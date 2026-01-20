@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "cors": "../_shared/cors.ts",
+    "supabase": "../_shared/supabase.ts"
+  }
+}

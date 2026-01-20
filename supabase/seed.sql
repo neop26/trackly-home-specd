@@ -1,0 +1,3 @@
+-- Seed data (optional)
+-- This file is intentionally minimal for the MVP.
+-- Add INSERT statements here if you want local dev data after `supabase db reset`.
