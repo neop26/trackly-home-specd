@@ -1,0 +1,330 @@
+name: Deploy Azure infra (SWA)
+
+on:
+  pull_request:
+    paths:
+      - "azure/deploy/**"
+      - ".github/workflows/azure-infra-deploy.yml"
+
+  push:
+    paths:
+      - "azure/deploy/**"
+      - ".github/workflows/azure-infra-deploy.yml"
+
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "plan runs what-if only; deploy actually creates/updates resources"
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - deploy
+      target:
+        description: "Which environment to deploy (deploy mode only)"
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - prod
+          - both
+      location:
+        description: "Azure region"
+        required: true
+        default: eastasia
+        type: choice
+        options:
+          - eastasia
+          - australiasoutheast
+          - eastus
+          - westus2
+          - eastus2
+      location_short:
+        description: "Short region code used in names (eas, ase, eus, wus2, eus2)"
+        required: true
+        default: eas
+        type: string
+      base_name:
+        description: "Base name for resource groups and SWA instances"
+        required: true
+        default: tr-hme
+        type: string
+      dry_run:
+        description: "(Legacy) If true, forces what-if only even in deploy mode"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: azure-infra
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Plan (what-if)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: azure/deploy
+
+    env:
+      TEMPLATE_FILE: main.bicep
+      PARAM_FILE: main.bicepparam
+      TEMPLATE_ARM_FILE: main.arm.json
+      PARAM_JSON_FILE: main.parameters.json
+      WHATIF_FILE: whatif.out
+      DEPLOYMENT_NAME: tr-hme-infra-plan-${{ github.run_number }}
+
+      # Safe defaults for non-dispatch runs
+      LOCATION: ${{ (github.event_name == 'workflow_dispatch' && inputs.location) || 'eastasia' }}
+      LOCATION_SHORT: ${{ (github.event_name == 'workflow_dispatch' && inputs.location_short) || 'eas' }}
+      BASE_NAME: ${{ (github.event_name == 'workflow_dispatch' && inputs.base_name) || 'tr-hme' }}
+
+      # If manual run, use selected target for plan; otherwise plan "both"
+      TARGET_ENV: ${{ (github.event_name == 'workflow_dispatch' && inputs.target) || 'both' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Ensure Bicep CLI available
+        run: |
+          az bicep install
+          az bicep version
+
+      - name: Build ARM template + params (JSON)
+        run: |
+          az bicep build --file "$TEMPLATE_FILE" --outfile "$TEMPLATE_ARM_FILE"
+          az bicep build-params --file "$PARAM_FILE" --outfile "$PARAM_JSON_FILE"
+
+      - name: Azure account context
+        run: az account show --output table
+
+      - name: What-if (plan only)
+        run: |
+          az deployment sub what-if \
+            --name "$DEPLOYMENT_NAME" \
+            --location "$LOCATION" \
+            --template-file "$TEMPLATE_ARM_FILE" \
+            --parameters @"$PARAM_JSON_FILE" \
+            --parameters location="$LOCATION" locationShortName="$LOCATION_SHORT" baseName="$BASE_NAME" targetEnvironment="$TARGET_ENV" \
+            --result-format ResourceIdOnly \
+            --no-pretty-print \
+            --only-show-errors \
+            -o json > "$WHATIF_FILE"
+
+      - name: Add what-if payload head to summary (debug)
+        shell: bash
+        run: |
+          echo "## Azure infra plan summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Event**: \`$GITHUB_EVENT_NAME\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Ref**: \`$GITHUB_REF_NAME\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **SHA**: \`$GITHUB_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Parameters" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **location**: \`$LOCATION\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **locationShortName**: \`$LOCATION_SHORT\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **baseName**: \`$BASE_NAME\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **targetEnvironment**: \`$TARGET_ENV\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **deploymentName**: \`$DEPLOYMENT_NAME\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### whatif.out (head)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          sed -n '1,120p' "$WHATIF_FILE" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build what-if table rows (jq)
+        shell: bash
+        run: |
+          # This handles multiple JSON shapes:
+          # - array of strings (resource IDs)
+          # - object with .changes or .properties.changes containing objects with resourceId
+          jq -r '
+            def ids:
+              if type=="array" then
+                if length==0 then []
+                elif (.[0] | type) == "string" then .
+                elif (.[0] | type) == "object" then [.[].resourceId]
+                else [] end
+              elif type=="object" then
+                ((.changes // .properties.changes // []) | map(.resourceId))
+              else [] end;
+
+            def env_of($rid):
+              if ($rid | test("/resourceGroups/[^/]+-dev(/|$)")) then "dev"
+              elif ($rid | test("/resourceGroups/[^/]+-prod(/|$)")) then "prod"
+              else "" end;
+
+            def type_of($rid):
+              if ($rid | test("/providers/")) then
+                ($rid | capture("/providers/(?<ns>[^/]+)/(?<rt>[^/]+)") | "\(.ns)/\(.rt)")
+              else "" end;
+
+            def name_of($rid):
+              ($rid | split("/") | last);
+
+            (ids | map(select(. != null and . != "")) | unique)[] as $rid
+            | "| \(name_of($rid)) | \(type_of($rid)) | \(env_of($rid)) |"
+          ' "$WHATIF_FILE" > whatif.rows.md || true
+
+      - name: Publish what-if table to summary
+        shell: bash
+        run: |
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### What-if results" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Resource | Type | Environment |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          if [[ ! -s whatif.rows.md ]]; then
+            echo "| (no changes detected or parser mismatch) |  |  |" >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat whatif.rows.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Artifacts" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Template: \`azure/deploy/$TEMPLATE_ARM_FILE\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Parameters: \`azure/deploy/$PARAM_JSON_FILE\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- What-if: \`azure/deploy/$WHATIF_FILE\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload artifacts (ARM + params + what-if)
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-infra-plan-${{ github.run_number }}
+          path: |
+            azure/deploy/main.arm.json
+            azure/deploy/main.parameters.json
+            azure/deploy/whatif.out
+
+  deploy_dev:
+    name: Deploy DEV
+    needs: plan
+    runs-on: ubuntu-latest
+
+    if: >
+      needs.plan.result == 'success' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.mode == 'deploy' &&
+      inputs.dry_run != true &&
+      (inputs.target == 'dev' || inputs.target == 'both')
+
+    environment: dev
+
+    defaults:
+      run:
+        working-directory: azure/deploy
+
+    env:
+      TEMPLATE_ARM_FILE: main.arm.json
+      PARAM_JSON_FILE: main.parameters.json
+      DEPLOYMENT_NAME: tr-hme-infra-dev-${{ github.run_number }}
+      LOCATION: ${{ inputs.location }}
+      LOCATION_SHORT: ${{ inputs.location_short }}
+      BASE_NAME: ${{ inputs.base_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download plan artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: azure-infra-plan-${{ github.run_number }}
+          path: azure/deploy
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy infra (DEV)
+        run: |
+          az deployment sub create \
+            --name "$DEPLOYMENT_NAME" \
+            --location "$LOCATION" \
+            --template-file "$TEMPLATE_ARM_FILE" \
+            --parameters @"$PARAM_JSON_FILE" \
+            --parameters location="$LOCATION" locationShortName="$LOCATION_SHORT" baseName="$BASE_NAME" targetEnvironment="dev"
+
+      - name: Show deployment outputs
+        shell: bash
+        run: |
+          echo "### DEV deployment outputs" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs" -o json | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  deploy_prod:
+    name: Deploy PROD
+    needs: plan
+    runs-on: ubuntu-latest
+
+    if: >
+      needs.plan.result == 'success' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.mode == 'deploy' &&
+      inputs.dry_run != true &&
+      (inputs.target == 'prod' || inputs.target == 'both')
+
+    environment: prod
+
+    defaults:
+      run:
+        working-directory: azure/deploy
+
+    env:
+      TEMPLATE_ARM_FILE: main.arm.json
+      PARAM_JSON_FILE: main.parameters.json
+      DEPLOYMENT_NAME: tr-hme-infra-prod-${{ github.run_number }}
+      LOCATION: ${{ inputs.location }}
+      LOCATION_SHORT: ${{ inputs.location_short }}
+      BASE_NAME: ${{ inputs.base_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download plan artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: azure-infra-plan-${{ github.run_number }}
+          path: azure/deploy
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy infra (PROD)
+        run: |
+          az deployment sub create \
+            --name "$DEPLOYMENT_NAME" \
+            --location "$LOCATION" \
+            --template-file "$TEMPLATE_ARM_FILE" \
+            --parameters @"$PARAM_JSON_FILE" \
+            --parameters location="$LOCATION" locationShortName="$LOCATION_SHORT" baseName="$BASE_NAME" targetEnvironment="prod"
+
+      - name: Show deployment outputs
+        shell: bash
+        run: |
+          echo "### PROD deployment outputs" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          az deployment sub show --name "$DEPLOYMENT_NAME" --query "properties.outputs" -o json | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
