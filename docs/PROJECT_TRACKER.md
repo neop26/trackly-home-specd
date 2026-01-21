@@ -1,6 +1,6 @@
 # Trackly Home — Project Tracker
 
-**Last Updated:** 2026-01-18  
+**Last Updated:** 2026-01-21  
 **Current Phase:** Phase 2 (Security Hardening)  
 **MVP Target:** 2026-02-28
 
@@ -13,7 +13,7 @@
 | Phase | Name | Status | Progress |
 |-------|------|--------|----------|
 | Phase 1 | Role-Based Access Control | 🟢 Complete | 100% |
-| Phase 2 | Security Hardening | 🟡 In Progress | 40% |
+| Phase 2 | Security Hardening | 🟡 In Progress | 78% |
 | Phase 3 | UX Routing & Onboarding | 🟡 In Progress | 60% |
 | Phase 4 | Deploy Discipline | 🔴 Not Started | 0% |
 | Phase 5 | Planner MVP | 🔴 Not Started | 0% |
@@ -50,10 +50,10 @@
 | ID | Task | Priority | Status | Target | Notes |
 |----|------|----------|--------|--------|-------|
 | 2.1 | RLS audit: profiles table policies | P0 | 🟢 Done | 2026-01-20 | Self-access only verified |
-| 2.2 | RLS audit: households table policies | P0 | 🟡 In Progress | 2026-01-22 | Member-only SELECT |
-| 2.3 | RLS audit: household_members policies | P0 | 🟡 In Progress | 2026-01-22 | Admin-only UPDATE |
-| 2.4 | RLS audit: invites table policies | P0 | 🟡 In Progress | 2026-01-22 | Admin-only INSERT |
-| 2.5 | Verify helper functions don't recurse | P0 | 🔴 Not Started | 2026-01-23 | Test with EXPLAIN |
+| 2.2 | RLS audit: households table policies | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: Zero cross-household leaks |
+| 2.3 | RLS audit: household_members policies | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: Write protection enforced |
+| 2.4 | RLS audit: invites table policies | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: Admin-only verified |
+| 2.5 | Verify helper functions don't recurse | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: SECURITY DEFINER confirmed |
 | 2.6 | Set verify_jwt=true on all user functions | P0 | 🟢 Done | 2026-01-20 | All 4 functions updated |
 | 2.7 | Implement strict CORS allowlist | P0 | 🟢 Done | 2026-01-20 | Using CORS_ORIGINS env |
 | 2.8 | Standardize error responses (status + message + code) | P1 | 🔴 Not Started | 2026-01-25 | Consistent shape |
@@ -175,6 +175,16 @@
 ---
 
 ## Notes & Decisions
+
+### 2026-01-21 (PM)
+- **RLS Audit Complete**: Feature 001-audit-and-strengthen fully tested
+- All 18 validation tests passing (Phase 3-7)
+- Zero cross-household data leaks confirmed
+- Test suite created: `supabase/test_rls_audit.sql` (823 lines)
+- Comprehensive documentation added to `supabase/migrations/README.md`
+- AUDIT_FINDINGS.md created with detailed results
+- Security posture: STRONG - ready for production
+- Remaining Phase 2 tasks: 2.8 (error responses), 2.9 (PII logging review)
 
 ### 2026-01-18
 - Consolidated all documentation into single PRD
