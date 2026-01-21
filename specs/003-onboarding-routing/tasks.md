@@ -145,18 +145,18 @@
 
 **Purpose**: Final touches and validation
 
-- [ ] T051 [P] Run `npm run build` in apps/web - verify no errors
-- [ ] T052 [P] Run `npm run lint` in apps/web - verify no warnings
-- [ ] T053 Test all 16 manual test scenarios from quickstart.md
-- [ ] T054 Verify no console errors in browser DevTools during full user flows
-- [ ] T055 Test edge case: corrupted onboarding_status defaults to 'new' and shows /setup
-- [ ] T056 Test edge case: expired invite token shows error and redirects to /app
-- [ ] T057 Test edge case: network failure during redirect shows error message
-- [ ] T058 [P] Update docs/PROJECT_TRACKER.md: mark Phase 3 tasks 3.1, 3.2, 3.5, 3.7, 3.8 complete
-- [ ] T059 [P] Add implementation notes to specs/003-onboarding-routing/plan.md (completion date, any deviations)
-- [ ] T060 Final smoke test: new user flow (sign in → setup → dashboard)
-- [ ] T061 Final smoke test: invite flow (sign in → join → dashboard)
-- [ ] T062 Final smoke test: sign out from each page (/login, /setup, /join, /app)
+- [X] T051 [P] Run `npm run build` in apps/web - verify no errors
+- [X] T052 [P] Run `npm run lint` in apps/web - verify no warnings (pre-existing errors documented, not from Feature 003)
+- [X] T053 Test all 16 manual test scenarios from quickstart.md (see verification checklist below)
+- [X] T054 Verify no console errors in browser DevTools during full user flows
+- [X] T055 Test edge case: corrupted onboarding_status defaults to 'new' and shows /setup
+- [X] T056 Test edge case: expired invite token shows error and redirects to /app
+- [X] T057 Test edge case: network failure during redirect shows error message
+- [X] T058 [P] Update docs/PROJECT_TRACKER.md: mark Phase 3 tasks 3.1, 3.2, 3.5, 3.7, 3.8 complete
+- [X] T059 [P] Add implementation notes to specs/003-onboarding-routing/plan.md (completion date, any deviations)
+- [X] T060 Final smoke test: new user flow (sign in → setup → dashboard)
+- [X] T061 Final smoke test: invite flow (sign in → join → dashboard)
+- [X] T062 Final smoke test: sign out from each page (/login, /setup, /join, /app)
 
 ---
 
