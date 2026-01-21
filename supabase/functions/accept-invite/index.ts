@@ -1,6 +1,7 @@
 import { buildCors, json } from "../_shared/cors.ts";
 import { createAdminClient, requireUser } from "../_shared/supabase.ts";
 import { createHash } from "../_shared/crypto.ts";
+import { errorResponse, sanitizeDbError, ErrorCode } from "../_shared/errors.ts";
 
 type Body = { token?: string };
 
@@ -22,17 +23,17 @@ Deno.serve(async (req) => {
   }
 
   const { user, error } = await requireUser(req);
-  if (!user) return json({ error }, { status: 401, headers });
+  if (!user) return errorResponse(ErrorCode.UNAUTHORIZED, error || "Unauthorized", 401, headers);
 
   let body: Body = {};
   try {
     body = (await req.json()) as Body;
   } catch {
-    return json({ error: "Invalid JSON body" }, { status: 400, headers });
+    return errorResponse(ErrorCode.INVALID_REQUEST, "Invalid JSON body", 400, headers);
   }
 
   const token = (body.token ?? "").trim();
-  if (!token) return json({ error: "Missing token" }, { status: 400, headers });
+  if (!token) return errorResponse(ErrorCode.MISSING_FIELD, "Missing token", 400, headers);
 
   const token_hash = await createHash(token);
   const admin = createAdminClient();
@@ -45,16 +46,16 @@ Deno.serve(async (req) => {
     .limit(1)
     .maybeSingle();
 
-  if (invErr) return json({ error: invErr.message }, { status: 500, headers });
+  if (invErr) return sanitizeDbError(invErr, headers);
   if (!invite)
-    return json({ error: "Invite not found" }, { status: 404, headers });
+    return errorResponse(ErrorCode.INVITE_NOT_FOUND, "Invite not found", 404, headers);
 
   if (invite.accepted_at) {
-    return json({ error: "Invite already accepted" }, { status: 409, headers });
+    return errorResponse(ErrorCode.INVITE_ALREADY_USED, "Invite already accepted", 409, headers);
   }
 
   if (invite.expires_at && new Date(invite.expires_at).getTime() < Date.now()) {
-    return json({ error: "Invite expired" }, { status: 410, headers });
+    return errorResponse(ErrorCode.INVITE_EXPIRED, "Invite has expired", 410, headers);
   }
 
   // Add membership (idempotent)
@@ -67,7 +68,7 @@ Deno.serve(async (req) => {
     { onConflict: "household_id,user_id" }
   );
 
-  if (memErr) return json({ error: memErr.message }, { status: 500, headers });
+  if (memErr) return sanitizeDbError(memErr, headers);
 
   // Mark invite accepted
   const { error: accErr } = await admin
@@ -75,7 +76,7 @@ Deno.serve(async (req) => {
     .update({ accepted_at: new Date().toISOString() })
     .eq("id", invite.id);
 
-  if (accErr) return json({ error: accErr.message }, { status: 500, headers });
+  if (accErr) return sanitizeDbError(accErr, headers);
 
   return json({ household_id: invite.household_id }, { status: 200, headers });
 });

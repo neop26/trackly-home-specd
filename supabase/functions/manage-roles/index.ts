@@ -1,5 +1,6 @@
 import { buildCors, json } from "../_shared/cors.ts";
 import { createAdminClient, requireUser } from "../_shared/supabase.ts";
+import { errorResponse, sanitizeDbError, ErrorCode } from "../_shared/errors.ts";
 
 type Body = {
   household_id?: string;
@@ -29,13 +30,13 @@ Deno.serve(async (req) => {
   }
 
   const { user, error } = await requireUser(req);
-  if (!user) return json({ error }, { status: 401, headers });
+  if (!user) return errorResponse(ErrorCode.UNAUTHORIZED, error || "Unauthorized", 401, headers);
 
   let body: Body = {};
   try {
     body = (await req.json()) as Body;
   } catch {
-    return json({ error: "Invalid JSON body" }, { status: 400, headers });
+    return errorResponse(ErrorCode.INVALID_REQUEST, "Invalid JSON body", 400, headers);
   }
 
   const householdId = (body.household_id ?? "").trim();
@@ -43,14 +44,11 @@ Deno.serve(async (req) => {
   const newRole = (body.new_role ?? "").trim().toLowerCase();
 
   if (!householdId)
-    return json({ error: "Missing household_id" }, { status: 400, headers });
+    return errorResponse(ErrorCode.MISSING_FIELD, "Missing household_id", 400, headers);
   if (!targetUserId)
-    return json({ error: "Missing target_user_id" }, { status: 400, headers });
+    return errorResponse(ErrorCode.MISSING_FIELD, "Missing target_user_id", 400, headers);
   if (!newRole || !VALID_ROLES.includes(newRole)) {
-    return json(
-      { error: "Invalid role. Must be admin or member" },
-      { status: 400, headers },
-    );
+    return errorResponse(ErrorCode.INVALID_ROLE, "Invalid role. Must be admin or member", 400, headers);
   }
 
   const admin = createAdminClient();
@@ -65,15 +63,12 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (callerErr)
-    return json({ error: callerErr.message }, { status: 500, headers });
+    return sanitizeDbError(callerErr, headers);
   if (!callerMembership)
-    return json({ error: "Not a household member" }, { status: 403, headers });
+    return errorResponse(ErrorCode.NOT_HOUSEHOLD_MEMBER, "Not a household member", 403, headers);
 
   if (!["owner", "admin"].includes(callerMembership.role)) {
-    return json(
-      { error: "Only admins can manage roles" },
-      { status: 403, headers },
-    );
+    return errorResponse(ErrorCode.NOT_ADMIN, "Only admins can manage roles", 403, headers);
   }
 
   // Get target member
@@ -86,16 +81,13 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (targetErr)
-    return json({ error: targetErr.message }, { status: 500, headers });
+    return sanitizeDbError(targetErr, headers);
   if (!targetMember)
-    return json({ error: "Target user not found" }, { status: 404, headers });
+    return errorResponse(ErrorCode.USER_NOT_FOUND, "Target user not found in household", 404, headers);
 
   // MVP: do not allow changing the household owner's role.
   if (targetMember.role === "owner") {
-    return json(
-      { error: "Owner role cannot be changed in this MVP" },
-      { status: 403, headers },
-    );
+    return errorResponse(ErrorCode.CANNOT_CHANGE_OWNER, "Owner role cannot be changed", 403, headers);
   }
 
   // Prevent removing last admin (if demoting an admin to member)
@@ -110,13 +102,10 @@ Deno.serve(async (req) => {
       .in("role", ["admin", "owner"]);
 
     if (countErr)
-      return json({ error: countErr.message }, { status: 500, headers });
+      return sanitizeDbError(countErr, headers);
 
     if ((count ?? 0) <= 1) {
-      return json(
-        { error: "Cannot remove last admin from household" },
-        { status: 409, headers },
-      );
+      return errorResponse(ErrorCode.LAST_ADMIN, "Cannot remove last admin from household", 409, headers);
     }
   }
 
@@ -128,7 +117,7 @@ Deno.serve(async (req) => {
     .eq("user_id", targetUserId);
 
   if (updateErr)
-    return json({ error: updateErr.message }, { status: 500, headers });
+    return sanitizeDbError(updateErr, headers);
 
   return json({ success: true, new_role: newRole }, { status: 200, headers });
 });

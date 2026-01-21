@@ -1,5 +1,6 @@
 import { buildCors, json } from "../_shared/cors.ts";
 import { createAdminClient, requireUser } from "../_shared/supabase.ts";
+import { errorResponse, sanitizeDbError, ErrorCode } from "../_shared/errors.ts";
 
 type Body = { name?: string };
 
@@ -24,7 +25,7 @@ Deno.serve(async (req) => {
   // Auth
   const { user, error } = await requireUser(req);
   if (!user) {
-    return json({ error }, { status: 401, headers });
+    return errorResponse(ErrorCode.UNAUTHORIZED, error || "Unauthorized", 401, headers);
   }
 
   // Body
@@ -32,17 +33,14 @@ Deno.serve(async (req) => {
   try {
     body = (await req.json()) as Body;
   } catch {
-    return json({ error: "Invalid JSON body" }, { status: 400, headers });
+    return errorResponse(ErrorCode.INVALID_REQUEST, "Invalid JSON body", 400, headers);
   }
 
   const name = (body.name ?? "").trim();
   if (!name)
-    return json({ error: "Missing household name" }, { status: 400, headers });
+    return errorResponse(ErrorCode.MISSING_FIELD, "Missing household name", 400, headers);
   if (name.length > 80) {
-    return json(
-      { error: "Household name too long (max 80)" },
-      { status: 400, headers }
-    );
+    return errorResponse(ErrorCode.INVALID_REQUEST, "Household name too long (max 80)", 400, headers);
   }
 
   const admin = createAdminClient();
@@ -57,12 +55,14 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (memberErr)
-    return json({ error: memberErr.message }, { status: 500, headers });
+    return sanitizeDbError(memberErr, headers);
 
   if (existingMembership?.household_id) {
-    return json(
-      { error: "User already belongs to a household" },
-      { status: 409, headers }
+    return errorResponse(
+      ErrorCode.ALREADY_IN_HOUSEHOLD,
+      "User already belongs to a household",
+      409,
+      headers
     );
   }
 
@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     .select("id")
     .single();
 
-  if (hErr) return json({ error: hErr.message }, { status: 500, headers });
+  if (hErr) return sanitizeDbError(hErr, headers);
 
   const { error: hmErr } = await admin.from("household_members").insert({
     household_id: household.id,
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
     role: "owner",
   });
 
-  if (hmErr) return json({ error: hmErr.message }, { status: 500, headers });
+  if (hmErr) return sanitizeDbError(hmErr, headers);
 
   return json({ household_id: household.id }, { status: 200, headers });
 });

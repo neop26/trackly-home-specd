@@ -13,7 +13,7 @@
 | Phase | Name | Status | Progress |
 |-------|------|--------|----------|
 | Phase 1 | Role-Based Access Control | 🟢 Complete | 100% |
-| Phase 2 | Security Hardening | 🟡 In Progress | 78% |
+| Phase 2 | Security Hardening | � Complete | 100% |
 | Phase 3 | UX Routing & Onboarding | 🟡 In Progress | 60% |
 | Phase 4 | Deploy Discipline | 🔴 Not Started | 0% |
 | Phase 5 | Planner MVP | 🔴 Not Started | 0% |
@@ -42,13 +42,13 @@
 
 ---
 
-## Phase 2: Security Hardening 🟡
+## Phase 2: Security Hardening �
 
-**Status:** In Progress  
-**Target Completion:** 2026-01-25  
+**Status:** Complete  
+**Completed:** 2026-01-21  
 
-| ID | Task | Priority | Status | Target | Notes |
-|----|------|----------|--------|--------|-------|
+| ID | Task | Priority | Status | Completed | Notes |
+|----|------|----------|--------|-----------|-------|
 | 2.1 | RLS audit: profiles table policies | P0 | 🟢 Done | 2026-01-20 | Self-access only verified |
 | 2.2 | RLS audit: households table policies | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: Zero cross-household leaks |
 | 2.3 | RLS audit: household_members policies | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: Write protection enforced |
@@ -56,8 +56,8 @@
 | 2.5 | Verify helper functions don't recurse | P0 | 🟢 Done | 2026-01-21 | ✅ Feature 001: SECURITY DEFINER confirmed |
 | 2.6 | Set verify_jwt=true on all user functions | P0 | 🟢 Done | 2026-01-20 | All 4 functions updated |
 | 2.7 | Implement strict CORS allowlist | P0 | 🟢 Done | 2026-01-20 | Using CORS_ORIGINS env |
-| 2.8 | Standardize error responses (status + message + code) | P1 | 🔴 Not Started | 2026-01-25 | Consistent shape |
-| 2.9 | Review PII logging in functions | P1 | 🔴 Not Started | 2026-01-25 | Ensure no emails logged |
+| 2.8 | Standardize error responses (status + message + code) | P1 | 🟢 Done | 2026-01-21 | ✅ Feature 002: 16 error codes defined |
+| 2.9 | Review PII logging in functions | P1 | 🟢 Done | 2026-01-21 | ✅ Feature 002: Zero PII exposure |
 
 ---
 
@@ -154,7 +154,7 @@
 
 | Milestone | Target Date | Description |
 |-----------|-------------|-------------|
-| Security Audit Complete | 2026-01-25 | All RLS policies reviewed and tested |
+| **Security Audit Complete** | **2026-01-21** | **✅ All RLS policies reviewed and tested** |
 | Routing Finalized | 2026-01-31 | All user flows work correctly |
 | Prod Pipeline Ready | 2026-02-07 | Can deploy to production safely |
 | Planner MVP Complete | 2026-02-21 | Basic task management working |
@@ -176,7 +176,21 @@
 
 ## Notes & Decisions
 
-### 2026-01-21 (PM)
+### 2026-01-21 (PM) - Phase 2 Complete ✅
+- **Error Handling Standardized**: Feature 002 implemented and tested
+- Created `_shared/errors.ts` with 16 error codes across 5 categories
+- Refactored all 4 Edge Functions to use standardized error responses
+- Error format: `{ error: { message, code, status } }` (backward compatible)
+- **PII Audit Complete**: Zero PII exposure verified
+  - No console.log statements logging emails, tokens, or household names
+  - All database errors sanitized before returning to client
+  - `sanitizeDbError()` wraps all Supabase errors in generic messages
+- Comprehensive documentation added to `supabase/functions/README.md`
+- Test suite created: `specs/002-error-handling-pii-logging/test-errors.sh`
+- **Security posture: EXCELLENT** - Phase 2 Security Hardening 100% complete
+- Ready to proceed to Phase 3 (UX Routing & Onboarding)
+
+### 2026-01-21 (AM) - RLS Audit Complete
 - **RLS Audit Complete**: Feature 001-audit-and-strengthen fully tested
 - All 18 validation tests passing (Phase 3-7)
 - Zero cross-household data leaks confirmed
