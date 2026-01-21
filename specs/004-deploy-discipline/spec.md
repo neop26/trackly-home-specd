@@ -15,31 +15,26 @@
 
 The project has **partial deployment infrastructure** from the old repo but lacks complete production automation and quality gates.
 
-**Current State (from old repo workflows)**:
+**Current State (NEW REPO - adapting from old repo patterns)**:
 
-✅ **Existing Infrastructure**:
-- GitHub Environments configured: `dev`, `prod`, `copilot`
-- Azure Static Web Apps (SWA) deployed: dev and prod environments
-- Bicep infrastructure deployment workflow (`azure-infra-deploy.yml`):
-  - OIDC authentication (no stored credentials)
-  - What-if analysis + plan/deploy jobs
-  - Environment protection on prod deployments
-- SWA deployment workflow (`swa-app-deploy.yml`):
-  - Triggers: push to dev (apps/web/**) OR workflow_dispatch (manual)
-  - Dynamic environment: dev for push, user-selected for manual
-  - Build-time env vars: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
-  - Concurrency control: `swa-web-${{ github.ref_name }}`
-- Supabase dev deployment workflow (`supabase-deploy-dev.yml`):
-  - Triggers: push to dev (supabase/**) OR workflow_dispatch
-  - Steps: link project → push migrations → set secrets → deploy functions
-  - Comprehensive summary: dashboard links, migrations list, functions list
-  - 9 Edge Function secrets: SB_SUPABASE_URL, SB_SUPABASE_ANON_KEY, SB_SUPABASE_SERVICE_ROLE_KEY, SB_DATABASE_URL, SB_DIRECT_URL, SB_JWT_SECRET, SB_SITE_URL, SB_CORS_ORIGINS, SB_SMTP_*
+✅ **Existing in New Repo**:
+- GitHub Environments configured: `dev`, `prod`, `copilot` (with secrets already set)
+- Reference workflows from old repo available (in `specs/004-deploy-discipline/oldrepo/`)
+- **Dev infrastructure deployed**:
+  - Azure Static Web App (dev) ✅ deployed
+  - Supabase project (dev) ✅ deployed
+- Bicep templates ready: `azure/deploy/main.bicep` (for infrastructure deployment)
 
-❌ **Missing Gaps**:
-1. **PR Quality Gates**: No automated checks before merge (lint, typecheck, build)
-2. **Automated Production Deploys**: Existing prod deploys are manual-only (workflow_dispatch)
-3. **Supabase Production Workflow**: Only dev deployment exists, no prod version
-4. **Secrets Documentation**: No centralized reference for required GitHub secrets
+❌ **Missing Gaps (Need to Address)**:
+1. **Azure OIDC not configured**: New repo needs GitHub → Azure OIDC federated credentials setup
+2. **Production infrastructure NOT deployed**:
+   - Azure Static Web App (prod) ❌ not deployed yet
+   - Supabase project (prod) ❌ not deployed yet
+3. **Workflows not migrated**: Old repo workflows need to be adapted to new repo structure
+4. **PR Quality Gates**: No automated checks before merge (lint, typecheck, build)
+5. **Automated Production Deploys**: No workflows for auto-deploy on main
+6. **Supabase Production Workflow**: Need to create prod version (only dev exists in old repo)
+7. **Secrets Documentation**: No centralized reference for required GitHub secrets
 
 **Deployment Pattern to Implement**:
 ```
@@ -583,11 +578,13 @@ jobs:
 4. **GitHub secrets**: All 15+ secrets configured in environments
 
 ### Prerequisites
-- ✅ Azure production Static Web App provisioned
-- ✅ Supabase production project created
 - ✅ GitHub repository admin access
-- ✅ GitHub environments configured (dev, prod)
-- ⚠️ Production secrets configured (need to verify)
+- ✅ GitHub environments configured (dev, prod) with secrets
+- ✅ Dev infrastructure deployed (Azure SWA, Supabase)
+- ❌ Azure OIDC not configured (need to set up for new repo)
+- ❌ Azure production Static Web App NOT provisioned yet
+- ❌ Supabase production project NOT created yet
+- 🔧 Production secrets configured in GitHub (need to verify match new infrastructure)
 
 ---
 

@@ -10,26 +10,126 @@
 
 ## Overview
 
-This plan outlines implementation of complete CI/CD automation, building on existing workflows from the old repo. We have **3 workflows to create**, **1 workflow to update**, and **1 documentation file to create**.
+This plan outlines implementation of complete CI/CD automation, building on existing workflows from the old repo. **IMPORTANT**: This is a new repo, so we need to:
 
-**Existing Infrastructure** (from old repo):
-- ✅ `.github/workflows/swa-app-deploy.yml` - SWA deployment (dev auto + manual prod)
-- ✅ `.github/workflows/supabase-deploy-dev.yml` - Supabase dev deployment
-- ✅ `.github/workflows/azure-infra-deploy.yml` - Bicep infrastructure
-- ✅ GitHub environments: dev, prod, copilot (already configured)
-- ✅ Azure SWAs: dev and prod (already deployed)
-- ✅ Supabase projects: dev and prod (already created)
+1. **Deploy production infrastructure** (Azure SWA + Supabase prod)
+2. **Set up Azure OIDC** for GitHub Actions authentication
+3. **Migrate workflows** from old repo to new repo structure
+4. **Create missing workflows** (PR checks, Supabase prod)
+5. **Document secrets** for easier setup
+
+**Current State** (NEW REPO):
+- ✅ Dev infrastructure deployed (Azure SWA dev, Supabase dev)
+- ✅ GitHub environments configured with secrets (dev, prod)
+- ✅ Reference workflows from old repo available
+- ❌ Azure OIDC NOT configured (new repo needs setup)
+- ❌ Production infrastructure NOT deployed (Azure SWA prod, Supabase prod)
+- ❌ Workflows NOT migrated to new repo yet
 
 **Work Required**:
+- 🔧 **PHASE 0**: Deploy production infrastructure + configure OIDC
 - ✨ **CREATE**: PR check workflow (lint, typecheck, build)
+- 🔄 **MIGRATE**: Adapt old repo workflows to new repo
 - ✨ **CREATE**: Supabase production workflow (copy from dev)
-- ✨ **CREATE**: Secrets documentation (.github/SECRETS.md)
-- 🔧 **UPDATE**: SWA workflow (add auto-trigger for main)
+- ✨ **CREATE**: Secrets documentation + helper scripts (.github/SECRETS.md)
 - ✅ **VALIDATE**: Verify prod environment has approval gates
 
 ---
 
 ## Implementation Phases
+
+### Phase 0: Infrastructure & OIDC Setup (Priority: P0, Est: 1 day) - **NEW**
+
+**Objective**: Deploy production infrastructure and configure Azure OIDC for new repo
+
+**Tasks**:
+
+1. **Set up Azure OIDC for GitHub Actions** (1 hour)
+   - Run script: `./scripts/setup-azure-oidc.sh`
+   - Script will:
+     - Create Azure AD app registration
+     - Create service principal
+     - Create federated credentials (main, dev, pull_request)
+     - Assign Contributor role
+     - Set GitHub repository secrets: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
+   - Verify OIDC works: Test azure-infra-deploy.yml workflow
+
+2. **Deploy Production Azure Infrastructure** (2 hours)
+   - Use existing Bicep templates: `azure/deploy/main.bicep`
+   - Deploy both dev + prod environments:
+     ```bash
+     cd azure/deploy
+     az deployment sub create \
+       --location eastasia \
+       --name tr-hme-deploy \
+       --template-file main.bicep \
+       --parameters @main.bicepparam
+     ```
+   - Outputs will include:
+     - Resource group names: `rg-tr-hme-dev`, `rg-tr-hme-prod`
+     - Static Web App names (dev + prod)
+     - Monitoring resources (Application Insights, Log Analytics)
+   - Document resource names for later steps
+
+3. **Retrieve Azure SWA Deployment Tokens** (30 min)
+   - For dev environment:
+     ```bash
+     az staticwebapp secrets list \
+       --name <swa-dev-name> \
+       --resource-group rg-tr-hme-dev \
+       --query properties.apiKey -o tsv
+     ```
+   - For prod environment:
+     ```bash
+     az staticwebapp secrets list \
+       --name <swa-prod-name> \
+       --resource-group rg-tr-hme-prod \
+       --query properties.apiKey -o tsv
+     ```
+   - Save tokens for GitHub secrets setup
+
+4. **Create Supabase Production Project** (1 hour)
+   - Go to https://supabase.com/dashboard
+   - Click "New Project"
+   - Configure:
+     - Name: `trackly-home-prod`
+     - Database password: Generate strong password (save for later)
+     - Region: Same as dev (for consistency)
+   - Wait for project to provision
+   - Document:
+     - Project URL (for VITE_SUPABASE_URL, SB_URL)
+     - Anon key (for VITE_SUPABASE_ANON_KEY, SB_ANON_KEY)
+     - Service role key (for SB_SERVICE_ROLE_KEY)
+     - Project reference ID (for SUPABASE_PROJECT_REF)
+
+5. **Set up GitHub Secrets using Helper Script** (1 hour)
+   - Run script: `./scripts/setup-github-secrets.sh`
+   - Select option 1: Set up dev environment secrets
+   - Select option 2: Set up prod environment secrets
+   - Script will prompt for each secret with descriptions
+   - Alternatively, set manually using secret retrieval instructions (option 3)
+
+6. **Verify Infrastructure Ready** (30 min)
+   - Test Azure SWA dev: Visit dev URL
+   - Test Azure SWA prod: Visit prod URL
+   - Test Supabase dev: Run query in SQL Editor
+   - Test Supabase prod: Run query in SQL Editor
+   - Verify all GitHub secrets configured:
+     ```bash
+     gh secret list --env dev
+     gh secret list --env prod
+     gh secret list  # repository secrets (OIDC)
+     ```
+
+**Deliverables**:
+- ✅ Azure OIDC configured (AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID)
+- ✅ Production infrastructure deployed (Azure SWA prod, Supabase prod)
+- ✅ All GitHub environment secrets configured (dev + prod)
+- ✅ Infrastructure validated and accessible
+
+**Dependencies**: None (must be first phase)
+
+---
 
 ### Phase 1: PR Quality Gates (Priority: P0, Est: 1 day)
 
@@ -411,45 +511,59 @@ Validating this plan against project constitution:
 
 ## Timeline
 
-**Total Duration**: 4 days (1 work week)  
+**Total Duration**: 5 days (1 work week + 1 day)  
 **Target Completion**: 2026-01-31 (Phase 4 deadline)
 
 **Day-by-Day Breakdown**:
 
 - **Day 1** (2026-01-23):
-  - Phase 1: PR Quality Gates (1 day)
-  - Phase 2: Validate Production Environment (0.5 days)
+  - **Phase 0**: Infrastructure & OIDC Setup (1 day) - **CRITICAL FIRST**
   
 - **Day 2** (2026-01-24):
-  - Phase 3: SWA Production Auto-Deploy (1 day)
+  - Phase 1: PR Quality Gates (0.5 days)
+  - Phase 2: Validate Production Environment (0.5 days)
   
 - **Day 3** (2026-01-25):
-  - Phase 4: Supabase Production Deployment (1 day)
+  - Phase 3: Migrate & Update SWA Workflow (1 day)
   
 - **Day 4** (2026-01-26):
+  - Phase 4: Supabase Production Deployment (1 day)
+  
+- **Day 5** (2026-01-27):
   - Phase 5: Secrets Documentation (0.5 days)
   - E2E Testing (0.5 days)
 
-- **Buffer** (2026-01-27 to 2026-01-31):
-  - 4 days buffer for unexpected issues
+- **Buffer** (2026-01-28 to 2026-01-31):
+  - 3 days buffer for unexpected issues
   - Documentation updates
   - PROJECT_TRACKER.md updates
 
 ---
+Helper Scripts Created (2) - **NEW**:
+1. ✅ `scripts/setup-github-secrets.sh` - Interactive secrets setup helper
+2. ✅ `scripts/setup-azure-oidc.sh` - Azure OIDC configuration automation
 
-## Deliverables Summary
+### Infrastructure Deployed (2) - **NEW**:
+1. ✅ Azure Static Web App (prod) - Production frontend hosting
+2. ✅ Supabase project (prod) - Production backend database + Edge Functions
 
-### New Files Created (3):
+### New Workflow Files (3):
 1. ✅ `.github/workflows/pr-check.yml` - PR quality gates
 2. ✅ `.github/workflows/supabase-deploy-prod.yml` - Supabase production deployment
-3. ✅ `.github/SECRETS.md` - Secrets documentation
+3. ✅ `.github/workflows/swa-app-deploy.yml` - Migrated from old repo, adapted for new repo
 
-### Files Updated (1):
-1. ✅ `.github/workflows/swa-app-deploy.yml` - Add auto-trigger for main
+### Documentation Files (2):
+1. ✅ `.github/SECRETS.md` - Secrets documentation
+2. ✅ `.github/workflows/supabase-deploy-dev.yml` - Migrated from old repo (optional)
 
-### Configuration Changes (1):
+### Configuration Changes (2):
 1. ✅ Branch protection rule on `main` - Require PR checks
+2. ✅ Azure OIDC federated credentials - GitHub Actions authentication
 
+### Validation Tasks (3):
+1. ✅ Production environment configuration validated
+2. ✅ All 14+ production secrets verified present
+3. ✅ Azure OIDC authentication working
 ### Validation Tasks (2):
 1. ✅ Production environment configuration validated
 2. ✅ All 15+ production secrets verified present
