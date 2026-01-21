@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import InvitePartnerCard from "../components/InvitePartnerCard";
 import ManageRolesCard from "../components/ManageRolesCard";
@@ -14,7 +14,6 @@ export default function AppShell() {
   const [ctx, setCtx] = useState<HouseholdContext | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
   const location = useLocation();
 
   const flags = useMemo(() => {
@@ -31,7 +30,8 @@ export default function AppShell() {
         const { data: sessionData } = await supabase.auth.getSession();
         const user = sessionData.session?.user;
         if (!user) {
-          navigate("/login", { replace: true });
+          // Route guard will handle redirect
+          setLoading(false);
           return;
         }
 
@@ -46,17 +46,13 @@ export default function AppShell() {
 
         const household = await getHouseholdForUser(user.id);
 
-        if (!household) {
-          navigate("/setup", { replace: true });
-          return;
-        }
-
+        // Route guard ensures we only reach here if user has household
         setCtx(household);
       } finally {
         setLoading(false);
       }
     })();
-  }, [navigate]);
+  }, []);
 
   if (loading) return <div className="p-6">Loading…</div>;
   if (!ctx) return <div className="p-6">Loading…</div>;

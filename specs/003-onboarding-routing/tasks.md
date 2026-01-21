@@ -71,23 +71,23 @@
 
 ### Implementation for User Story 2
 
-- [ ] T012 [US2] Create apps/web/src/hooks/useRouteGuard.ts with routing state machine logic
-- [ ] T013 [US2] Add auth state check to useRouteGuard (authenticated vs not)
-- [ ] T014 [US2] Add onboarding_status fetch to useRouteGuard (query profiles table)
-- [ ] T015 [US2] Add household membership check to useRouteGuard (query household_members table)
-- [ ] T016 [US2] Implement redirect decision logic in useRouteGuard (return target route or null)
-- [ ] T017 [US2] Add loading state tracking to useRouteGuard (isLoading: boolean)
-- [ ] T018 [US2] Add JSDoc documentation to useRouteGuard explaining all routing rules
-- [ ] T019 [US2] Update apps/web/src/router/AppRouter.tsx to use useRouteGuard hook
-- [ ] T020 [US2] Remove household redirect logic from apps/web/src/screens/AppShell.tsx (keep banner flags)
-- [ ] T021 [US2] Simplify apps/web/src/ProtectedRoute.tsx to only check auth (remove onboarding logic)
-- [ ] T022 [US2] Test unauthenticated access to /app redirects to /login?next=/app
-- [ ] T023 [US2] Test authenticated user with no household visiting /app redirects to /setup
-- [ ] T024 [US2] Test authenticated user with household visiting /setup redirects to /app
-- [ ] T025 [US2] Test ?next= parameter preserved through login flow
-- [ ] T026 [US2] Test /join?token=xyz allows user to stay on join page (not redirected away)
-- [ ] T027 [US2] Test no infinite redirect loops in any navigation scenario
-- [ ] T028 [US2] Verify all routing logic consolidated into ≤2 files (useRouteGuard + AppRouter)
+- [X] T012 [US2] Create apps/web/src/hooks/useRouteGuard.ts with routing state machine logic
+- [X] T013 [US2] Add auth state check to useRouteGuard (authenticated vs not)
+- [X] T014 [US2] Add onboarding_status fetch to useRouteGuard (query profiles table)
+- [X] T015 [US2] Add household membership check to useRouteGuard (query household_members table)
+- [X] T016 [US2] Implement redirect decision logic in useRouteGuard (return target route or null)
+- [X] T017 [US2] Add loading state tracking to useRouteGuard (isLoading: boolean)
+- [X] T018 [US2] Add JSDoc documentation to useRouteGuard explaining all routing rules
+- [X] T019 [US2] Update apps/web/src/router/AppRouter.tsx to use useRouteGuard hook
+- [X] T020 [US2] Remove household redirect logic from apps/web/src/screens/AppShell.tsx (keep banner flags)
+- [X] T021 [US2] Simplify apps/web/src/ProtectedRoute.tsx to only check auth (remove onboarding logic)
+- [X] T022 [US2] Test unauthenticated access to /app redirects to /login?next=/app
+- [X] T023 [US2] Test authenticated user with no household visiting /app redirects to /setup
+- [X] T024 [US2] Test authenticated user with household visiting /setup redirects to /app
+- [X] T025 [US2] Test ?next= parameter preserved through login flow
+- [X] T026 [US2] Test /join?token=xyz allows user to stay on join page (not redirected away)
+- [X] T027 [US2] Test no infinite redirect loops in any navigation scenario
+- [X] T028 [US2] Verify all routing logic consolidated into ≤2 files (useRouteGuard + AppRouter)
 
 **Checkpoint**: User Story 2 complete - routing logic centralized, all flows working
 
