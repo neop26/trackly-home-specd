@@ -3,7 +3,7 @@
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**Note**: This template is filled in by the `/speckit.plan` command.
 
 ## Summary
 
@@ -12,26 +12,31 @@
 ## Technical Context
 
 <!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
+  TRACKLY HOME DEFAULTS:
+  Most features will use these values. Adjust only if needed.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5.x  
+**Primary Dependencies**: React 18, Tailwind CSS, @supabase/supabase-js  
+**Storage**: PostgreSQL (via Supabase) with RLS  
+**Testing**: Manual testing (future: Vitest, Playwright)  
+**Target Platform**: Web (Azure Static Web Apps)  
+**Project Type**: web (frontend in apps/web, backend in supabase)  
+**Performance Goals**: LCP < 2.5s, Edge function response < 500ms  
+**Constraints**: Household data isolation, single-use invite tokens, admin-gated features  
+**Scale/Scope**: 2-person households (MVP), expandable to 10+ members (future)
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: Must pass before implementation. Re-check after design.*
 
-[Gates determined based on constitution file]
+| Principle | Status | Notes |
+|-----------|--------|-------|
+| I. Security First | ☐ | RLS policies defined? Auth validation planned? |
+| II. Vertical Slices | ☐ | User stories independently deliverable? |
+| III. Minimal Changes | ☐ | Simplest solution? No over-engineering? |
+| IV. Document As You Go | ☐ | Migration README? JSDoc? PRD update? |
+| V. Test Before Deploy | ☐ | Local testing approach? Manual smoke test plan? |
 
 ## Project Structure
 
@@ -39,60 +44,80 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+├── plan.md              # This file
+├── spec.md              # Feature specification
+├── research.md          # Technical research (if needed)
+├── data-model.md        # Database design (if DB changes)
+├── quickstart.md        # Setup/testing guide (if complex)
+├── contracts/           # API contracts (if new Edge Functions)
+└── tasks.md             # Task list (created by /speckit.tasks)
 ```
 
-### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
+### Source Code (Trackly Home structure)
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+apps/web/src/
+├── components/          # React components
+│   └── [NewComponent].tsx
+├── screens/             # Page-level components
+│   └── [NewScreen].tsx
+├── services/            # API/Supabase service functions
+│   └── [newService].ts
+├── lib/                 # Utilities
+│   └── supabaseClient.ts (existing)
+└── router/              # React Router configuration
+    └── AppRouter.tsx (existing)
 
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+supabase/
+├── migrations/          # SQL migrations
+│   └── [timestamp]_[num]_[description].sql
+├── functions/           # Edge Functions (Deno)
+│   ├── [new-function]/
+│   │   ├── index.ts
+│   │   └── deno.json
+│   └── _shared/         # Shared utilities (existing)
+│       ├── cors.ts
+│       ├── crypto.ts
+│       └── supabase.ts
+└── config.toml          # Local CLI config
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Web application with frontend (apps/web) and backend (supabase)
+
+## Database Design *(if feature involves data changes)*
+
+### New Tables
+
+| Table | Purpose | RLS |
+|-------|---------|-----|
+| [table_name] | [description] | ☐ Enabled |
+
+### New Columns (existing tables)
+
+| Table | Column | Type | Notes |
+|-------|--------|------|-------|
+| [table] | [column] | [type] | [purpose] |
+
+### RLS Policies Required
+
+| Table | Operation | Policy |
+|-------|-----------|--------|
+| [table] | SELECT | Household members only |
+| [table] | INSERT | [who can insert] |
+| [table] | UPDATE | [who can update] |
+
+## Edge Functions *(if new server-side logic)*
+
+| Function | Auth Required | Admin Only | Purpose |
+|----------|---------------|------------|---------|
+| [name] | ☐ | ☐ | [description] |
+
+## Frontend Components *(if UI changes)*
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| [Name] | apps/web/src/components/ | [description] |
+| [Screen] | apps/web/src/screens/ | [description] |
 
 ## Complexity Tracking
 
@@ -100,5 +125,31 @@ directories captured above]
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| [principle violated] | [current need] | [why simpler approach insufficient] |
+
+## Security Considerations
+
+- [ ] New tables have RLS enabled
+- [ ] Edge functions validate JWT (verify_jwt = true)
+- [ ] Admin-only features check role
+- [ ] No service role key exposure
+- [ ] Tokens hashed before storage (if applicable)
+- [ ] CORS configured correctly
+- [ ] No PII in logs
+
+## Testing Plan
+
+### Manual Testing
+- [ ] Happy path works
+- [ ] Error states handled
+- [ ] Loading states display
+- [ ] Role-based access verified
+
+### RLS Verification
+```sql
+-- Test: Cross-household access blocked
+SET LOCAL role TO 'authenticated';
+SET LOCAL request.jwt.claims.sub TO 'user-uuid-here';
+SELECT * FROM [new_table] WHERE household_id = 'other-household-id';
+-- Should return 0 rows
+```

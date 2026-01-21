@@ -8,16 +8,22 @@
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
-  IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
-  you should still have a viable MVP (Minimum Viable Product) that delivers value.
+  TRACKLY HOME GUIDELINES:
   
-  Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
-  Think of each story as a standalone slice of functionality that can be:
-  - Developed independently
-  - Tested independently
-  - Deployed independently
-  - Demonstrated to users independently
+  User stories should be PRIORITIZED as user journeys ordered by importance.
+  Each story must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
+  you should still have a viable increment that delivers value.
+  
+  Priorities:
+  - P1: MVP-critical, must have for launch
+  - P2: Important but not blocking MVP
+  - P3: Nice to have, can defer
+  
+  Consider existing user flows:
+  - Authentication (magic link sign-in)
+  - Household creation (owner assignment)
+  - Invite flow (admin creates, partner joins)
+  - Role management (admin-only)
 -->
 
 ### User Story 1 - [Brief Title] (Priority: P1)
@@ -63,13 +69,15 @@
 
 ---
 
-[Add more user stories as needed, each with an assigned priority]
-
 ### Edge Cases
 
 <!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
+  TRACKLY HOME COMMON EDGE CASES:
+  - What if user is already in a household?
+  - What if user is the last admin?
+  - What if token is expired/used/invalid?
+  - What if cross-household access is attempted?
+  - What if user has no household yet?
 -->
 
 - What happens when [boundary condition]?
@@ -78,38 +86,52 @@
 ## Requirements *(mandatory)*
 
 <!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
+  TRACKLY HOME GUIDELINES:
+  - Security requirements are always implicit (RLS, auth validation)
+  - Consider role-based access (owner/admin/member)
+  - Consider household data isolation
+  - Mark unclear items with [NEEDS CLARIFICATION: reason]
 -->
 
 ### Functional Requirements
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+- **FR-001**: System MUST [specific capability]
+- **FR-002**: System MUST [specific capability]
+- **FR-003**: [Role] MUST be able to [key interaction]
+- **FR-004**: System MUST [data requirement]
+- **FR-005**: System MUST [behavior]
 
-*Example of marking unclear requirements:*
+### Security Requirements *(include if feature touches data/auth)*
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+- **SR-001**: Feature MUST enforce household isolation via RLS
+- **SR-002**: Feature MUST validate user authentication
+- **SR-003**: [Admin-only feature] MUST verify admin role before execution
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+<!--
+  EXISTING ENTITIES:
+  - profiles (user_id, display_name, timezone)
+  - households (id, name, owner_user_id)
+  - household_members (user_id, household_id, role)
+  - invites (token_hash, expires_at, invited_email)
+-->
+
+- **[New Entity]**: [What it represents, key attributes, relationship to households]
 
 ## Success Criteria *(mandatory)*
 
 <!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
+  TRACKLY HOME METRICS:
+  - User completion rates
+  - Error rates
+  - Security (zero cross-household leaks)
+  - Performance (LCP < 2.5s, function response < 500ms)
 -->
 
 ### Measurable Outcomes
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-001**: [Measurable metric, e.g., "Users can complete [task] in under X minutes"]
+- **SC-002**: [Security metric, e.g., "Zero cross-household data exposure"]
+- **SC-003**: [User success metric, e.g., "X% of users complete primary task on first attempt"]
+- **SC-004**: [Performance metric, e.g., "Feature loads in under X seconds"]
