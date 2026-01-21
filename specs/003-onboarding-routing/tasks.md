@@ -22,11 +22,11 @@
 
 **Purpose**: Basic project setup and dependency verification
 
-- [ ] T001 Verify React Router v6 installed in apps/web/package.json
-- [ ] T002 Create apps/web/src/hooks/ directory for new hook
-- [ ] T003 [P] Review existing routing code: apps/web/src/ProtectedRoute.tsx
-- [ ] T004 [P] Review existing routing code: apps/web/src/screens/AppShell.tsx
-- [ ] T005 [P] Review existing routing code: apps/web/src/router/AppRouter.tsx
+- [X] T001 Verify React Router v6 installed in apps/web/package.json
+- [X] T002 Create apps/web/src/hooks/ directory for new hook
+- [X] T003 [P] Review existing routing code: apps/web/src/ProtectedRoute.tsx
+- [X] T004 [P] Review existing routing code: apps/web/src/screens/AppShell.tsx
+- [X] T005 [P] Review existing routing code: apps/web/src/router/AppRouter.tsx
 
 ---
 
@@ -52,12 +52,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Add onboarding_status update to supabase/functions/create-household/index.ts (after household creation, before response)
-- [ ] T007 [US1] Add onboarding_status update to supabase/functions/accept-invite/index.ts (after member insertion, before response)
-- [ ] T008 [US1] Test create-household locally: verify onboarding_status = 'in_household' after creation
-- [ ] T009 [US1] Test accept-invite locally: verify onboarding_status = 'in_household' after join
-- [ ] T010 [US1] Test edge case: invalid user_id should not crash Edge Function
-- [ ] T011 [US1] Verify Edge Function logs show no errors (check Supabase local logs)
+- [X] T006 [US1] Add onboarding_status update to supabase/functions/create-household/index.ts (after household creation, before response)
+- [X] T007 [US1] Add onboarding_status update to supabase/functions/accept-invite/index.ts (after member insertion, before response)
+- [X] T008 [US1] Test create-household locally: verify onboarding_status = 'in_household' after creation
+- [X] T009 [US1] Test accept-invite locally: verify onboarding_status = 'in_household' after join
+- [X] T010 [US1] Test edge case: invalid user_id should not crash Edge Function
+- [X] T011 [US1] Verify Edge Function logs show no errors (check Supabase local logs)
 
 **Checkpoint**: User Story 1 complete - onboarding_status updates work correctly
 

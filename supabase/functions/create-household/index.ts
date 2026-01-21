@@ -83,5 +83,13 @@ Deno.serve(async (req) => {
 
   if (hmErr) return sanitizeDbError(hmErr, headers);
 
+  // Update onboarding status
+  const { error: profileErr } = await admin
+    .from("profiles")
+    .update({ onboarding_status: "in_household" })
+    .eq("user_id", user.id);
+
+  if (profileErr) return sanitizeDbError(profileErr, headers);
+
   return json({ household_id: household.id }, { status: 200, headers });
 });
