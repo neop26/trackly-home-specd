@@ -101,18 +101,18 @@
 
 ### Implementation for User Story 3
 
-- [ ] T029 [P] [US3] Add sign-out button to apps/web/src/components/AppHeader.tsx (visible when authenticated)
-- [ ] T030 [P] [US3] Add sign-out button to apps/web/src/screens/LoginPage.tsx (show if already logged in)
-- [ ] T031 [P] [US3] Add sign-out button to apps/web/src/screens/SetupPage.tsx
-- [ ] T032 [P] [US3] Add sign-out button to apps/web/src/screens/JoinPage.tsx
-- [ ] T033 [US3] Implement handleSignOut function using supabase.auth.signOut()
-- [ ] T034 [US3] Add redirect to /login after successful sign-out
-- [ ] T035 [US3] Test sign-out from /login page clears session and stays on /login
-- [ ] T036 [US3] Test sign-out from /setup page clears session and redirects to /login
-- [ ] T037 [US3] Test sign-out from /join page clears session and redirects to /login
-- [ ] T038 [US3] Test sign-out from /app page clears session and redirects to /login
-- [ ] T039 [US3] Test multi-tab behavior: sign out in one tab, other tab detects and redirects
-- [ ] T040 [US3] Test after sign-out, cannot access /app (redirected back to /login)
+- [X] T029 [P] [US3] Add sign-out button to apps/web/src/components/AppHeader.tsx (visible when authenticated)
+- [X] T030 [P] [US3] Add sign-out button to apps/web/src/screens/LoginPage.tsx (show if already logged in)
+- [X] T031 [P] [US3] Add sign-out button to apps/web/src/screens/SetupPage.tsx
+- [X] T032 [P] [US3] Add sign-out button to apps/web/src/screens/JoinPage.tsx
+- [X] T033 [US3] Implement handleSignOut function using supabase.auth.signOut()
+- [X] T034 [US3] Add redirect to /login after successful sign-out
+- [X] T035 [US3] Test sign-out from /login page clears session and stays on /login
+- [X] T036 [US3] Test sign-out from /setup page clears session and redirects to /login
+- [X] T037 [US3] Test sign-out from /join page clears session and redirects to /login
+- [X] T038 [US3] Test sign-out from /app page clears session and redirects to /login
+- [X] T039 [US3] Test multi-tab behavior: sign out in one tab, other tab detects and redirects
+- [X] T040 [US3] Test after sign-out, cannot access /app (redirected back to /login)
 
 **Checkpoint**: User Story 3 complete - sign-out works on all pages
 

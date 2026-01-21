@@ -1,14 +1,30 @@
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function LoginPage() {
   const [params] = useSearchParams();
   const next = params.get("next") || "/app";
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      setIsAuthenticated(!!data.session);
+    })();
+  }, []);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    setIsAuthenticated(false);
+    navigate("/login", { replace: true });
+  }
 
   function persistNext() {
     localStorage.setItem("trackly_next", next);
@@ -53,8 +69,21 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md space-y-4 rounded-xl border p-6">
-        <h1 className="text-2xl font-bold">Trackly Home</h1>
-        <p className="text-sm text-gray-600">Sign in to continue</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Trackly Home</h1>
+            <p className="text-sm text-gray-600">Sign in to continue</p>
+          </div>
+
+          {isAuthenticated && (
+            <button
+              onClick={handleSignOut}
+              className="rounded-lg border px-3 py-2 text-sm"
+            >
+              Sign out
+            </button>
+          )}
+        </div>
 
         {error && <div className="text-sm text-red-600">{error}</div>}
 
