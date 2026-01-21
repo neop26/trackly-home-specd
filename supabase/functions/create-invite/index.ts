@@ -1,6 +1,7 @@
 import { buildCors, json } from "../_shared/cors.ts";
 import { createAdminClient, getEnv, requireUser } from "../_shared/supabase.ts";
 import { createHash } from "../_shared/crypto.ts";
+import { errorResponse, sanitizeDbError, ErrorCode } from "../_shared/errors.ts";
 
 type Body = { household_id?: string; email?: string };
 
@@ -26,22 +27,22 @@ Deno.serve(async (req) => {
   }
 
   const { user, error } = await requireUser(req);
-  if (!user) return json({ error }, { status: 401, headers });
+  if (!user) return errorResponse(ErrorCode.UNAUTHORIZED, error || "Unauthorized", 401, headers);
 
   let body: Body = {};
   try {
     body = (await req.json()) as Body;
   } catch {
-    return json({ error: "Invalid JSON body" }, { status: 400, headers });
+    return errorResponse(ErrorCode.INVALID_REQUEST, "Invalid JSON body", 400, headers);
   }
 
   const householdId = (body.household_id ?? "").trim();
   const email = (body.email ?? "").trim().toLowerCase();
 
   if (!householdId)
-    return json({ error: "Missing household_id" }, { status: 400, headers });
+    return errorResponse(ErrorCode.MISSING_FIELD, "Missing household_id", 400, headers);
   if (!email || !isEmail(email)) {
-    return json({ error: "Invalid email" }, { status: 400, headers });
+    return errorResponse(ErrorCode.INVALID_EMAIL, "Invalid email format", 400, headers);
   }
 
   const admin = createAdminClient();
@@ -55,16 +56,13 @@ Deno.serve(async (req) => {
     .limit(1)
     .maybeSingle();
 
-  if (mErr) return json({ error: mErr.message }, { status: 500, headers });
+  if (mErr) return sanitizeDbError(mErr, headers);
   if (!membership)
-    return json({ error: "Not a household member" }, { status: 403, headers });
+    return errorResponse(ErrorCode.NOT_HOUSEHOLD_MEMBER, "Not a household member", 403, headers);
 
   // Only admins and owners can invite
   if (!["owner", "admin"].includes(membership.role)) {
-    return json(
-      { error: "Only admins can create invites" },
-      { status: 403, headers }
-    );
+    return errorResponse(ErrorCode.NOT_ADMIN, "Only admins can create invites", 403, headers);
   }
 
   // Create token + hash
@@ -83,7 +81,7 @@ Deno.serve(async (req) => {
     invited_by_user_id: user.id,
   });
 
-  if (iErr) return json({ error: iErr.message }, { status: 500, headers });
+  if (iErr) return sanitizeDbError(iErr, headers);
 
   const e = getEnv();
   const base = (e.siteUrl || "").replace(/\/$/, "");
