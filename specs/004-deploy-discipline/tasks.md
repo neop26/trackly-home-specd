@@ -28,8 +28,8 @@
 - [X] T006 [INFRA] Retrieve Azure SWA deployment token for prod using `az staticwebapp secrets list` command
 - [ ] T007 [INFRA] Create Supabase production project at https://supabase.com/dashboard (name: trackly-home-prod)
 - [ ] T008 [INFRA] Document Supabase prod credentials: project URL, anon key, service role key, project ref, db password
-- [ ] T009 [INFRA] Run `./scripts/setup-github-secrets.sh` option 1 to configure all dev environment secrets
-- [ ] T010 [INFRA] Run `./scripts/setup-github-secrets.sh` option 2 to configure all prod environment secrets
+- [ ] T009 [INFRA] Fill `.secrets/.env.dev` with dev credentials, then run `./scripts/setup-github-secrets-auto.sh` option 1
+- [ ] T010 [INFRA] Fill `.secrets/.env.prod` with prod credentials, then run `./scripts/setup-github-secrets-auto.sh` option 2
 - [ ] T011 [INFRA] Verify infrastructure: Test dev Azure SWA URL loads, prod Azure SWA URL loads
 - [ ] T012 [INFRA] Verify infrastructure: Test Supabase dev project (run query in SQL Editor)
 - [ ] T013 [INFRA] Verify infrastructure: Test Supabase prod project (run query in SQL Editor)
