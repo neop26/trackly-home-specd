@@ -42,7 +42,9 @@ echo ""
 apply_settings() {
     local env=$1
     local rg_name="rg-${LOCATION_SHORT}-${BASE_NAME}-${env}"
-    local swa_name="swa-${LOCATION_SHORT}-${BASE_NAME}-${env}-$(echo -n "${SUBSCRIPTION_ID}${BASE_NAME}${env}" | shasum -a 256 | cut -c1-13)"
+    
+    # Get the actual SWA name from Azure instead of trying to calculate it
+    local swa_name=$(az staticwebapp list --resource-group "$rg_name" --query "[0].name" -o tsv 2>/dev/null)
     
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${YELLOW}Environment: ${env}${NC}"
