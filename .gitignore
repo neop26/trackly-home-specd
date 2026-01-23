@@ -9,6 +9,10 @@ build/
 .vscode/
 .idea/
 
+# Supabase credentials (DO NOT COMMIT)
+supabase/*CREDENTIALS.md
+!supabase/*CREDENTIALS_TEMPLATE.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
