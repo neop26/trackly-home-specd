@@ -22,8 +22,8 @@
 
 - [ ] T001 [INFRA] Run `./scripts/setup-azure-oidc.sh` to configure GitHub → Azure OIDC authentication
 - [ ] T002 [INFRA] Verify OIDC secrets set in GitHub repository: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
-- [ ] T003 [INFRA] Deploy Azure infrastructure using `azure/deploy/main.bicep` (creates dev + prod resource groups and SWAs)
-- [ ] T004 [INFRA] Document Azure SWA resource names from deployment outputs for both dev and prod environments
+- [X] T003 [INFRA] Deploy Azure infrastructure using `azure/deploy/main.bicep` (creates dev + prod resource groups and SWAs)
+- [X] T004 [INFRA] Document Azure SWA resource names from deployment outputs for both dev and prod environments
 - [ ] T005 [INFRA] Retrieve Azure SWA deployment token for dev using `az staticwebapp secrets list` command
 - [ ] T006 [INFRA] Retrieve Azure SWA deployment token for prod using `az staticwebapp secrets list` command
 - [ ] T007 [INFRA] Create Supabase production project at https://supabase.com/dashboard (name: trackly-home-prod)
