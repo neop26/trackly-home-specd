@@ -156,22 +156,25 @@ module staticWebApps '../modules/staticwebapp.bicep' = [
 // ===================================================================
 // STATIC WEB APP SETTINGS (applied after SWA provisioned)
 // ===================================================================
+// NOTE: Commented out to avoid race condition during initial deployment
+// App settings will be applied via GitHub Actions workflow on first deployment
+// Uncomment only if you need to update settings via Bicep after SWA is stable
 
-module staticWebAppSettings '../modules/staticwebapp-settings.bicep' = [
-  for (env, i) in environments: {
-    name: 'staticwebapp-settings-${env.name}'
-    scope: resourceGroups[i]
-    dependsOn: [
-      staticWebApps[i]
-    ]
-    params: {
-      staticWebAppName: env.staticWebAppName
-      environment: env.name
-      appInsightsConnectionString: monitoring[i].outputs.appInsightsConnectionString
-      deploymentTimestamp: deploymentTimestamp
-    }
-  }
-]
+// module staticWebAppSettings '../modules/staticwebapp-settings.bicep' = [
+//   for (env, i) in environments: {
+//     name: 'staticwebapp-settings-${env.name}'
+//     scope: resourceGroups[i]
+//     dependsOn: [
+//       staticWebApps[i]
+//     ]
+//     params: {
+//       staticWebAppName: env.staticWebAppName
+//       environment: env.name
+//       appInsightsConnectionString: monitoring[i].outputs.appInsightsConnectionString
+//       deploymentTimestamp: deploymentTimestamp
+//     }
+//   }
+// ]
 
 // ===================================================================
 // OUTPUTS
