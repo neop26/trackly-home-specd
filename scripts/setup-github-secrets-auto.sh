@@ -192,8 +192,8 @@ setup_environment() {
 
 # Main menu
 echo -e "${GREEN}What would you like to do?${NC}"
-echo "1) Setup dev environment from DEV_CREDENTIALS.md"
-echo "2) Setup prod environment from PROD_CREDENTIALS.md"
+echo "1) Setup dev environment from .secrets/.env.dev"
+echo "2) Setup prod environment from .secrets/.env.prod"
 echo "3) Setup both environments"
 echo "4) List current secrets"
 echo "5) Exit"
@@ -202,14 +202,14 @@ read -p "Enter choice [1-5]: " choice
 
 case $choice in
     1)
-        setup_environment "dev" "supabase/DEV_CREDENTIALS.md"
+        setup_environment "dev" ".secrets/.env.dev"
         ;;
     2)
-        setup_environment "prod" "supabase/PROD_CREDENTIALS.md"
+        setup_environment "prod" ".secrets/.env.prod"
         ;;
     3)
-        setup_environment "dev" "supabase/DEV_CREDENTIALS.md"
-        setup_environment "prod" "supabase/PROD_CREDENTIALS.md"
+        setup_environment "dev" ".secrets/.env.dev"
+        setup_environment "prod" ".secrets/.env.prod"
         ;;
     4)
         echo ""

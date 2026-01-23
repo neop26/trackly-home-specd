@@ -9,7 +9,10 @@ build/
 .vscode/
 .idea/
 
-# Supabase credentials (DO NOT COMMIT)
+# Secrets folder (contains all environment credentials)
+.secrets/
+
+# Supabase credentials (legacy - moved to .secrets/)
 supabase/*CREDENTIALS.md
 supabase/*CREDENTIALS*.md
 !supabase/*CREDENTIALS_TEMPLATE.md

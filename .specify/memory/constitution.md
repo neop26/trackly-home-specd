@@ -196,6 +196,10 @@ The project's technology stack is defined in README.md and PRD:
 - **Hosting**: Azure Static Web Apps
 - **CI/CD**: GitHub Actions
 
+### Documentation
+- If you build any documentation that is like a working document, always create it within working_folder under docs.
+- Always ask if you are about to create some sort of project summary document.
+
 Changes to core technology stack MUST be documented as breaking changes with migration plan.
 
 **Version**: 1.0.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-21
