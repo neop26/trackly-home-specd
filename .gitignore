@@ -11,6 +11,7 @@ build/
 
 # Supabase credentials (DO NOT COMMIT)
 supabase/*CREDENTIALS.md
+supabase/*CREDENTIALS*.md
 !supabase/*CREDENTIALS_TEMPLATE.md
 
 # Byte-compiled / optimized / DLL files
