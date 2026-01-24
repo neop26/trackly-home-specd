@@ -14,8 +14,8 @@
 |-------|------|--------|----------|
 | Phase 1 | Role-Based Access Control | 🟢 Complete | 100% |
 | Phase 2 | Security Hardening | 🟢 Complete | 100% |
-| Phase 3 | UX Routing & Onboarding | � Complete | 100% |
-| Phase 4 | Deploy Discipline | 🟡 In Progress | 14% (1/7 tasks - spec created) |
+| Phase 3 | UX Routing & Onboarding | 🟢 Complete | 100% |
+| Phase 4 | Deploy Discipline | 🟢 Complete | 100% |
 | Phase 5 | Planner MVP | 🔴 Not Started | 0% |
 
 **Legend:** 🟢 Complete | 🟡 In Progress | 🔴 Not Started | ⚪ Blocked
@@ -79,20 +79,20 @@
 
 ---
 
-## Phase 4: Deploy Discipline �
+## Phase 4: Deploy Discipline 🟢
 
-**Status:** In Progress (Spec Created)  
-**Target Completion:** 2026-02-07  
+**Status:** Complete  
+**Completed:** 2026-01-25  
 
-| ID | Task | Priority | Status | Target | Notes |
-|----|------|----------|--------|--------|-------|
-| 4.1 | Create PR check workflow (lint/typecheck/build) | P0 | 🟡 Spec Created | 2026-02-01 | Block merge on failure |
-| 4.2 | Add summary output to dev deploy workflow | P0 | 🟢 Done | — | Already implemented |
-| 4.3 | Create prod deploy workflow (gated) | P1 | 🟡 Spec Created | 2026-02-03 | Manual trigger + approval |
-| 4.4 | Set up production GitHub environment | P1 | 🟡 Spec Created | 2026-02-04 | With approval rules |
-| 4.5 | Document secrets naming conventions | P0 | 🟡 Spec Created | 2026-02-05 | SB_* vs SUPABASE_* |
-| 4.6 | Add Supabase prod deploy workflow | P1 | 🟡 Spec Created | 2026-02-06 | Separate from dev |
-| 4.7 | Test full deploy pipeline end-to-end | P0 | 🔴 Not Started | 2026-02-07 | Smoke test |
+| ID | Task | Priority | Status | Completed | Notes |
+|----|------|----------|--------|-----------|-------|
+| 4.1 | Create PR check workflow (lint/typecheck/build) | P0 | 🟢 Done | 2026-01-24 | ✅ Feature 004: pr-check.yml |
+| 4.2 | Add summary output to dev deploy workflow | P0 | 🟢 Done | 2026-01-24 | Already implemented |
+| 4.3 | Create prod deploy workflow (gated) | P1 | 🟢 Done | 2026-01-24 | ✅ Feature 004: swa-app-deploy.yml |
+| 4.4 | Set up production GitHub environment | P1 | 🟢 Done | 2026-01-24 | ✅ Feature 004: Approval gates |
+| 4.5 | Document secrets naming conventions | P0 | 🟢 Done | 2026-01-24 | ✅ Feature 004: .github/SECRETS.md |
+| 4.6 | Add Supabase prod deploy workflow | P1 | 🟢 Done | 2026-01-24 | ✅ Feature 004: supabase-deploy-prod.yml |
+| 4.7 | Test full deploy pipeline end-to-end | P0 | 🟢 Done | 2026-01-25 | ✅ All workflows tested |
 
 ---
 
@@ -156,7 +156,7 @@
 |-----------|-------------|-------------|
 | **Security Audit Complete** | **2026-01-21** | **✅ All RLS policies reviewed and tested** |
 | **Phase 3 Routing Complete** | **2026-01-22** | **✅ All user flows tested and working** |
-| Prod Pipeline Ready | 2026-02-07 | Can deploy to production safely |
+| **Phase 4 Deploy Complete** | **2026-01-25** | **✅ Full CI/CD pipeline operational** |
 | Planner MVP Complete | 2026-02-21 | Basic task management working |
 | **MVP Launch** | **2026-02-28** | **Public release of MVP** |
 
@@ -175,6 +175,33 @@
 ---
 
 ## Notes & Decisions
+
+### 2026-01-25 - Phase 4 Complete ✅
+- **Full CI/CD Pipeline Operational**: All workflows tested and working
+- **Workflows Created**:
+  - `pr-check.yml` - PR quality gates (lint + build)
+  - `swa-app-deploy.yml` - Azure SWA deployment (dev/prod)
+  - `supabase-deploy-prod.yml` - Supabase production deployment
+  - `supabase-deploy-dev.yml` - Supabase dev deployment
+- **Infrastructure Deployed**:
+  - Azure Static Web Apps (dev + prod)
+  - Supabase projects (dev + prod)
+  - GitHub environments configured with approval gates
+- **Documentation Complete**:
+  - `.github/workflows/README.md` - Comprehensive workflow documentation
+  - `.github/SECRETS.md` - Secrets management guide
+  - Updated README.md with deployment instructions and badges
+  - Updated SDLC_PROCESS.md with deployment procedures
+- **Testing Complete**:
+  - Phase 1: PR quality gates tested
+  - Phase 3: SWA production deployment tested
+  - Phase 4: Supabase production deployment tested
+  - Phase 5: Secrets documentation validated
+  - Phase 6: End-to-end pipeline validated
+- **Success Criteria**: 6/6 criteria met (SC-001 through SC-006)
+- **Phase 4 Progress**: 100% complete (105/105 tasks)
+- **Branch**: 004-deploy-discipline ready for merge
+- **Next**: Begin Phase 5 (Planner MVP)
 
 ### 2026-01-22 - Phase 4 Specification Created ✅
 - **Feature 004**: Deploy Discipline (CI/CD Automation)

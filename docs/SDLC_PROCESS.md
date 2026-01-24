@@ -276,9 +276,19 @@ SELECT * FROM households WHERE id = 'other-household-id';
 
 ## 7. Deployment Process
 
-### 7.1 Development Environment
+### 7.1 Overview
+
+Trackly Home uses GitHub Actions for automated CI/CD with separate workflows for frontend (Azure SWA) and backend (Supabase).
+
+**Complete workflow documentation:** [.github/workflows/README.md](../.github/workflows/README.md)
+
+### 7.2 Development Environment
 
 **Trigger:** Push to `dev` branch
+
+**Workflows:**
+- `swa-app-deploy.yml` - Deploys frontend when `apps/web/**` changes
+- `supabase-deploy-dev.yml` - Deploys database + functions when `supabase/**` changes
 
 **Steps:**
 
@@ -286,34 +296,187 @@ SELECT * FROM households WHERE id = 'other-household-id';
 2. Supabase deploys via `supabase-deploy-dev.yml`
 3. Check workflow summaries for success
 
-### 7.2 Production Environment (Future)
+**Approval:** Not required (automatic deployment)
 
-**Trigger:** Manual workflow dispatch
+### 7.3 Production Environment
+
+**Trigger:** Push to `main` branch or manual workflow dispatch
+
+**Workflows:**
+- `swa-app-deploy.yml` - Deploys frontend when `apps/web/**` changes
+- `supabase-deploy-prod.yml` - Deploys database + functions when `supabase/**` changes
 
 **Steps:**
 
-1. Create release tag from `dev`
-2. Merge `dev` → `main`
-3. Trigger `swa-app-deploy.yml` with `target: prod`
-4. Trigger `supabase-deploy-prod.yml` (to be created)
-5. Approve deployment in GitHub
-6. Monitor for issues
+1. Create PR from `dev` → `main`
+2. Ensure PR quality gates pass (`pr-check.yml`)
+3. Merge PR to `main`
+4. Workflows trigger automatically
+5. **Approve deployments** in GitHub Actions UI
+6. Monitor deployment summaries
 
-### 7.3 Pre-Deployment Checklist
+**Approval:** Required for production deployments
+
+### 7.4 Pull Request Quality Gates
+
+**Workflow:** `pr-check.yml`
+
+**Trigger:** Pull request to `main` branch
+
+**Checks:**
+- Lint: `npm run lint` in `apps/web/`
+- Build: `npm run build` in `apps/web/`
+
+**Branch Protection:**
+- Main branch requires PR checks to pass before merge
+- Configuration: Settings → Branches → `main` → Branch protection rules
+
+### 7.5 Manual Deployment
+
+**Use Cases:**
+- Emergency hotfix
+- Deploy to prod without merging to main
+- Re-deploy after rollback
+
+**Steps:**
+
+1. Navigate to Actions tab in GitHub
+2. Select workflow:
+   - Deploy Web App (Azure SWA)
+   - Supabase Deploy (Dev)
+   - Supabase Deploy (Prod)
+3. Click "Run workflow"
+4. Select branch and target environment
+5. Click "Run workflow"
+6. If prod, approve deployment when prompted
+
+### 7.6 Deployment Artifacts
+
+**Frontend (Azure SWA):**
+- Build output: `apps/web/dist/`
+- Deployed to: Azure Static Web Apps
+- URL: Environment-specific (dev/prod)
+
+**Backend (Supabase):**
+- Migrations: `supabase/migrations/*.sql`
+- Functions: `supabase/functions/*/index.ts`
+- Deployed to: Supabase project (dev/prod)
+
+### 7.7 Environment Variables & Secrets
+
+**Frontend Build-time:**
+| Variable | Source | Purpose |
+|----------|--------|---------|
+| `VITE_SUPABASE_URL` | GitHub Environment secret | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | GitHub Environment secret | Supabase anonymous key |
+
+**Backend (Edge Functions):**
+| Secret | Source | Purpose |
+|--------|--------|---------|
+| `SB_URL` | Environment secret | Supabase URL |
+| `SB_ANON_KEY` | Environment secret | Anon key |
+| `SB_SERVICE_ROLE_KEY` | Environment secret | Service role key |
+| `SITE_URL` | Environment secret | Allowed origin |
+| `ALLOWED_ORIGINS` | Environment secret | CORS allowlist |
+| `INVITE_TOKEN_SECRET` | Environment secret | Token signing |
+
+**Supabase Deployment:**
+| Secret | Purpose |
+|--------|---------|
+| `SUPABASE_PROJECT_REF` | Project identifier |
+| `SUPABASE_DB_PASSWORD` | Database password |
+| `SUPABASE_ACCESS_TOKEN` | CLI authentication |
+
+**Complete secrets documentation:** [.github/SECRETS.md](../.github/SECRETS.md)
+
+### 7.8 Pre-Deployment Checklist
 
 - [ ] All tests passing
 - [ ] Manual smoke test complete
 - [ ] Security checklist reviewed
 - [ ] Documentation updated
 - [ ] Tracker updated with completion
+- [ ] PR quality gates passed (if applicable)
+- [ ] Secrets verified for target environment
 
-### 7.4 Post-Deployment Verification
+### 7.9 Post-Deployment Verification
 
 - [ ] Site loads without errors
 - [ ] Login flow works
 - [ ] Create/join household works
 - [ ] Console shows no errors
 - [ ] Supabase logs clean
+- [ ] Database migrations applied (check Supabase Dashboard)
+- [ ] Edge Functions deployed (check Function logs)
+
+### 7.10 Rollback Procedures
+
+**Frontend Rollback:**
+```bash
+# Option 1: Revert commit
+git revert <bad-commit-sha>
+git push origin main
+
+# Option 2: Manual workflow dispatch with older commit
+git checkout <good-commit-sha>
+# Actions → Deploy Web App → Run workflow (prod)
+```
+
+**Database Migration Rollback:**
+```bash
+# Create reverse migration
+supabase migration new rollback_bad_migration
+
+# Write SQL to undo changes in the new migration file
+# Test locally: supabase db reset
+# Deploy: push to main, approve prod deployment
+```
+
+**Edge Function Rollback:**
+```bash
+# Revert function code
+git revert <bad-commit-sha>
+git push origin main
+# Function auto-deploys on push
+```
+
+### 7.11 Monitoring Deployments
+
+**GitHub Actions:**
+- View workflow runs in Actions tab
+- Filter by workflow name, branch, or status
+- Click workflow run for detailed logs
+
+**Deployment Summaries:**
+All workflows generate comprehensive summaries including:
+- Environment deployed to
+- Commit SHA and author
+- Deployment status (success/failure)
+- Links to Azure Portal, Supabase Dashboard
+- List of deployed migrations/functions
+
+**Azure Portal:**
+- Monitor Azure SWA health and metrics
+- View deployment history
+- Access application logs
+
+**Supabase Dashboard:**
+- View migration history
+- Monitor Edge Function logs and invocations
+- Check database performance
+
+### 7.12 Concurrency Control
+
+All workflows use concurrency groups to prevent concurrent deployments:
+
+| Workflow | Concurrency Group | Cancel in Progress |
+|----------|-------------------|-------------------|
+| pr-check.yml | `pr-check-${{ github.ref }}` | Yes |
+| swa-app-deploy.yml | `swa-web-${{ github.ref_name }}` | Yes |
+| supabase-deploy-dev.yml | `supabase-dev` | Yes |
+| supabase-deploy-prod.yml | `supabase-prod` | Yes |
+
+**Effect:** New workflow runs cancel old ones for the same group, preventing stale deployments.
 
 ---
 

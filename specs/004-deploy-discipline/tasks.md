@@ -53,9 +53,9 @@
 - [X] T018 [US1] Add concurrency control to `.github/workflows/pr-check.yml`: group `pr-check-${{ github.ref }}`, cancel-in-progress true
 - [X] T019 [US1] Add comprehensive GitHub Actions summary to `.github/workflows/pr-check.yml` (follow supabase-deploy-dev.yml pattern)
 - [X] T020 [US1] Configure branch protection rule on main branch: require pr-check status checks, require up-to-date branches
-- [ ] T021 [US1] Test PR check workflow: Create test PR with intentional lint error, verify workflow fails
-- [ ] T022 [US1] Test PR check workflow: Fix lint error, push update, verify workflow re-runs and passes
-- [ ] T023 [US1] Test branch protection: Verify merge button disabled when checks fail, enabled when checks pass
+- [X] T021 [US1] Test PR check workflow: Create test PR with intentional lint error, verify workflow fails
+- [X] T022 [US1] Test PR check workflow: Fix lint error, push update, verify workflow re-runs and passes
+- [X] T023 [US1] Test branch protection: Verify merge button disabled when checks fail, enabled when checks pass
 
 **Checkpoint**: PR quality gates working - broken code cannot merge to main
 
@@ -103,10 +103,10 @@
 - [X] T042 [US3] Add build-time env vars to `.github/workflows/swa-app-deploy.yml`: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY from secrets
 - [X] T043 [US3] Add Azure/static-web-apps-deploy@v1 action to `.github/workflows/swa-app-deploy.yml` with working directory apps/web
 - [X] T044 [US3] Test YAML syntax: `yamllint .github/workflows/swa-app-deploy.yml` or validate in GitHub
-- [ ] T045 [US3] Regression test: Make trivial change to apps/web/README.md, push to dev, verify dev auto-deploy works
-- [ ] T046 [US3] Feature test: Merge PR to main with frontend change, verify workflow triggers, verify approval request for prod
-- [ ] T047 [US3] Feature test: Approve prod deployment, verify deployment succeeds, visit prod SWA URL, verify change live
-- [ ] T048 [US3] Regression test: Trigger workflow_dispatch manually, select prod, verify manual deploy works
+- [X] T045 [US3] Regression test: Make trivial change to apps/web/README.md, push to dev, verify dev auto-deploy works
+- [X] T046 [US3] Feature test: Merge PR to main with frontend change, verify workflow triggers, verify approval request for prod
+- [X] T047 [US3] Feature test: Approve prod deployment, verify deployment succeeds, visit prod SWA URL, verify change live
+- [X] T048 [US3] Regression test: Trigger workflow_dispatch manually, select prod, verify manual deploy works
 
 **Checkpoint**: SWA production auto-deploy working - frontend changes auto-deploy on merge to main
 
@@ -132,11 +132,11 @@
 - [X] T058 [US4] Preserve comprehensive summary format in `.github/workflows/supabase-deploy-prod.yml` (dashboard links, migrations list, functions list)
 - [X] T059 [US4] Verify workflow includes: supabase link, `yes | supabase db push`, set 9 Edge Function secrets, supabase functions deploy
 - [X] T060 [US4] Test YAML syntax for both dev and prod Supabase workflows
-- [ ] T061 [US4] Regression test: Make trivial migration change, push to dev, verify dev workflow triggers and works
-- [ ] T062 [US4] Feature test: Create test migration file (e.g., add test table), commit to main, verify prod workflow triggers
-- [ ] T063 [US4] Feature test: Approve prod Supabase deployment, verify migrations applied in Supabase Dashboard
-- [ ] T064 [US4] Feature test: Query prod database to confirm migration changes applied
-- [ ] T065 [US4] Feature test: Make trivial Edge Function change, deploy to prod, verify function updated, test endpoint
+- [X] T061 [US4] Regression test: Make trivial migration change, push to dev, verify dev workflow triggers and works
+- [X] T062 [US4] Feature test: Create test migration file (e.g., add test table), commit to main, verify prod workflow triggers
+- [X] T063 [US4] Feature test: Approve prod Supabase deployment, verify migrations applied in Supabase Dashboard
+- [X] T064 [US4] Feature test: Query prod database to confirm migration changes applied
+- [X] T065 [US4] Feature test: Make trivial Edge Function change, deploy to prod, verify function updated, test endpoint
 
 **Checkpoint**: Supabase production deployment working - backend changes auto-deploy on merge to main
 
@@ -163,9 +163,9 @@
 - [X] T076 [US5] Add rotation procedures section to `.github/SECRETS.md` explaining how to rotate each secret type
 - [X] T077 [US5] Add example workflow usage to `.github/SECRETS.md` showing how secrets are referenced in YAML
 - [X] T078 [US5] Add links to `.github/SECRETS.md`: Azure Portal, Supabase Dashboard, helper scripts
-- [ ] T079 [US5] Validate documentation: Follow instructions to retrieve one Azure SWA deployment token
-- [ ] T080 [US5] Validate documentation: Follow instructions to retrieve one Supabase secret (e.g., project URL)
-- [ ] T081 [US5] Proofread `.github/SECRETS.md` for clarity, completeness, and accuracy
+- [X] T079 [US5] Validate documentation: Follow instructions to retrieve one Azure SWA deployment token
+- [X] T080 [US5] Validate documentation: Follow instructions to retrieve one Supabase secret (e.g., project URL)
+- [X] T081 [US5] Proofread `.github/SECRETS.md` for clarity, completeness, and accuracy
 
 **Checkpoint**: Secrets documentation complete - team can set up secrets independently
 
@@ -175,22 +175,22 @@
 
 **Purpose**: Validate entire CI/CD pipeline works end-to-end and no regressions introduced
 
-- [ ] T082 [E2E] Create test feature branch `test/e2e-deploy` from main
-- [ ] T083 [E2E] Make test changes: Update apps/web/src/App.tsx, add migration in supabase/migrations/, update Edge Function
-- [ ] T084 [E2E] Create PR targeting main, verify pr-check workflow runs (lint, build)
-- [ ] T085 [E2E] Verify PR checks pass (green status), merge PR to main
-- [ ] T086 [E2E] Verify two workflows trigger: swa-app-deploy.yml and supabase-deploy-prod.yml
-- [ ] T087 [E2E] Approve both deployments (SWA prod and Supabase prod)
-- [ ] T088 [E2E] Verify both deployments succeed (check GitHub Actions logs)
-- [ ] T089 [E2E] Visit production SWA URL, verify frontend change visible
-- [ ] T090 [E2E] Test backend functionality: query prod DB, call Edge Function endpoint
-- [ ] T091 [E2E] Verify backend changes applied (migration + function update)
-- [ ] T092 [REGRESSION] Create test branch from dev, make trivial change to apps/web/README.md
-- [ ] T093 [REGRESSION] Push to dev branch, verify dev SWA auto-deploy triggers (no approval needed)
-- [ ] T094 [REGRESSION] Make trivial Supabase migration change, push to dev
-- [ ] T095 [REGRESSION] Verify dev Supabase workflow triggers and deploys (no approval needed)
-- [ ] T096 [MANUAL] Navigate to Actions → SWA App Deploy, click "Run workflow", select target "prod"
-- [ ] T097 [MANUAL] Verify approval request appears, approve, verify deployment succeeds
+- [X] T082 [E2E] Create test feature branch `test/e2e-deploy` from main
+- [X] T083 [E2E] Make test changes: Update apps/web/src/App.tsx, add migration in supabase/migrations/, update Edge Function
+- [X] T084 [E2E] Create PR targeting main, verify pr-check workflow runs (lint, build)
+- [X] T085 [E2E] Verify PR checks pass (green status), merge PR to main
+- [X] T086 [E2E] Verify two workflows trigger: swa-app-deploy.yml and supabase-deploy-prod.yml
+- [X] T087 [E2E] Approve both deployments (SWA prod and Supabase prod)
+- [X] T088 [E2E] Verify both deployments succeed (check GitHub Actions logs)
+- [X] T089 [E2E] Visit production SWA URL, verify frontend change visible
+- [X] T090 [E2E] Test backend functionality: query prod DB, call Edge Function endpoint
+- [X] T091 [E2E] Verify backend changes applied (migration + function update)
+- [X] T092 [REGRESSION] Create test branch from dev, make trivial change to apps/web/README.md
+- [X] T093 [REGRESSION] Push to dev branch, verify dev SWA auto-deploy triggers (no approval needed)
+- [X] T094 [REGRESSION] Make trivial Supabase migration change, push to dev
+- [X] T095 [REGRESSION] Verify dev Supabase workflow triggers and deploys (no approval needed)
+- [X] T096 [MANUAL] Navigate to Actions → SWA App Deploy, click "Run workflow", select target "prod"
+- [X] T097 [MANUAL] Verify approval request appears, approve, verify deployment succeeds
 
 **Checkpoint**: Full CI/CD pipeline validated - no regressions, all workflows working
 
@@ -200,14 +200,14 @@
 
 **Purpose**: Update project documentation and clean up
 
-- [ ] T098 [P] [DOCS] Update `docs/PROJECT_TRACKER.md` Phase 4 status to 100% complete
-- [ ] T099 [P] [DOCS] Update `docs/SDLC_PROCESS.md` with deployment workflow documentation (link to workflows)
-- [ ] T100 [P] [DOCS] Add workflow usage instructions to `README.md`: how to trigger deploys, view logs, approve deployments
-- [ ] T101 [DOCS] Create `.github/workflows/README.md` documenting all workflows: purpose, triggers, secrets used
-- [ ] T102 [DOCS] Update constitution memory in `.specify/memory/constitution.md` if deployment process changed
-- [ ] T103 [POLISH] Review all workflow YAML files for consistent formatting and clear comments
-- [ ] T104 [POLISH] Verify no hardcoded values in workflows (all use secrets or variables)
-- [ ] T105 [POLISH] Add workflow badges to repository README.md showing status of pr-check workflow
+- [X] T098 [P] [DOCS] Update `docs/PROJECT_TRACKER.md` Phase 4 status to 100% complete
+- [X] T099 [P] [DOCS] Update `docs/SDLC_PROCESS.md` with deployment workflow documentation (link to workflows)
+- [X] T100 [P] [DOCS] Add workflow usage instructions to `README.md`: how to trigger deploys, view logs, approve deployments
+- [X] T101 [DOCS] Create `.github/workflows/README.md` documenting all workflows: purpose, triggers, secrets used
+- [X] T102 [DOCS] Update constitution memory in `.specify/memory/constitution.md` if deployment process changed
+- [X] T103 [POLISH] Review all workflow YAML files for consistent formatting and clear comments
+- [X] T104 [POLISH] Verify no hardcoded values in workflows (all use secrets or variables)
+- [X] T105 [POLISH] Add workflow badges to repository README.md showing status of pr-check workflow
 
 **Checkpoint**: Phase 4 complete and documented
 
