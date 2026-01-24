@@ -9,6 +9,14 @@ build/
 .vscode/
 .idea/
 
+# Secrets folder (contains all environment credentials)
+.secrets/
+
+# Supabase credentials (legacy - moved to .secrets/)
+supabase/*CREDENTIALS.md
+supabase/*CREDENTIALS*.md
+!supabase/*CREDENTIALS_TEMPLATE.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

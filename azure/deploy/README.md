@@ -10,6 +10,10 @@ This folder deploys two resource groups (`rg-tr-hme-dev`, `rg-tr-hme-prod`) and 
 
 ## Deploy both environments (dev and prod)
 
+⚠️ **IMPORTANT**: App settings deployment has been separated to avoid race conditions
+
+**Step 1: Deploy infrastructure** (resource groups, SWAs, monitoring)
+
 ```sh
 cd /Users/neop26/Library/CloudStorage/OneDrive-Personal/Aben_Personal/_Code_Repo/1_Repository/2_Github/attendance-tracker-bundle/deployment/azure/v2
 az deployment sub create \
@@ -17,6 +21,39 @@ az deployment sub create \
   --name tr-hme-v2-deploy \
   --template-file main.bicep \
   --parameters @main.bicepparam
+```
+
+**Step 2: Apply app settings** (after SWAs are fully provisioned - wait 2-3 minutes)
+
+```sh
+# Apply settings to both environments
+./apply-app-settings.sh
+# Choose option 3 (both)
+```
+
+## Alternative: Deploy single environment
+
+**Deploy dev only:**
+```sh
+az deployment sub create \
+  --location eastasia \
+  --name tr-hme-dev-deploy \
+  --template-file main.bicep \
+  --parameters @main.bicepparam targetEnvironment=dev
+```
+
+**Deploy prod only:**
+```sh
+az deployment sub create \
+  --location eastasia \
+  --name tr-hme-prod-deploy \
+  --template-file main.bicep \
+  --parameters @main.bicepparam targetEnvironment=prod
+```
+
+Then apply settings for the specific environment:
+```sh
+./apply-app-settings.sh
 ```
 
 ## Inspect deployment outputs

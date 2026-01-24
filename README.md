@@ -7,9 +7,9 @@ Trackly Home is a consumer MVP for helping a household (starting with two people
 | Phase               | Status         | Description                           |
 | ------------------- | -------------- | ------------------------------------- |
 | Phase 1: RBAC       | ✅ Complete    | Roles, permissions, admin constraints |
-| Phase 2: Security   | 🟡 In Progress | RLS audit, function security          |
-| Phase 3: UX Routing | 🟡 In Progress | Onboarding state machine              |
-| Phase 4: Deploy     | ⬜ Not Started | Prod pipeline, PR checks              |
+| Phase 2: Security   | ✅ Complete    | RLS audit, function security          |
+| Phase 3: UX Routing | ✅ Complete    | Onboarding state machine              |
+| Phase 4: Deploy     | ✅ Complete    | CI/CD, PR checks, auto-deploy         |
 | Phase 5: Planner    | ⬜ Not Started | Basic task management                 |
 
 **MVP Target:** 2026-02-28
@@ -212,21 +212,58 @@ For security guidelines, see [`.github/copilot/security.md`](.github/copilot/sec
 
 ## Deployment
 
+### Branching Strategy
+
+```
+feature/* → dev → main
+```
+
+- **feature branches**: Feature development and fixes
+- **dev**: Integration branch, auto-deploys to dev environment
+- **main**: Production branch, auto-deploys to prod with approval
+
+See [.github/BRANCHING_STRATEGY.md](.github/BRANCHING_STRATEGY.md) for detailed workflow.
+
 ### Environments
 
-| Environment | Branch | Deployment        |
-| ----------- | ------ | ----------------- |
-| Local       | any    | Manual            |
-| Dev         | `dev`  | Automatic on push |
-| Prod        | `main` | Manual (future)   |
+| Environment | Branch | Deployment                  | Approval Required |
+| ----------- | ------ | --------------------------- | ----------------- |
+| Local       | any    | Manual (`npm run dev`)      | No                |
+| Dev         | `dev`  | Automatic on push           | No                |
+| Prod        | `main` | Automatic on merge          | **Yes**           |
 
-### CI/CD Pipelines
+### CI/CD Workflows
 
-| Workflow                  | Trigger                        | Description                   |
-| ------------------------- | ------------------------------ | ----------------------------- |
-| `swa-app-deploy.yml`      | Push to dev (apps/web changes) | Deploy frontend               |
-| `supabase-deploy-dev.yml` | Push to dev (supabase changes) | Deploy migrations + functions |
-| `azure-infra-deploy.yml`  | Manual                         | Deploy Azure infrastructure   |
+| Workflow                   | Trigger                           | Description                   |
+| -------------------------- | --------------------------------- | ----------------------------- |
+| `pr-check.yml`             | PR to main                        | Lint + build quality gates    |
+| `swa-app-deploy.yml`       | Push to dev/main (apps/web/**)    | Deploy frontend to Azure SWA  |
+| `supabase-deploy-dev.yml`  | Push to dev (supabase/**)         | Deploy DB + functions (dev)   |
+| `supabase-deploy-prod.yml` | Push to main (supabase/**)        | Deploy DB + functions (prod)  |
+| `azure-infra-deploy.yml`   | Manual workflow_dispatch          | Deploy Azure infrastructure   |
+
+### Deployment Process
+
+**For Dev:**
+```bash
+git checkout dev
+git pull origin dev
+git checkout -b feature/my-feature
+# make changes
+git push origin feature/my-feature
+# Create PR to dev, merge after checks
+# Dev auto-deploys (no approval needed)
+```
+
+**For Production:**
+```bash
+# After testing in dev
+# Create PR from dev → main
+# Get approval and merge
+# Approve prod deployments in GitHub Actions
+```
+
+See [workflow documentation](.github/BRANCHING_STRATEGY.md) for complete details.
 
 ---
 
