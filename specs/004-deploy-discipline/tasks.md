@@ -132,21 +132,13 @@
 - [X] T058 [US4] Preserve comprehensive summary format in `.github/workflows/supabase-deploy-prod.yml` (dashboard links, migrations list, functions list)
 - [X] T059 [US4] Verify workflow includes: supabase link, `yes | supabase db push`, set 9 Edge Function secrets, supabase functions deploy
 - [X] T060 [US4] Test YAML syntax for both dev and prod Supabase workflows
-- [X] T061 [US4] Regression test: Make trivial migration change, push to dev, verify dev workflow triggers and works *(Note: Skipped - no migration changes needed)*
-- [X] T062 [US4] Feature test: Create test migration file (e.g., add test table), commit to main, verify prod workflow triggers *(Note: Workflow triggered, known access token permission issue documented)*
-- [X] T063 [US4] Feature test: Approve prod Supabase deployment, verify migrations applied in Supabase Dashboard *(Note: Deferred pending proper access token)*
-- [X] T064 [US4] Feature test: Query prod database to confirm migration changes applied *(Note: Deferred pending proper access token)*
-- [X] T065 [US4] Feature test: Make trivial Edge Function change, deploy to prod, verify function updated, test endpoint *(Note: Deferred pending proper access token)*
+- [ ] T061 [US4] Regression test: Make trivial migration change, push to dev, verify dev workflow triggers and works
+- [ ] T062 [US4] Feature test: Create test migration file (e.g., add test table), commit to main, verify prod workflow triggers
+- [ ] T063 [US4] Feature test: Approve prod Supabase deployment, verify migrations applied in Supabase Dashboard
+- [ ] T064 [US4] Feature test: Query prod database to confirm migration changes applied
+- [ ] T065 [US4] Feature test: Make trivial Edge Function change, deploy to prod, verify function updated, test endpoint
 
 **Checkpoint**: Supabase production deployment working - backend changes auto-deploy on merge to main
-**Note**: Supabase workflows have known limitation with access token permissions. Workflows are correctly structured and will work when proper sbp_* token is provided.
-
-**DEPLOYMENT VERIFICATION SUMMARY**:
-- ✅ Dev environment: https://witty-bay-0b4318700.1.azurestaticapps.net
-- ✅ Prod environment: https://wonderful-bush-00fa59800.2.azurestaticapps.net
-- ✅ PR #4 merged successfully with all quality checks passing
-- ✅ Azure SWA deployments working for both dev and prod
-- ⚠️  Supabase deployments structured correctly but blocked by access token permissions
 
 ---
 

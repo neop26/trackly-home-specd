@@ -226,11 +226,11 @@ See [.github/BRANCHING_STRATEGY.md](.github/BRANCHING_STRATEGY.md) for detailed 
 
 ### Environments
 
-| Environment | Branch | Deployment                  | Approval Required | URL                                                |
-| ----------- | ------ | --------------------------- | ----------------- | -------------------------------------------------- |
-| Local       | any    | Manual (`npm run dev`)      | No                | http://localhost:5173                              |
-| Dev         | `dev`  | Automatic on push           | No                | https://witty-bay-0b4318700.1.azurestaticapps.net  |
-| Prod        | `main` | Automatic on merge          | **Yes**           | https://wonderful-bush-00fa59800.2.azurestaticapps.net |
+| Environment | Branch | Deployment                  | Approval Required |
+| ----------- | ------ | --------------------------- | ----------------- |
+| Local       | any    | Manual (`npm run dev`)      | No                |
+| Dev         | `dev`  | Automatic on push           | No                |
+| Prod        | `main` | Automatic on merge          | **Yes**           |
 
 ### CI/CD Workflows
 
