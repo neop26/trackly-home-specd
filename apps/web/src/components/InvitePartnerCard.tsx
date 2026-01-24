@@ -14,6 +14,18 @@ export default function InvitePartnerCard({
 }: Props) {
   const isAdmin = userRole && ["owner", "admin"].includes(userRole);
 
+  const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState<boolean | null>(null);
+
+  const canShare = useMemo(
+    () => typeof navigator !== "undefined" && "share" in navigator,
+    []
+  );
+
   if (!isAdmin) {
     return (
       <div className="rounded-lg border p-4 space-y-3">
@@ -26,17 +38,6 @@ export default function InvitePartnerCard({
       </div>
     );
   }
-  const [email, setEmail] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
-  const [emailSent, setEmailSent] = useState<boolean | null>(null);
-
-  const canShare = useMemo(
-    () => typeof navigator !== "undefined" && "share" in navigator,
-    []
-  );
 
   async function copy(text: string) {
     await navigator.clipboard.writeText(text);

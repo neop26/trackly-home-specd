@@ -489,3 +489,5 @@ The test suite validates:
 ---
 
 **For detailed test queries and validation scenarios, see**: `supabase/test_rls_audit.sql`
+
+-- Test comment to trigger Supabase deployment workflow

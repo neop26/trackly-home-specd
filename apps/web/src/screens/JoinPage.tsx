@@ -31,7 +31,15 @@ export default function JoinPage() {
         });
 
         if (res.error) {
-          const anyErr = res.error as any;
+          const anyErr = res.error as {
+            context?: {
+              status?: number;
+              clone?: () => { json: () => Promise<unknown> };
+              json?: () => Promise<unknown>;
+            };
+            status?: number;
+            message?: string;
+          };
           const ctx = anyErr?.context;
           const statusCode = ctx?.status ?? anyErr?.status ?? null;
 
@@ -44,7 +52,7 @@ export default function JoinPage() {
             ) {
               const j = await ctx.clone().json();
               if (j && typeof j === "object" && "error" in j) {
-                const e = (j as any).error;
+                const e = (j as { error?: unknown }).error;
                 if (typeof e === "string") serverMessage = e;
               }
             }
@@ -87,7 +95,7 @@ export default function JoinPage() {
         setStatus("Invite failed");
       }
     })();
-  }, [location.search, navigate]);
+  }, [location.search, location.pathname, navigate]);
 
   return (
     <div className="p-6 space-y-6">
