@@ -114,15 +114,14 @@ Members can optionally set due dates on tasks to track deadlines and time-sensit
 - **FR-007**: System MUST validate task title is non-empty before allowing creation
 - **FR-008**: System SHOULD support optional assigned_to field (UUID reference to household_members.user_id)
 - **FR-009**: System SHOULD support optional due_date field (date)
-- **FR-010**: System SHOULD visually distinguish completed tasks from incomplete tasks in the list view
+- **FR-010**: System SHOULD visually distinguish completed tasks from incomplete tasks in the list view (e.g., strikethrough text, checkmark icon, reduced opacity)
 
 ### Security Requirements
 
-- **SR-001**: System MUST enforce household isolation via RLS policies - users can ONLY access tasks where household_id matches their household membership
+- **SR-001**: System MUST enforce household isolation via RLS policies ensuring zero cross-household data access under any circumstances
 - **SR-002**: System MUST validate user is authenticated before allowing any task operations (create/read/update)
-- **SR-003**: System MUST prevent cross-household data leaks - RLS policies must ensure zero access to tasks from other households
-- **SR-004**: System MUST verify user is a member of a household before allowing task creation/updates
-- **SR-005**: Task queries MUST use RLS policies to filter by household_id automatically based on authenticated user's household membership
+- **SR-003**: System MUST verify user is a member of a household before allowing task creation/updates
+- **SR-004**: Task queries MUST use RLS policies to filter by household_id automatically based on authenticated user's household membership
 
 ### Key Entities
 
@@ -145,9 +144,9 @@ Members can optionally set due dates on tasks to track deadlines and time-sensit
 
 ### Measurable Outcomes
 
-- **SC-001**: Household members can view their task list in under 2 seconds from navigation (initial page load)
+- **SC-001**: Household members can view their task list in under 2 seconds from clicking the tasks navigation link (initial page load)
 - **SC-002**: Zero cross-household data exposure verified through RLS testing - members cannot access tasks from other households under any circumstances
 - **SC-003**: Users can create a new task and see it appear in the list within 1 second of submission (round-trip time)
 - **SC-004**: Task completion status updates are reflected in the UI for all household members within 2 seconds (including other open browser tabs)
-- **SC-005**: 95% of users successfully create their first task on first attempt without errors or confusion
+- **SC-005**: 95% of users successfully create their first task on first attempt without validation errors or form submission failures
 - **SC-006**: Task list remains functional with up to 100 tasks per household (acceptable performance, no UI degradation)

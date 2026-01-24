@@ -283,6 +283,7 @@
 - [ ] T103 Performance validation: Task list with 100 tasks loads in under 2 seconds (SC-006)
 - [ ] T104 Security validation: RLS verification queries pass (6/6 tests, SC-002)
 - [ ] T105 Multi-user test: Concurrent task creation and status updates work correctly across browser tabs
+- [ ] T106 [US2] Test: Validate task creation UX - 5 users create first task, track success rate and failure points (target 95%+ no errors, SC-005)
 
 **Checkpoint**: All features complete, validation passed, ready for deployment
 
@@ -426,7 +427,7 @@ With 3 developers:
 
 ---
 
-## Total Task Count: 105 tasks
+## Total Task Count: 106 tasks
 
 - **Phase 0 (Chakra Migration)**: 18 tasks (T001-T018)
 - **Phase 1 (Database Foundation)**: 18 tasks (T019-T036)
@@ -435,7 +436,7 @@ With 3 developers:
 - **Phase 4 (US3 - Complete Tasks)**: 11 tasks (T061-T071)
 - **Phase 5 (US4 - Assignment)**: 11 tasks (T072-T082)
 - **Phase 6 (US5 - Due Dates)**: 11 tasks (T083-T093)
-- **Phase 7 (Polish)**: 12 tasks (T094-T105)
+- **Phase 7 (Polish)**: 13 tasks (T094-T106)
 
-**MVP Scope** (P0 only): Phases 0-4 + Phase 7 = 72 tasks
-**Full Feature Set** (P0 + P1): All phases = 105 tasks
+**MVP Scope** (P0 only): Phases 0-4 + Phase 7 = 73 tasks
+**Full Feature Set** (P0 + P1): All phases = 106 tasks
