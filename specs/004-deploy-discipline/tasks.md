@@ -20,20 +20,20 @@
 
 **⚠️ CRITICAL**: This phase is a hard prerequisite. No workflow implementation can begin until infrastructure exists.
 
-- [ ] T001 [INFRA] Run `./scripts/setup-azure-oidc.sh` to configure GitHub → Azure OIDC authentication
-- [ ] T002 [INFRA] Verify OIDC secrets set in GitHub repository: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
+- [X] T001 [INFRA] Run `./scripts/setup-azure-oidc.sh` to configure GitHub → Azure OIDC authentication
+- [X] T002 [INFRA] Verify OIDC secrets set in GitHub repository: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
 - [X] T003 [INFRA] Deploy Azure infrastructure using `azure/deploy/main.bicep` (creates dev + prod resource groups and SWAs)
 - [X] T004 [INFRA] Document Azure SWA resource names from deployment outputs for both dev and prod environments
 - [X] T005 [INFRA] Retrieve Azure SWA deployment token for dev using `az staticwebapp secrets list` command
 - [X] T006 [INFRA] Retrieve Azure SWA deployment token for prod using `az staticwebapp secrets list` command
-- [ ] T007 [INFRA] Create Supabase production project at https://supabase.com/dashboard (name: trackly-home-prod)
-- [ ] T008 [INFRA] Document Supabase prod credentials: project URL, anon key, service role key, project ref, db password
-- [ ] T009 [INFRA] Fill `.secrets/.env.dev` with dev credentials, then run `./scripts/setup-github-secrets-auto.sh` option 1
-- [ ] T010 [INFRA] Fill `.secrets/.env.prod` with prod credentials, then run `./scripts/setup-github-secrets-auto.sh` option 2
-- [ ] T011 [INFRA] Verify infrastructure: Test dev Azure SWA URL loads, prod Azure SWA URL loads
-- [ ] T012 [INFRA] Verify infrastructure: Test Supabase dev project (run query in SQL Editor)
-- [ ] T013 [INFRA] Verify infrastructure: Test Supabase prod project (run query in SQL Editor)
-- [ ] T014 [INFRA] Verify all secrets configured: `gh secret list --env dev`, `gh secret list --env prod`, `gh secret list`
+- [X] T007 [INFRA] Create Supabase production project at https://supabase.com/dashboard (name: trackly-home-prod)
+- [X] T008 [INFRA] Document Supabase prod credentials: project URL, anon key, service role key, project ref, db password
+- [X] T009 [INFRA] Fill `.secrets/.env.dev` with dev credentials, then run `./scripts/setup-github-secrets-auto.sh` option 1
+- [X] T010 [INFRA] Fill `.secrets/.env.prod` with prod credentials, then run `./scripts/setup-github-secrets-auto.sh` option 2
+- [X] T011 [INFRA] Verify infrastructure: Test dev Azure SWA URL loads, prod Azure SWA URL loads
+- [X] T012 [INFRA] Verify infrastructure: Test Supabase dev project (run query in SQL Editor)
+- [X] T013 [INFRA] Verify infrastructure: Test Supabase prod project (run query in SQL Editor)
+- [X] T014 [INFRA] Verify all secrets configured: `gh secret list --env dev`, `gh secret list --env prod`, `gh secret list`
 
 **Checkpoint**: Infrastructure deployed and validated - workflow implementation can now begin
 
@@ -47,11 +47,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Create `.github/workflows/pr-check.yml` with triggers for pull_request to main branch
-- [ ] T016 [US1] Add lint job to `.github/workflows/pr-check.yml` running `npm run lint` in apps/web directory
-- [ ] T017 [US1] Add build job to `.github/workflows/pr-check.yml` running `npm run build` in apps/web directory
-- [ ] T018 [US1] Add concurrency control to `.github/workflows/pr-check.yml`: group `pr-check-${{ github.ref }}`, cancel-in-progress true
-- [ ] T019 [US1] Add comprehensive GitHub Actions summary to `.github/workflows/pr-check.yml` (follow supabase-deploy-dev.yml pattern)
+- [X] T015 [US1] Create `.github/workflows/pr-check.yml` with triggers for pull_request to main branch
+- [X] T016 [US1] Add lint job to `.github/workflows/pr-check.yml` running `npm run lint` in apps/web directory
+- [X] T017 [US1] Add build job to `.github/workflows/pr-check.yml` running `npm run build` in apps/web directory
+- [X] T018 [US1] Add concurrency control to `.github/workflows/pr-check.yml`: group `pr-check-${{ github.ref }}`, cancel-in-progress true
+- [X] T019 [US1] Add comprehensive GitHub Actions summary to `.github/workflows/pr-check.yml` (follow supabase-deploy-dev.yml pattern)
 - [ ] T020 [US1] Configure branch protection rule on main branch: require pr-check status checks, require up-to-date branches
 - [ ] T021 [US1] Test PR check workflow: Create test PR with intentional lint error, verify workflow fails
 - [ ] T022 [US1] Test PR check workflow: Fix lint error, push update, verify workflow re-runs and passes
@@ -93,16 +93,16 @@
 
 ### Implementation for User Story 3
 
-- [ ] T035 [US3] Read reference workflow `specs/004-deploy-discipline/oldrepo/swa-app-deploy.yml` and document current triggers
-- [ ] T036 [US3] Create `.github/workflows/swa-app-deploy.yml` adapted from old repo workflow for new repo structure
-- [ ] T037 [US3] Add push trigger for dev branch (apps/web/**) to `.github/workflows/swa-app-deploy.yml`
-- [ ] T038 [US3] Add push trigger for main branch (apps/web/**) to `.github/workflows/swa-app-deploy.yml`
-- [ ] T039 [US3] Add workflow_dispatch trigger with target input (dev/prod choice) to `.github/workflows/swa-app-deploy.yml`
-- [ ] T040 [US3] Implement dynamic environment logic in `.github/workflows/swa-app-deploy.yml`: workflow_dispatch → inputs.target, push to main → prod, push to dev → dev
-- [ ] T041 [US3] Add concurrency control to `.github/workflows/swa-app-deploy.yml`: group `swa-web-${{ github.ref_name }}`, cancel-in-progress true
-- [ ] T042 [US3] Add build-time env vars to `.github/workflows/swa-app-deploy.yml`: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY from secrets
-- [ ] T043 [US3] Add Azure/static-web-apps-deploy@v1 action to `.github/workflows/swa-app-deploy.yml` with working directory apps/web
-- [ ] T044 [US3] Test YAML syntax: `yamllint .github/workflows/swa-app-deploy.yml` or validate in GitHub
+- [X] T035 [US3] Read reference workflow `specs/004-deploy-discipline/oldrepo/swa-app-deploy.yml` and document current triggers
+- [X] T036 [US3] Create `.github/workflows/swa-app-deploy.yml` adapted from old repo workflow for new repo structure
+- [X] T037 [US3] Add push trigger for dev branch (apps/web/**) to `.github/workflows/swa-app-deploy.yml`
+- [X] T038 [US3] Add push trigger for main branch (apps/web/**) to `.github/workflows/swa-app-deploy.yml`
+- [X] T039 [US3] Add workflow_dispatch trigger with target input (dev/prod choice) to `.github/workflows/swa-app-deploy.yml`
+- [X] T040 [US3] Implement dynamic environment logic in `.github/workflows/swa-app-deploy.yml`: workflow_dispatch → inputs.target, push to main → prod, push to dev → dev
+- [X] T041 [US3] Add concurrency control to `.github/workflows/swa-app-deploy.yml`: group `swa-web-${{ github.ref_name }}`, cancel-in-progress true
+- [X] T042 [US3] Add build-time env vars to `.github/workflows/swa-app-deploy.yml`: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY from secrets
+- [X] T043 [US3] Add Azure/static-web-apps-deploy@v1 action to `.github/workflows/swa-app-deploy.yml` with working directory apps/web
+- [X] T044 [US3] Test YAML syntax: `yamllint .github/workflows/swa-app-deploy.yml` or validate in GitHub
 - [ ] T045 [US3] Regression test: Make trivial change to apps/web/README.md, push to dev, verify dev auto-deploy works
 - [ ] T046 [US3] Feature test: Merge PR to main with frontend change, verify workflow triggers, verify approval request for prod
 - [ ] T047 [US3] Feature test: Approve prod deployment, verify deployment succeeds, visit prod SWA URL, verify change live
@@ -120,18 +120,18 @@
 
 ### Implementation for User Story 4
 
-- [ ] T049 [US4] Read reference workflow `specs/004-deploy-discipline/oldrepo/supabase-deploy-dev.yml` (149 lines) and document structure
-- [ ] T050 [US4] Create `.github/workflows/supabase-deploy-dev.yml` by copying old repo workflow for dev environment
-- [ ] T051 [US4] Update dev workflow triggers in `.github/workflows/supabase-deploy-dev.yml`: push to dev (supabase/**), workflow_dispatch
-- [ ] T052 [US4] Update dev workflow concurrency in `.github/workflows/supabase-deploy-dev.yml`: group `supabase-dev`, cancel-in-progress true
-- [ ] T053 [US4] Copy `.github/workflows/supabase-deploy-dev.yml` to `.github/workflows/supabase-deploy-prod.yml`
-- [ ] T054 [US4] Update prod workflow triggers in `.github/workflows/supabase-deploy-prod.yml`: push to main (supabase/**), workflow_dispatch
-- [ ] T055 [US4] Change environment from dev to prod in `.github/workflows/supabase-deploy-prod.yml`
-- [ ] T056 [US4] Change concurrency group from `supabase-dev` to `supabase-prod` in `.github/workflows/supabase-deploy-prod.yml`
-- [ ] T057 [US4] Update secret references in `.github/workflows/supabase-deploy-prod.yml` to use prod environment secrets
-- [ ] T058 [US4] Preserve comprehensive summary format in `.github/workflows/supabase-deploy-prod.yml` (dashboard links, migrations list, functions list)
-- [ ] T059 [US4] Verify workflow includes: supabase link, `yes | supabase db push`, set 9 Edge Function secrets, supabase functions deploy
-- [ ] T060 [US4] Test YAML syntax for both dev and prod Supabase workflows
+- [X] T049 [US4] Read reference workflow `specs/004-deploy-discipline/oldrepo/supabase-deploy-dev.yml` (149 lines) and document structure
+- [X] T050 [US4] Create `.github/workflows/supabase-deploy-dev.yml` by copying old repo workflow for dev environment
+- [X] T051 [US4] Update dev workflow triggers in `.github/workflows/supabase-deploy-dev.yml`: push to dev (supabase/**), workflow_dispatch
+- [X] T052 [US4] Update dev workflow concurrency in `.github/workflows/supabase-deploy-dev.yml`: group `supabase-dev`, cancel-in-progress true
+- [X] T053 [US4] Copy `.github/workflows/supabase-deploy-dev.yml` to `.github/workflows/supabase-deploy-prod.yml`
+- [X] T054 [US4] Update prod workflow triggers in `.github/workflows/supabase-deploy-prod.yml`: push to main (supabase/**), workflow_dispatch
+- [X] T055 [US4] Change environment from dev to prod in `.github/workflows/supabase-deploy-prod.yml`
+- [X] T056 [US4] Change concurrency group from `supabase-dev` to `supabase-prod` in `.github/workflows/supabase-deploy-prod.yml`
+- [X] T057 [US4] Update secret references in `.github/workflows/supabase-deploy-prod.yml` to use prod environment secrets
+- [X] T058 [US4] Preserve comprehensive summary format in `.github/workflows/supabase-deploy-prod.yml` (dashboard links, migrations list, functions list)
+- [X] T059 [US4] Verify workflow includes: supabase link, `yes | supabase db push`, set 9 Edge Function secrets, supabase functions deploy
+- [X] T060 [US4] Test YAML syntax for both dev and prod Supabase workflows
 - [ ] T061 [US4] Regression test: Make trivial migration change, push to dev, verify dev workflow triggers and works
 - [ ] T062 [US4] Feature test: Create test migration file (e.g., add test table), commit to main, verify prod workflow triggers
 - [ ] T063 [US4] Feature test: Approve prod Supabase deployment, verify migrations applied in Supabase Dashboard
