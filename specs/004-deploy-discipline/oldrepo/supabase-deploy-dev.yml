@@ -1,0 +1,164 @@
+name: Deploy Supabase (DEV)
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/functions/**"
+      - "supabase/config.toml"
+      - ".github/workflows/supabase-deploy-dev.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    env:
+      # Optional convenience
+      DASHBOARD_BASE: https://supabase.com/dashboard/project
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Push DB migrations (remote)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          # Non-interactive: auto-confirm migration push
+          yes | supabase db push | tee db_push.log
+
+      - name: Set Edge Function secrets (DEV)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+          SB_URL: ${{ secrets.SB_URL }}
+          SB_ANON_KEY: ${{ secrets.SB_ANON_KEY }}
+          SB_SERVICE_ROLE_KEY: ${{ secrets.SB_SERVICE_ROLE_KEY }}
+
+          SITE_URL: ${{ secrets.SITE_URL }}
+          INVITE_TOKEN_SECRET: ${{ secrets.INVITE_TOKEN_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+
+          # Runtime expects CORS_ORIGINS (CSV). Keep ALLOWED_ORIGINS as legacy/back-compat.
+          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+
+        run: |
+          # Prefer CORS_ORIGINS; fallback to legacy ALLOWED_ORIGINS.
+          if [[ -z "${CORS_ORIGINS:-}" ]]; then
+            export CORS_ORIGINS="${ALLOWED_ORIGINS:-}"
+          fi
+
+          cat > .env.functions <<EOF
+          SB_URL=$SB_URL
+          SB_ANON_KEY=$SB_ANON_KEY
+          SB_SERVICE_ROLE_KEY=$SB_SERVICE_ROLE_KEY
+          SITE_URL=$SITE_URL
+          INVITE_TOKEN_SECRET=$INVITE_TOKEN_SECRET
+          RESEND_API_KEY=$RESEND_API_KEY
+          RESEND_FROM=$RESEND_FROM
+          CORS_ORIGINS=$CORS_ORIGINS
+          EOF
+
+          supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" --env-file .env.functions | tee secrets_set.log
+          rm -f .env.functions
+
+      - name: Deploy Edge Functions (DEV)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF" | tee functions_deploy.log
+
+      - name: Publish run summary
+        if: always()
+        shell: bash
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: |
+          set -euo pipefail
+
+          echo "## Supabase DEV Deploy Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Workflow**: \`$GITHUB_WORKFLOW\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Run**: [#$GITHUB_RUN_NUMBER]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Ref**: \`$GITHUB_REF_NAME\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **SHA**: \`$GITHUB_SHA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### Links" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Supabase project: ${DASHBOARD_BASE}/${SUPABASE_PROJECT_REF}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Edge Functions: ${DASHBOARD_BASE}/${SUPABASE_PROJECT_REF}/functions" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Auth settings: ${DASHBOARD_BASE}/${SUPABASE_PROJECT_REF}/auth/providers" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Site URL (dev): \`${SITE_URL}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### Database migrations applied" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Migration |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|" >> "$GITHUB_STEP_SUMMARY"
+          if ls supabase/migrations/*.sql >/dev/null 2>&1; then
+            for f in supabase/migrations/*.sql; do
+              echo "| \`$(basename "$f")\` |" >> "$GITHUB_STEP_SUMMARY"
+            done
+          else
+            echo "| (none) |" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### Edge Functions deployed" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Function |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|" >> "$GITHUB_STEP_SUMMARY"
+          if ls supabase/functions/*/index.ts >/dev/null 2>&1; then
+            for d in supabase/functions/*; do
+              if [[ -f "$d/index.ts" ]]; then
+                echo "| \`$(basename "$d")\` |" >> "$GITHUB_STEP_SUMMARY"
+              fi
+            done
+          else
+            echo "| (none) |" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### Logs (high-signal snippets)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "**DB push**" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f db_push.log ]]; then tail -n 30 db_push.log; else echo "(no log)"; fi >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          echo "**Secrets set**" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f secrets_set.log ]]; then tail -n 30 secrets_set.log; else echo "(no log)"; fi >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          echo "**Functions deploy**" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          if [[ -f functions_deploy.log ]]; then tail -n 50 functions_deploy.log; else echo "(no log)"; fi >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

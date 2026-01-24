@@ -15,7 +15,7 @@
 | Phase 1 | Role-Based Access Control | 🟢 Complete | 100% |
 | Phase 2 | Security Hardening | 🟢 Complete | 100% |
 | Phase 3 | UX Routing & Onboarding | � Complete | 100% |
-| Phase 4 | Deploy Discipline | 🔴 Not Started | 0% |
+| Phase 4 | Deploy Discipline | 🟡 In Progress | 14% (1/7 tasks - spec created) |
 | Phase 5 | Planner MVP | 🔴 Not Started | 0% |
 
 **Legend:** 🟢 Complete | 🟡 In Progress | 🔴 Not Started | ⚪ Blocked
@@ -79,19 +79,19 @@
 
 ---
 
-## Phase 4: Deploy Discipline 🔴
+## Phase 4: Deploy Discipline �
 
-**Status:** Not Started  
+**Status:** In Progress (Spec Created)  
 **Target Completion:** 2026-02-07  
 
 | ID | Task | Priority | Status | Target | Notes |
 |----|------|----------|--------|--------|-------|
-| 4.1 | Create PR check workflow (lint/typecheck/build) | P0 | 🔴 Not Started | 2026-02-01 | Block merge on failure |
+| 4.1 | Create PR check workflow (lint/typecheck/build) | P0 | 🟡 Spec Created | 2026-02-01 | Block merge on failure |
 | 4.2 | Add summary output to dev deploy workflow | P0 | 🟢 Done | — | Already implemented |
-| 4.3 | Create prod deploy workflow (gated) | P1 | 🔴 Not Started | 2026-02-03 | Manual trigger + approval |
-| 4.4 | Set up production GitHub environment | P1 | 🔴 Not Started | 2026-02-04 | With approval rules |
-| 4.5 | Document secrets naming conventions | P0 | 🔴 Not Started | 2026-02-05 | SB_* vs SUPABASE_* |
-| 4.6 | Add Supabase prod deploy workflow | P1 | 🔴 Not Started | 2026-02-06 | Separate from dev |
+| 4.3 | Create prod deploy workflow (gated) | P1 | 🟡 Spec Created | 2026-02-03 | Manual trigger + approval |
+| 4.4 | Set up production GitHub environment | P1 | 🟡 Spec Created | 2026-02-04 | With approval rules |
+| 4.5 | Document secrets naming conventions | P0 | 🟡 Spec Created | 2026-02-05 | SB_* vs SUPABASE_* |
+| 4.6 | Add Supabase prod deploy workflow | P1 | 🟡 Spec Created | 2026-02-06 | Separate from dev |
 | 4.7 | Test full deploy pipeline end-to-end | P0 | 🔴 Not Started | 2026-02-07 | Smoke test |
 
 ---
@@ -175,6 +175,20 @@
 ---
 
 ## Notes & Decisions
+
+### 2026-01-22 - Phase 4 Specification Created ✅
+- **Feature 004**: Deploy Discipline (CI/CD Automation)
+- **Specification Complete**: 5 user stories, 6 functional requirements, 6 success criteria
+- **User Stories**:
+  - US1: PR Quality Gates (P0) - Automated lint/build checks
+  - US2: Production Environment Setup (P0) - Approval gates
+  - US3: Production Deployment Workflow (P1) - Manual SWA deploy
+  - US4: Supabase Production Deployment (P1) - DB migrations
+  - US5: Secrets Documentation (P0) - Clear conventions
+- **Scope**: GitHub Actions workflows, branch protection, environment setup
+- **Out of Scope**: Automated testing framework, monitoring, database backups
+- **Target Completion**: 2026-02-07 (16 days from now)
+- **Next**: Create implementation plan, task breakdown, begin development
 
 ### 2026-01-22 - Phase 3 Complete ✅
 - **Manual Testing Complete**: All 16 test scenarios passed
