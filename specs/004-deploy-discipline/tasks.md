@@ -150,19 +150,19 @@
 
 ### Implementation for User Story 5
 
-- [ ] T066 [P] [US5] Analyze `.github/workflows/swa-app-deploy.yml` and list all secrets used
-- [ ] T067 [P] [US5] Analyze `.github/workflows/supabase-deploy-dev.yml` and list all secrets used
-- [ ] T068 [P] [US5] Analyze `.github/workflows/supabase-deploy-prod.yml` and list all secrets used
-- [ ] T069 [US5] Create inventory of all 14+ secrets: Azure SWA (3 per env), Supabase (3 shared/per env), Edge Functions (9 per env), OIDC (3)
-- [ ] T070 [US5] Create `.github/SECRETS.md` with overview section explaining purpose and structure
-- [ ] T071 [US5] Add secrets inventory table to `.github/SECRETS.md` with columns: name, scope (dev/prod/shared), purpose
-- [ ] T072 [US5] Add "Secrets by Workflow" section to `.github/SECRETS.md` grouping secrets by swa-app-deploy, supabase-deploy-*, azure-infra-deploy
-- [ ] T073 [US5] Add "How to Obtain Secrets" section to `.github/SECRETS.md` with Azure SWA token retrieval command
-- [ ] T074 [US5] Add Supabase secret retrieval instructions to `.github/SECRETS.md` (Dashboard navigation for URL, keys, project ref)
-- [ ] T075 [US5] Add Azure OIDC configuration instructions to `.github/SECRETS.md` (reference setup-azure-oidc.sh script)
-- [ ] T076 [US5] Add rotation procedures section to `.github/SECRETS.md` explaining how to rotate each secret type
-- [ ] T077 [US5] Add example workflow usage to `.github/SECRETS.md` showing how secrets are referenced in YAML
-- [ ] T078 [US5] Add links to `.github/SECRETS.md`: Azure Portal, Supabase Dashboard, helper scripts
+- [X] T066 [P] [US5] Analyze `.github/workflows/swa-app-deploy.yml` and list all secrets used
+- [X] T067 [P] [US5] Analyze `.github/workflows/supabase-deploy-dev.yml` and list all secrets used
+- [X] T068 [P] [US5] Analyze `.github/workflows/supabase-deploy-prod.yml` and list all secrets used
+- [X] T069 [US5] Create inventory of all 14+ secrets: Azure SWA (3 per env), Supabase (3 shared/per env), Edge Functions (9 per env), OIDC (3)
+- [X] T070 [US5] Create `.github/SECRETS.md` with overview section explaining purpose and structure
+- [X] T071 [US5] Add secrets inventory table to `.github/SECRETS.md` with columns: name, scope (dev/prod/shared), purpose
+- [X] T072 [US5] Add "Secrets by Workflow" section to `.github/SECRETS.md` grouping secrets by swa-app-deploy, supabase-deploy-*, azure-infra-deploy
+- [X] T073 [US5] Add "How to Obtain Secrets" section to `.github/SECRETS.md` with Azure SWA token retrieval command
+- [X] T074 [US5] Add Supabase secret retrieval instructions to `.github/SECRETS.md` (Dashboard navigation for URL, keys, project ref)
+- [X] T075 [US5] Add Azure OIDC configuration instructions to `.github/SECRETS.md` (reference setup-azure-oidc.sh script)
+- [X] T076 [US5] Add rotation procedures section to `.github/SECRETS.md` explaining how to rotate each secret type
+- [X] T077 [US5] Add example workflow usage to `.github/SECRETS.md` showing how secrets are referenced in YAML
+- [X] T078 [US5] Add links to `.github/SECRETS.md`: Azure Portal, Supabase Dashboard, helper scripts
 - [ ] T079 [US5] Validate documentation: Follow instructions to retrieve one Azure SWA deployment token
 - [ ] T080 [US5] Validate documentation: Follow instructions to retrieve one Supabase secret (e.g., project URL)
 - [ ] T081 [US5] Proofread `.github/SECRETS.md` for clarity, completeness, and accuracy
