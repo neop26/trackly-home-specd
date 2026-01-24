@@ -1,29 +1,23 @@
 <!--
-Sync Impact Report (2026-01-21):
+Sync Impact Report (2026-01-24):
 
-Version Change: 0.0.0 → 1.0.0
-Reason: Initial constitution creation. MAJOR version as this establishes the foundational governance framework for the project.
-
-Added Principles:
-  1. Security First - Security implications must be considered in all changes
-  2. Vertical Slices - Deliver working features end-to-end with independent user stories
-  3. Minimal Changes - Make the smallest change that solves the problem
-  4. Document As You Go - Update documentation with each change
-  5. Test Before Deploy - Validate all changes locally before merging
+Version Change: 1.0.0 → 1.1.0
+Reason: Added secrets management pattern and clarified documentation guidelines. MINOR version as this adds new guidance without changing existing principles.
 
 Added Sections:
-  - Security Requirements - Comprehensive security model and constraints
-  - Development Workflow - Branching, commit guidelines, and deployment process
+  - Secrets Management - Standardized approach for credential storage and management
+  - Enhanced Documentation Guidelines - Smart rules for when to use working_folder vs regular docs
+
+Modified Sections:
+  - Documentation - Expanded with intelligent routing rules for different document types
 
 Templates Status:
-  ✅ plan-template.md - Reviewed: Constitution Check section aligns with principles
-  ✅ spec-template.md - Reviewed: User story prioritization aligns with Vertical Slices principle
-  ✅ tasks-template.md - Reviewed: Independent story implementation aligns with Vertical Slices principle
-  ⚠ No command files found in .specify/templates/commands/ - Expected location for agent commands
+  ✅ All existing templates remain compliant
+  ✅ New secrets management pattern documented for future reference
 
 Follow-up Actions:
-  - None: All placeholders filled
-  - Recommendation: Consider creating .specify/templates/commands/ directory for agent command specifications
+  - None: Pattern established for future credential management
+  - Recommendation: Consider adding .secrets folder to project template
 
 -->
 # Trackly Home Constitution
@@ -118,6 +112,35 @@ Member → Read household data, use features
 - Helper functions MUST be tested for recursion/infinite loops
 - CORS allowlist MUST be verified for each environment
 
+## Secrets Management
+
+### Standardized Secrets Pattern
+All project secrets MUST be stored in a `.secrets/` folder at the repository root.
+
+**Structure**:
+```
+.secrets/
+├── .env.dev          # Development environment secrets
+├── .env.prod         # Production environment secrets
+└── README.md         # Documentation for secrets setup
+```
+
+**Requirements**:
+- `.secrets/` folder MUST be added to `.gitignore` (entire folder ignored)
+- Environment files MUST use standard `.env` format (KEY=VALUE)
+- All required secrets MUST be documented in `.secrets/README.md`
+- Secrets MUST be environment-specific (no shared secrets between dev/prod)
+- No secrets SHALL be committed to version control
+
+**Setup Process**:
+1. Create `.secrets/` folder with required `.env` files
+2. Document all required secrets in README.md
+3. Add `.secrets/` to `.gitignore`
+4. Fill secrets manually or via automated setup scripts
+5. Validate secrets are loaded correctly in each environment
+
+**Rationale**: Centralized secret management prevents credential sprawl, ensures environment isolation, and provides clear documentation for team members. The `.secrets/` pattern establishes a consistent approach for all future credential management.
+
 ## Development Workflow
 
 ### Branching Strategy
@@ -197,9 +220,41 @@ The project's technology stack is defined in README.md and PRD:
 - **CI/CD**: GitHub Actions
 
 ### Documentation
+
+#### Intelligent Document Routing
+Documents MUST be routed based on their purpose and longevity:
+
+<!--
+**Permanent Documentation** (goes in regular docs/):
+- Specification documents (specs, PRDs, requirements)
+- API documentation and contracts
+- Architecture decisions and design docs
+- User guides and setup instructions
+- Migration guides and breaking change docs
+- README files for top-level folders
+-->
+
+**Working Documents** (goes in docs/working_folder/):
+- Temporary summaries and status reports
+- Meeting notes and discussion transcripts
+- Exploratory research and investigation docs
+- Draft specifications before finalization
+- One-off analysis or debugging documents
+- Agent-generated summaries without long-term value
+
+#### Routing Rules
+- **Spec Documents**: Always follow the current rules
+- **Summary Documents**: If created by agents and don't add long-term value → docs/working_folder/
+- **Research Documents**: If exploratory/investigative → docs/working_folder/
+- **Status Reports**: Temporary updates → docs/working_folder/
+- **API Contracts**: Permanent reference → docs/
+- **User Documentation**: Permanent value → docs/
+
+#### Guidelines
 - If you build any documentation that is like a working document, always create it within working_folder under docs.
 - Always ask if you are about to create some sort of project summary document.
+- Follow Minimal Documentation Policy: One README per top-level folder; no READMEs in subfolders; no unnecessary summary documents
 
-Changes to core technology stack MUST be documented as breaking changes with migration plan.
+**Rationale**: Different document types have different lifecycles. Permanent docs need version control and maintenance, while working docs are temporary and shouldn't clutter the main documentation structure.
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-21
+**Version**: 1.1.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-24
