@@ -47,3 +47,4 @@ export default function App() {
     </Routes>
   );
 }
+  const unusedVar = 'test';
