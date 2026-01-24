@@ -16,6 +16,11 @@ Trackly Home is a consumer MVP for helping a household (starting with two people
 
 > For detailed tracking, see [`docs/PROJECT_TRACKER.md`](docs/PROJECT_TRACKER.md)
 
+[![PR Quality Gates](https://github.com/neop26/trackly-home-specd/actions/workflows/pr-check.yml/badge.svg)](https://github.com/neop26/trackly-home-specd/actions/workflows/pr-check.yml)
+[![Deploy Web App](https://github.com/neop26/trackly-home-specd/actions/workflows/swa-app-deploy.yml/badge.svg)](https://github.com/neop26/trackly-home-specd/actions/workflows/swa-app-deploy.yml)
+[![Supabase Deploy (Dev)](https://github.com/neop26/trackly-home-specd/actions/workflows/supabase-deploy-dev.yml/badge.svg)](https://github.com/neop26/trackly-home-specd/actions/workflows/supabase-deploy-dev.yml)
+[![Supabase Deploy (Prod)](https://github.com/neop26/trackly-home-specd/actions/workflows/supabase-deploy-prod.yml/badge.svg)](https://github.com/neop26/trackly-home-specd/actions/workflows/supabase-deploy-prod.yml)
+
 ---
 
 ## Documentation
@@ -258,7 +263,35 @@ git push origin feature/my-feature
 **For Production:**
 ```bash
 # After testing in dev
-# Create PR from dev → main
+**Manual Deployment:**
+
+Navigate to the Actions tab and trigger workflows manually:
+
+1. **Deploy Web App (Azure SWA):**
+   - Actions → Deploy Web App (Azure SWA) → Run workflow
+   - Select branch and target environment (dev/prod)
+   - If prod, approve deployment when prompted
+
+2. **Deploy Supabase (Dev/Prod):**
+   - Actions → Supabase Deploy (Dev) or Supabase Deploy (Prod) → Run workflow
+   - Select appropriate branch
+   - If prod, approve deployment when prompted
+
+**View Deployment Logs:**
+- Navigate to Actions tab
+- Click on a workflow run
+- Expand job steps to see detailed logs
+- Check deployment summary for status
+
+**Workflow Documentation:**
+See [.github/workflows/README.md](.github/workflows/README.md) for complete workflow documentation including:
+- Workflow triggers and purposes
+- Environment variables and secrets required
+- Troubleshooting guides
+- Emergency rollback procedures
+
+**Secrets Management:**
+See [.github/SECRETS.md](.github/SECRETS.md) for comprehensive secrets documentation
 # Get approval and merge
 # Approve prod deployments in GitHub Actions
 ```
