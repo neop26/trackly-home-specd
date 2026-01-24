@@ -52,7 +52,7 @@
 - [X] T017 [US1] Add build job to `.github/workflows/pr-check.yml` running `npm run build` in apps/web directory
 - [X] T018 [US1] Add concurrency control to `.github/workflows/pr-check.yml`: group `pr-check-${{ github.ref }}`, cancel-in-progress true
 - [X] T019 [US1] Add comprehensive GitHub Actions summary to `.github/workflows/pr-check.yml` (follow supabase-deploy-dev.yml pattern)
-- [ ] T020 [US1] Configure branch protection rule on main branch: require pr-check status checks, require up-to-date branches
+- [X] T020 [US1] Configure branch protection rule on main branch: require pr-check status checks, require up-to-date branches
 - [ ] T021 [US1] Test PR check workflow: Create test PR with intentional lint error, verify workflow fails
 - [ ] T022 [US1] Test PR check workflow: Fix lint error, push update, verify workflow re-runs and passes
 - [ ] T023 [US1] Test branch protection: Verify merge button disabled when checks fail, enabled when checks pass
@@ -69,17 +69,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Navigate to GitHub Settings → Environments → prod and verify required reviewers configured
-- [ ] T025 [US2] Verify prod environment deployment branches set to `main` only
-- [ ] T026 [US2] Verify prod environment wait timer set to 0 minutes (manual approval, no auto-approval)
-- [ ] T027 [US2] Document current prod environment protection rules in `.github/SECRETS.md` (create file structure first)
-- [ ] T028 [P] [US2] Audit prod environment secrets for Azure SWA: AZURE_SWA_DEPLOYMENT_TOKEN, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
-- [ ] T029 [P] [US2] Audit prod environment secrets for Supabase: SUPABASE_PROJECT_REF, SUPABASE_DB_PASSWORD
-- [ ] T030 [P] [US2] Audit prod environment secrets for Edge Functions: SB_URL, SB_ANON_KEY, SB_SERVICE_ROLE_KEY, SITE_URL, ALLOWED_ORIGINS
-- [ ] T031 [US2] List any missing prod secrets and add them using retrieval instructions from helper script
-- [ ] T032 [US2] Verify Azure OIDC configuration: Check federated credentials exist for main, dev, pull_request branches
-- [ ] T033 [US2] Verify repository secrets: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID are set
-- [ ] T034 [US2] Test OIDC authentication: Trigger azure-infra-deploy.yml workflow (if exists) or create test workflow
+- [X] T024 [US2] Navigate to GitHub Settings → Environments → prod and verify required reviewers configured
+- [X] T025 [US2] Verify prod environment deployment branches set to `main` only
+- [X] T026 [US2] Verify prod environment wait timer set to 0 minutes (manual approval, no auto-approval)
+- [X] T027 [US2] Document current prod environment protection rules in `.github/SECRETS.md` (create file structure first)
+- [X] T028 [P] [US2] Audit prod environment secrets for Azure SWA: AZURE_SWA_DEPLOYMENT_TOKEN, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+- [X] T029 [P] [US2] Audit prod environment secrets for Supabase: SUPABASE_PROJECT_REF, SUPABASE_DB_PASSWORD
+- [X] T030 [P] [US2] Audit prod environment secrets for Edge Functions: SB_URL, SB_ANON_KEY, SB_SERVICE_ROLE_KEY, SITE_URL, ALLOWED_ORIGINS
+- [X] T031 [US2] List any missing prod secrets and add them using retrieval instructions from helper script
+- [X] T032 [US2] Verify Azure OIDC configuration: Check federated credentials exist for main, dev, pull_request branches
+- [X] T033 [US2] Verify repository secrets: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID are set
+- [X] T034 [US2] Test OIDC authentication: Trigger azure-infra-deploy.yml workflow (if exists) or create test workflow
 
 **Checkpoint**: Production environment validated - ready for deployment workflows
 
