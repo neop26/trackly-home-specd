@@ -91,21 +91,39 @@ npx supabase db push
 
 ## Testing Migrations
 
-Run the test queries in `test_phase1.sql` to verify Phase 1 core checks (roles, policies, triggers):
+### RLS Policy Tests
+
+Run the RLS audit test suite to verify all policies and security guarantees:
 
 ```bash
-# Execute test queries
-npx supabase db execute -f supabase/migrations/test_phase1.sql
+# Option 1: Via psql (local Supabase)
+psql postgresql://postgres:postgres@localhost:54322/postgres -f scripts/supabase/test_rls_audit.sql
+
+# Option 2: Via Supabase CLI
+supabase db execute < scripts/supabase/test_rls_audit.sql
+
+# Option 3: Copy sections into SQL Editor (Supabase Dashboard)
 ```
 
-To validate the new household profile visibility from 007, run an additional check in the SQL editor:
+### Phase 1 Core Tests
 
-```sql
--- Replace with a member in the same household
-select display_name
-from public.profiles
-where user_id = '<other-member-uuid>'::uuid;
+Run Phase 1 validation tests (roles, policies, triggers):
+
+```bash
+# Execute Phase 1 test queries
+npx supabase db execute -f scripts/supabase/test_phase1.sql
 ```
+
+### Performance Tests
+
+For performance validation (e.g., T047 - 100 tasks < 2 second render):
+
+```bash
+# Execute performance test script
+npx supabase db execute -f scripts/supabase/test_performance_100_tasks.sql
+```
+
+**Note**: All test scripts are located in `scripts/supabase/` directory. The `migrations/` folder contains ONLY timestamped migration files.
 
 ## Rolling Back
 
@@ -516,10 +534,10 @@ Run the comprehensive test suite to validate all RLS policies:
 
 ```bash
 # Option 1: Via psql (local Supabase)
-psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/test_rls_audit.sql
+psql postgresql://postgres:postgres@localhost:54322/postgres -f scripts/supabase/test_rls_audit.sql
 
 # Option 2: Via Supabase CLI
-supabase db execute < supabase/test_rls_audit.sql
+supabase db execute < scripts/supabase/test_rls_audit.sql
 
 # Option 3: Copy sections into SQL Editor (Supabase Dashboard)
 ```
@@ -550,12 +568,12 @@ The test suite validates:
 
 1. **Always Use Helper Functions**: Never query `household_members` directly in RLS policies to avoid recursion
 2. **Service Role for Writes**: Critical operations (membership, invites) should use Edge Functions with service role
-3. **Regular Audits**: Re-run `test_rls_audit.sql` after any migration that touches RLS policies
+3. **Regular Audits**: Re-run test scripts from `scripts/supabase/` after any migration that touches RLS policies
 4. **Test Cross-Household Access**: Always validate that users cannot access data from other households
 5. **Document Changes**: Update this README when adding/modifying RLS policies
 
 ---
 
-**For detailed test queries and validation scenarios, see**: `supabase/test_rls_audit.sql`
+**For detailed test queries and validation scenarios, see**: `scripts/supabase/test_rls_audit.sql`
 
 -- Test comment to trigger Supabase deployment workflow

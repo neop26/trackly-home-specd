@@ -1,5 +1,26 @@
 <!--
-Sync Impact Report (2026-01-24):
+Sync Impact Report (2026-01-26):
+
+Version Change: 1.1.0 → 1.2.0
+Reason: Added script organization standards to enforce separation of migrations from utility/test scripts. MINOR version as this adds new structural guidance without changing existing principles.
+
+Added Sections:
+  - Script Organization - Mandatory structure for organizing scripts by function (azure/, github/, supabase/)
+  - Script Placement Rules - Clear rules for where different script types belong
+
+Modified Sections:
+  - Development Workflow - Added Script Organization section before Branching Strategy
+
+Templates Status:
+  ✅ All existing templates remain compliant
+  ✅ New script/supabase/ folder created and populated with test scripts
+  ✅ Migration folder cleaned to only contain timestamped migrations
+
+Follow-up Actions:
+  - migrations/README.md updated to reference scripts/supabase/ for test scripts
+  - scripts/supabase/README.md created to document test script purpose and usage
+
+Previous Sync (2026-01-24):
 
 Version Change: 1.0.0 → 1.1.0
 Reason: Added secrets management pattern and clarified documentation guidelines. MINOR version as this adds new guidance without changing existing principles.
@@ -143,6 +164,27 @@ All project secrets MUST be stored in a `.secrets/` folder at the repository roo
 
 ## Development Workflow
 
+### Script Organization
+All utility scripts MUST be organized by function under the `scripts/` directory. Database migration scripts are the ONLY exception and belong in the migrations folder.
+
+**Required Structure**:
+```
+scripts/
+├── azure/        # Azure deployment and infrastructure scripts
+├── github/       # GitHub Actions, secrets, OIDC setup scripts
+└── supabase/     # Supabase testing, data generation, utility scripts
+```
+
+**Script Placement Rules**:
+- **Migration scripts ONLY**: `supabase/migrations/` - Timestamped migration files only (e.g., `20260125021436_tasks_table.sql`)
+- **Test scripts**: `scripts/supabase/` - RLS tests, performance tests, data validation
+- **Data generation**: `scripts/supabase/` - Seed data, dummy data, test fixtures
+- **One-off utilities**: `scripts/supabase/` - Manual queries, cleanup scripts, investigation tools
+- **Azure operations**: `scripts/azure/` - Deployment, configuration, infrastructure
+- **GitHub automation**: `scripts/github/` - Repository setup, secrets management, OIDC
+
+**Rationale**: Separating migrations from utility scripts ensures migration directories remain clean and only contain schema changes. This prevents confusion during deployment and makes it clear which files are automatically applied by migration tools versus which require manual execution.
+
 ### Branching Strategy
 | Branch | Purpose | Base | Merges To |
 |--------|---------|------|-----------|
@@ -257,4 +299,4 @@ Documents MUST be routed based on their purpose and longevity:
 
 **Rationale**: Different document types have different lifecycles. Permanent docs need version control and maintenance, while working docs are temporary and shouldn't clutter the main documentation structure.
 
-**Version**: 1.1.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-24
+**Version**: 1.2.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-26

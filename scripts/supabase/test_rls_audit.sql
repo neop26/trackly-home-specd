@@ -14,13 +14,13 @@
 -- HOW TO RUN THIS TEST SUITE:
 -- 
 -- Option 1: Run via psql (local Supabase)
---   psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/test_rls_audit.sql
+--   psql postgresql://postgres:postgres@localhost:54322/postgres -f scripts/supabase/test_rls_audit.sql
 --
 -- Option 2: Run via Supabase SQL Editor (dev/prod)
 --   Copy sections into SQL editor and execute
 --
 -- Option 3: Run via supabase CLI
---   supabase db execute < supabase/test_rls_audit.sql
+--   supabase db execute < scripts/supabase/test_rls_audit.sql
 --
 -- IMPORTANT: This test suite creates and cleans up test data.
 --            Do NOT run in production without review.
