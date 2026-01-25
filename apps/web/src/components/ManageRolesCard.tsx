@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Select,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import {
   useHouseholdMembers,
   updateMemberRole,
   type HouseholdMember,
@@ -64,58 +73,65 @@ export default function ManageRolesCard({
   if (!isAdmin) return null;
 
   return (
-    <div className="rounded-lg border p-4 space-y-3">
-      <div>
-        <div className="font-semibold">Household Members</div>
-        <div className="text-sm text-gray-600">
-          Manage roles for members in your household.
-        </div>
-      </div>
+    <Box borderWidth={1} borderRadius="lg" p={4}>
+      <VStack spacing={3} align="stretch">
+        <Box>
+          <Heading size="sm">Household Members</Heading>
+          <Text fontSize="sm" color="gray.600">
+            Manage roles for members in your household.
+          </Text>
+        </Box>
 
-      {loading && <div className="text-sm text-gray-600">Loading...</div>}
-      {error && <div className="text-sm text-red-600">{error}</div>}
-      {updateError && <div className="text-sm text-red-600">{updateError}</div>}
+        {loading && <Text fontSize="sm" color="gray.600">Loading...</Text>}
+        {error && <Text fontSize="sm" color="red.600">{error}</Text>}
+        {updateError && <Text fontSize="sm" color="red.600">{updateError}</Text>}
 
-      {!loading && members.length > 0 && (
-        <div className="space-y-2">
-          {sortedMembers.map((member) => {
-            const isSelf = member.user_id === currentUserId;
-            return (
-              <div
-                key={member.user_id}
-                className="flex items-center justify-between rounded-lg border p-3"
-              >
-                <div>
-                  <div className="font-medium">
-                    {member.profile?.display_name}
-                    {isSelf && " (You)"}
-                  </div>
-                  <div className="text-sm text-gray-600 capitalize">
-                    {member.role}
-                  </div>
-                </div>
+        {!loading && members.length > 0 && (
+          <VStack spacing={2} align="stretch">
+            {sortedMembers.map((member) => {
+              const isSelf = member.user_id === currentUserId;
+              return (
+                <Flex
+                  key={member.user_id}
+                  align="center"
+                  justify="space-between"
+                  borderWidth={1}
+                  borderRadius="lg"
+                  p={3}
+                >
+                  <Box>
+                    <Text fontWeight="medium">
+                      {member.profile?.display_name}
+                      {isSelf && " (You)"}
+                    </Text>
+                    <Text fontSize="sm" color="gray.600" textTransform="capitalize">
+                      {member.role}
+                    </Text>
+                  </Box>
 
-                {isAdmin && !isSelf && member.role !== "owner" && (
-                  <select
-                    aria-label={`Change role for ${member.profile?.display_name}`}
-                    className="rounded-lg border px-3 py-2 text-sm"
-                    value={member.role}
-                    onChange={(e) => handleRoleChange(member, e.target.value)}
-                    disabled={busy}
-                  >
-                    <option value="member">Member</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+                  {isAdmin && !isSelf && member.role !== "owner" && (
+                    <Select
+                      aria-label={`Change role for ${member.profile?.display_name}`}
+                      size="sm"
+                      w="auto"
+                      value={member.role}
+                      onChange={(e) => handleRoleChange(member, e.target.value)}
+                      isDisabled={busy}
+                    >
+                      <option value="member">Member</option>
+                      <option value="admin">Admin</option>
+                    </Select>
+                  )}
+                </Flex>
+              );
+            })}
+          </VStack>
+        )}
 
-      {!loading && members.length === 0 && (
-        <div className="text-sm text-gray-600">No members found.</div>
-      )}
-    </div>
+        {!loading && members.length === 0 && (
+          <Text fontSize="sm" color="gray.600">No members found.</Text>
+        )}
+      </VStack>
+    </Box>
   );
 }

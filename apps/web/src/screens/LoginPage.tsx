@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { supabase } from "../lib/supabaseClient";
 
 export default function LoginPage() {
@@ -67,56 +76,71 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-4 rounded-xl border p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Trackly Home</h1>
-            <p className="text-sm text-gray-600">Sign in to continue</p>
-          </div>
+    <Flex minH="100vh" align="center" justify="center" p={6}>
+      <Box
+        w="full"
+        maxW="md"
+        borderWidth={1}
+        borderRadius="xl"
+        p={6}
+      >
+        <VStack spacing={4} align="stretch">
+          <Flex alignItems="flex-start" justifyContent="space-between">
+            <Box>
+              <Heading size="xl">Trackly Home</Heading>
+              <Text fontSize="sm" color="gray.600">
+                Sign in to continue
+              </Text>
+            </Box>
 
-          {isAuthenticated && (
-            <button
-              onClick={handleSignOut}
-              className="rounded-lg border px-3 py-2 text-sm"
-            >
-              Sign out
-            </button>
+            {isAuthenticated && (
+              <Button size="sm" variant="outline" onClick={handleSignOut}>
+                Sign out
+              </Button>
+            )}
+          </Flex>
+
+          {error && (
+            <Text fontSize="sm" color="red.600">
+              {error}
+            </Text>
           )}
-        </div>
 
-        {error && <div className="text-sm text-red-600">{error}</div>}
+          <Button
+            w="full"
+            colorScheme="blackAlpha"
+            bg="black"
+            color="white"
+            onClick={signInWithGoogle}
+          >
+            Continue with Google
+          </Button>
 
-        <button
-          onClick={signInWithGoogle}
-          className="w-full rounded-lg bg-black px-4 py-2 text-white"
-        >
-          Continue with Google
-        </button>
+          <Text fontSize="xs" color="gray.500" textAlign="center">
+            or
+          </Text>
 
-        <div className="text-center text-xs text-gray-500">or</div>
+          <VStack as="form" spacing={3} onSubmit={sendMagicLink}>
+            <Input
+              type="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-        <form onSubmit={sendMagicLink} className="space-y-3">
-          <input
-            className="w-full rounded-lg border px-3 py-2"
-            type="email"
-            placeholder="you@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+            <Button w="full" variant="outline" type="submit">
+              Send magic link
+            </Button>
+          </VStack>
 
-          <button className="w-full rounded-lg border px-4 py-2" type="submit">
-            Send magic link
-          </button>
-        </form>
-
-        {sent && (
-          <div className="text-sm text-green-700">
-            Magic link sent. Check your email (or Mailpit/Inbucket if local).
-          </div>
-        )}
-      </div>
-    </div>
+          {sent && (
+            <Text fontSize="sm" color="green.700">
+              Magic link sent. Check your email (or Mailpit/Inbucket if local).
+            </Text>
+          )}
+        </VStack>
+      </Box>
+    </Flex>
   );
 }

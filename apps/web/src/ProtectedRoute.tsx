@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { Box, Text } from "@chakra-ui/react";
 import { supabase } from "./lib/supabaseClient";
 
 export default function ProtectedRoute({
@@ -32,7 +33,7 @@ export default function ProtectedRoute({
     };
   }, []);
 
-  if (!ready) return <div className="p-6">Loading…</div>;
+  if (!ready) return <Box p={6}><Text>Loading…</Text></Box>;
   if (!authed) {
     const next = encodeURIComponent(location.pathname + location.search);
     return <Navigate to={`/login?next=${next}`} replace />;

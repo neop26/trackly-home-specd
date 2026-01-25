@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Box, Text, VStack } from "@chakra-ui/react";
 import { supabase } from "../lib/supabaseClient";
 import { useLocation } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
@@ -54,8 +55,8 @@ export default function AppShell() {
     })();
   }, []);
 
-  if (loading) return <div className="p-6">Loading…</div>;
-  if (!ctx) return <div className="p-6">Loading…</div>;
+  if (loading) return <Box p={6}><Text>Loading…</Text></Box>;
+  if (!ctx) return <Box p={6}><Text>Loading…</Text></Box>;
 
   const subtitleLines = [
     displayName ? `Hi, ${displayName}` : "Hi",
@@ -65,23 +66,23 @@ export default function AppShell() {
   const isAdmin = ["owner", "admin"].includes(ctx.role);
 
   return (
-    <div className="p-6 space-y-6">
+    <VStack p={6} spacing={6} align="stretch">
       <AppHeader subtitleLines={subtitleLines} role={ctx.role} />
 
       {flags.joined && (
-        <div className="rounded-lg border p-4">
-          <div className="font-semibold">
+        <Box borderWidth={1} borderRadius="lg" p={4}>
+          <Text fontWeight="semibold">
             Welcome — you joined {ctx.householdName} ✅
-          </div>
-        </div>
+          </Text>
+        </Box>
       )}
 
       {flags.setup && isAdmin && (
-        <div className="rounded-lg border p-4">
-          <div className="font-semibold">
+        <Box borderWidth={1} borderRadius="lg" p={4}>
+          <Text fontWeight="semibold">
             Household setup complete ✅ (invite partner next)
-          </div>
-        </div>
+          </Text>
+        </Box>
       )}
 
       <InvitePartnerCard
@@ -95,9 +96,11 @@ export default function AppShell() {
         currentUserRole={ctx.role}
       />
 
-      <div className="rounded-lg border p-4 text-sm text-gray-700">
-        Planner comes next 🙂
-      </div>
-    </div>
+      <Box borderWidth={1} borderRadius="lg" p={4}>
+        <Text fontSize="sm" color="gray.700">
+          Planner comes next 🙂
+        </Text>
+      </Box>
+    </VStack>
   );
 }

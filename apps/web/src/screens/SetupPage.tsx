@@ -1,4 +1,14 @@
 import { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
@@ -50,39 +60,47 @@ export default function SetupPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <VStack p={6} spacing={6} align="stretch">
       <AppHeader />
 
-      <div className="max-w-lg rounded-xl border p-6 space-y-4">
-        <div>
-          <div className="text-lg font-semibold">Set up your household</div>
-          <div className="text-sm text-gray-600">
-            Create your home space to coordinate with your partner.
-          </div>
-        </div>
+      <Box maxW="lg" borderWidth={1} borderRadius="xl" p={6}>
+        <VStack spacing={4} align="stretch">
+          <Box>
+            <Heading size="md">Set up your household</Heading>
+            <Text fontSize="sm" color="gray.600">
+              Create your home space to coordinate with your partner.
+            </Text>
+          </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="household" className="text-sm font-medium">
-            Household name
-          </label>
-          <input
-            id="household"
-            className="w-full rounded-lg border px-3 py-2"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+          <FormControl>
+            <FormLabel htmlFor="household" fontSize="sm" fontWeight="medium">
+              Household name
+            </FormLabel>
+            <Input
+              id="household"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </FormControl>
 
-        {error && <div className="text-sm text-red-600">{error}</div>}
+          {error && (
+            <Text fontSize="sm" color="red.600">
+              {error}
+            </Text>
+          )}
 
-        <button
-          className="w-full rounded-lg bg-black px-4 py-2 text-white"
-          onClick={createHousehold}
-          disabled={busy}
-        >
-          {busy ? "Creating…" : "Create household"}
-        </button>
-      </div>
-    </div>
+          <Button
+            w="full"
+            colorScheme="blackAlpha"
+            bg="black"
+            color="white"
+            onClick={createHousehold}
+            isDisabled={busy}
+          >
+            {busy ? "Creating…" : "Create household"}
+          </Button>
+        </VStack>
+      </Box>
+    </VStack>
   );
 }
