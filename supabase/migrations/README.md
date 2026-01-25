@@ -12,7 +12,7 @@ Migrations are applied in timestamp order:
 6. `20260113000200_006_admin_only_invite_policies.sql` - **Phase 1**: Admin-only RLS policies
 7. `20260120090000_007_profiles_household_select.sql` - **Phase 1**: Household member profile visibility
 8. `20260120091000_008_transfer_household_ownership.sql` - **Phase 1**: Transfer ownership function
-9. `20260125021436_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies
+9. `20260125021436_009_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies
 
 ## Phase 1 Migrations (Roles & Invites)
 

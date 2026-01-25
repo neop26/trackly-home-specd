@@ -176,12 +176,19 @@ scripts/
 ```
 
 **Script Placement Rules**:
-- **Migration scripts ONLY**: `supabase/migrations/` - Timestamped migration files only (e.g., `20260125021436_tasks_table.sql`)
+- **Migration scripts ONLY**: `supabase/migrations/` - Timestamped migration files only (format: `YYYYMMDDHHMMSS_00X_description.sql`, e.g., `20260125021436_009_tasks_table.sql`)
 - **Test scripts**: `scripts/supabase/` - RLS tests, performance tests, data validation
 - **Data generation**: `scripts/supabase/` - Seed data, dummy data, test fixtures
 - **One-off utilities**: `scripts/supabase/` - Manual queries, cleanup scripts, investigation tools
 - **Azure operations**: `scripts/azure/` - Deployment, configuration, infrastructure
 - **GitHub automation**: `scripts/github/` - Repository setup, secrets management, OIDC
+
+**Migration Naming Convention**:
+- Format: `YYYYMMDDHHMMSS_00X_description.sql`
+- `YYYYMMDDHHMMSS`: Timestamp when migration was created
+- `00X`: Sequential 3-digit migration number with leading zeros (001, 002, 003, etc.)
+- `description`: Snake_case description of the migration purpose
+- Examples: `20260106203424_001_profiles.sql`, `20260125021436_009_tasks_table.sql`
 
 **Rationale**: Separating migrations from utility scripts ensures migration directories remain clean and only contain schema changes. This prevents confusion during deployment and makes it clear which files are automatically applied by migration tools versus which require manual execution.
 

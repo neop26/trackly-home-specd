@@ -99,7 +99,7 @@ When creating new Supabase utility scripts:
 
 ## Script Organization Rules (per Constitution v1.2.0)
 
-**Migration scripts ONLY**: `supabase/migrations/` - Timestamped migration files only (e.g., `20260125021436_tasks_table.sql`)
+**Migration scripts ONLY**: `supabase/migrations/` - Timestamped migration files only (format: `YYYYMMDDHHMMSS_00X_description.sql`, e.g., `20260125021436_009_tasks_table.sql`)
 
 **Everything else**: `scripts/supabase/`:
 - Test scripts (RLS tests, performance tests, data validation)

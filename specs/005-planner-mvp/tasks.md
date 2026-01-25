@@ -121,11 +121,11 @@
 
 ### Manual Testing
 
-- [ ] T043 [US1] Test: Empty state displays "No tasks yet" message when household has zero tasks
-- [ ] T044 [US1] Test: Task list displays all tasks for authenticated user's household
-- [ ] T045 [US1] Test: Cross-household isolation verified (user in household A sees zero tasks from household B)
-- [ ] T046 [US1] Test: Completed tasks visually distinct from incomplete tasks (strikethrough or different styling)
-- [ ] T047 [US1] Test: Task list renders within 2 seconds with 100 tasks (performance validation SC-001)
+- [X] T043 [US1] Test: Empty state displays "No tasks yet" message when household has zero tasks
+- [X] T044 [US1] Test: Task list displays all tasks for authenticated user's household
+- [X] T045 [US1] Test: Cross-household isolation verified (user in household A sees zero tasks from household B)
+- [X] T046 [US1] Test: Completed tasks visually distinct from incomplete tasks (strikethrough or different styling)
+- [X] T047 [US1] Test: Task list renders within 2 seconds with 100 tasks (performance validation SC-001)
 
 **Checkpoint**: User Story 1 complete - Task viewing functional, household isolation verified, ready for independent deployment
 
@@ -154,13 +154,13 @@
 
 ### Manual Testing
 
-- [ ] T054 [US2] Test: Task creation with valid title succeeds and appears in list immediately
-- [ ] T055 [US2] Test: Task creation with empty title shows validation error and does not create task
+- [X] T054 [US2] Test: Task creation with valid title succeeds and appears in list immediately
+- [X] T055 [US2] Test: Task creation with empty title shows validation error and does not create task
 - [ ] T056 [US2] Test: Task creation with 500-char title succeeds
 - [ ] T057 [US2] Test: Task creation with 501-char title blocked by database constraint
-- [ ] T058 [US2] Test: Form clears after successful task creation
-- [ ] T059 [US2] Test: Created task visible to other household members (test in second browser tab)
-- [ ] T060 [US2] Test: Task creation round-trip completes in under 1 second (performance validation SC-003)
+- [X] T058 [US2] Test: Form clears after successful task creation
+- [X] T059 [US2] Test: Created task visible to other household members (test in second browser tab)
+- [X] T060 [US2] Test: Task creation round-trip completes in under 1 second (performance validation SC-003)
 
 **Checkpoint**: User Story 2 complete - Task creation functional, validation working, ready for independent deployment
 
