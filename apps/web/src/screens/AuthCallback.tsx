@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { upsertProfile } from "../services/profile";
@@ -42,9 +43,9 @@ export default function AuthCallback() {
   }, [nav]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold">Signing you in…</h1>
-      {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
-    </div>
+    <Box p={6}>
+      <Heading size="lg">Signing you in…</Heading>
+      {error && <Text mt={3} fontSize="sm" color="red.600">{error}</Text>}
+    </Box>
   );
 }
