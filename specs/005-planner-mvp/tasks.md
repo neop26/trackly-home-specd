@@ -174,17 +174,17 @@
 
 ### Task Service Layer
 
-- [ ] T061 Implement toggleTaskStatus service function in apps/web/src/services/tasks.ts (update status field, toggle between 'incomplete' and 'complete')
+- [X] T061 Implement toggleTaskStatus service function in apps/web/src/services/tasks.ts (update status field, toggle between 'incomplete' and 'complete')
 
 ### UI Components
 
-- [ ] T062 [US3] Add checkbox toggle handler to TaskItem component in apps/web/src/components/TaskItem.tsx (call toggleTaskStatus, pass task id and current status)
-- [ ] T063 [US3] Update TaskItem visual styling in apps/web/src/components/TaskItem.tsx (strikethrough for complete, gray text for complete)
-- [ ] T064 [US3] Add optimistic UI update to TaskList component in apps/web/src/components/TaskList.tsx (update local state immediately, revert on error)
+- [X] T062 [US3] Add checkbox toggle handler to TaskItem component in apps/web/src/components/TaskItem.tsx (call toggleTaskStatus, pass task id and current status)
+- [X] T063 [US3] Update TaskItem visual styling in apps/web/src/components/TaskItem.tsx (strikethrough for complete, gray text for complete)
+- [X] T064 [US3] Add optimistic UI update to TaskList component in apps/web/src/components/TaskList.tsx (update local state immediately, revert on error)
 
 ### Integration
 
-- [ ] T065 [US3] Wire toggleTaskStatus callback through TasksScreen to TaskItem in apps/web/src/screens/TasksScreen.tsx
+- [X] T065 [US3] Wire toggleTaskStatus callback through TasksScreen to TaskItem in apps/web/src/screens/TasksScreen.tsx
 
 ### Manual Testing
 
