@@ -9,10 +9,19 @@ type Props = {
 export default function TaskItem({ task, onToggle }: Props) {
   const isComplete = task.status === "complete";
 
+  // Check if task is overdue: has due date, not complete, and date is in the past
+  const isOverdue = !isComplete && task.due_date && new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0));
+
   const handleCheckboxChange = () => {
     if (onToggle) {
       onToggle(task.id, isComplete ? "incomplete" : "complete");
     }
+  };
+
+  // Format due date for display
+  const formatDueDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   return (
@@ -25,6 +34,7 @@ export default function TaskItem({ task, onToggle }: Props) {
       gap={3}
       bg={isComplete ? "gray.50" : "white"}
       opacity={isComplete ? 0.7 : 1}
+      borderColor={isOverdue ? "red.300" : "gray.200"}
     >
       <Checkbox
         isChecked={isComplete}
@@ -43,6 +53,18 @@ export default function TaskItem({ task, onToggle }: Props) {
         {task.assigned_to_name && (
           <Text fontSize="sm" color="gray.500" mt={1}>
             Assigned to: {task.assigned_to_name}
+          </Text>
+        )}
+        {task.due_date && (
+          <Text 
+            fontSize="sm" 
+            color={isOverdue ? "red.600" : "gray.500"} 
+            mt={1}
+            fontWeight={isOverdue ? "semibold" : "normal"}
+          >
+            {isOverdue && "⚠️ "}
+            Due: {formatDueDate(task.due_date)}
+            {isOverdue && " (Overdue)"}
           </Text>
         )}
       </Box>

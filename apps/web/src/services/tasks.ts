@@ -48,13 +48,15 @@ export async function getTasks(householdId: string): Promise<Task[]> {
  * @param householdId - UUID of the household
  * @param title - Task description (1-500 characters)
  * @param assignedTo - Optional UUID of household member to assign task to
+ * @param dueDate - Optional due date in YYYY-MM-DD format
  * @returns Created task object
  * @throws Error if creation fails or validation fails
  */
 export async function createTask(
   householdId: string,
   title: string,
-  assignedTo?: string | null
+  assignedTo?: string | null,
+  dueDate?: string | null
 ): Promise<Task> {
   // Frontend validation (database also enforces)
   if (!title || title.trim().length === 0) {
@@ -72,6 +74,7 @@ export async function createTask(
       title: title.trim(),
       status: "incomplete",
       assigned_to: assignedTo || null,
+      due_date: dueDate || null,
     })
     .select(`
       *,

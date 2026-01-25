@@ -30,8 +30,8 @@ export default function TasksScreen({ householdId }: Props) {
     }
   }
 
-  async function handleAddTask(title: string, assignedTo?: string | null) {
-    const newTask = await createTask(householdId, title, assignedTo);
+  async function handleAddTask(title: string, assignedTo?: string | null, dueDate?: string | null) {
+    const newTask = await createTask(householdId, title, assignedTo, dueDate);
 
     // Optimistic update - add new task to top of list
     setTasks((prev) => [newTask, ...prev]);

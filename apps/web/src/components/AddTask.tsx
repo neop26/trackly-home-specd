@@ -14,12 +14,13 @@ import { useHouseholdMembers } from "../services/members";
 
 type Props = {
   householdId: string;
-  onAddTask: (title: string, assignedTo?: string | null) => Promise<void>;
+  onAddTask: (title: string, assignedTo?: string | null, dueDate?: string | null) => Promise<void>;
 };
 
 export default function AddTask({ householdId, onAddTask }: Props) {
   const [title, setTitle] = useState("");
   const [assignedTo, setAssignedTo] = useState<string>("");
+  const [dueDate, setDueDate] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
 
@@ -52,11 +53,12 @@ export default function AddTask({ householdId, onAddTask }: Props) {
 
     try {
       setSubmitting(true);
-      await onAddTask(trimmed, assignedTo || null);
+      await onAddTask(trimmed, assignedTo || null, dueDate || null);
 
       // Clear form on success
       setTitle("");
       setAssignedTo("");
+      setDueDate("");
 
       toast({
         title: "Task created",
@@ -98,22 +100,36 @@ export default function AddTask({ householdId, onAddTask }: Props) {
           <FormLabel htmlFor="task-assignee" fontSize="sm" fontWeight="medium">
             Assign To (Optional)
           </FormLabel>
+          <Select
+            id="task-assignee"
+            placeholder="Unassigned"
+            value={assignedTo}
+            onChange={(e) => setAssignedTo(e.target.value)}
+            isDisabled={submitting || membersLoading}
+            size="md"
+          >
+            {members.map((member) => (
+              <option key={member.user_id} value={member.user_id}>
+                {member.profile?.display_name || "Unknown"}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel htmlFor="task-due-date" fontSize="sm" fontWeight="medium">
+            Due Date (Optional)
+          </FormLabel>
           <HStack spacing={2}>
-            <Select
-              id="task-assignee"
-              placeholder="Unassigned"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-              isDisabled={submitting || membersLoading}
+            <Input
+              id="task-due-date"
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              isDisabled={submitting}
               size="md"
               flex={1}
-            >
-              {members.map((member) => (
-                <option key={member.user_id} value={member.user_id}>
-                  {member.profile?.display_name || "Unknown"}
-                </option>
-              ))}
-            </Select>
+            />
             <Button
               type="submit"
               colorScheme="blue"

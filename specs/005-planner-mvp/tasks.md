@@ -237,14 +237,14 @@
 
 ### Service Layer Enhancement
 
-- [ ] T083 [US5] Update createTask function signature in apps/web/src/services/tasks.ts to accept optional dueDate parameter
+- [X] T083 [US5] Update createTask function signature in apps/web/src/services/tasks.ts to accept optional dueDate parameter
 
 ### UI Components
 
-- [ ] T084 [P] [US5] Add due date picker to AddTask component in apps/web/src/components/AddTask.tsx (Input type="date" or Chakra DatePicker)
-- [ ] T085 [P] [US5] Update TaskItem component to display due date in apps/web/src/components/TaskItem.tsx (formatted date string)
-- [ ] T086 [P] [US5] Add overdue visual indicator to TaskItem component in apps/web/src/components/TaskItem.tsx (red text or warning icon if due_date < today and status incomplete)
-- [ ] T087 [US5] Wire due date selection through TasksScreen to createTask call in apps/web/src/screens/TasksScreen.tsx
+- [X] T084 [P] [US5] Add due date picker to AddTask component in apps/web/src/components/AddTask.tsx (Input type="date" or Chakra DatePicker)
+- [X] T085 [P] [US5] Update TaskItem component to display due date in apps/web/src/components/TaskItem.tsx (formatted date string)
+- [X] T086 [P] [US5] Add overdue visual indicator to TaskItem component in apps/web/src/components/TaskItem.tsx (red text or warning icon if due_date < today and status incomplete)
+- [X] T087 [US5] Wire due date selection through TasksScreen to createTask call in apps/web/src/screens/TasksScreen.tsx
 
 ### Manual Testing
 
