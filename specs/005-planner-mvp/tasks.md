@@ -106,18 +106,18 @@
 
 ### Task Service Layer
 
-- [ ] T037 Create Task TypeScript interface in apps/web/src/services/tasks.ts (id, household_id, title, status, assigned_to, due_date, created_at, updated_at)
-- [ ] T038 Implement getTasks service function in apps/web/src/services/tasks.ts (Supabase query with household_id filter, ordered by created_at DESC)
+- [X] T037 Create Task TypeScript interface in apps/web/src/services/tasks.ts (id, household_id, title, status, assigned_to, due_date, created_at, updated_at)
+- [X] T038 Implement getTasks service function in apps/web/src/services/tasks.ts (Supabase query with household_id filter, ordered by created_at DESC)
 
 ### UI Components
 
-- [ ] T039 [P] [US1] Create TaskItem component in apps/web/src/components/TaskItem.tsx (display single task with checkbox, title, visual completion indicator)
-- [ ] T040 [P] [US1] Create TaskList component in apps/web/src/components/TaskList.tsx (map tasks array to TaskItem components, handle empty state)
-- [ ] T041 [US1] Create TasksScreen container in apps/web/src/screens/TasksScreen.tsx (fetch tasks on mount, pass to TaskList, manage loading state)
+- [X] T039 [P] [US1] Create TaskItem component in apps/web/src/components/TaskItem.tsx (display single task with checkbox, title, visual completion indicator)
+- [X] T040 [P] [US1] Create TaskList component in apps/web/src/components/TaskList.tsx (map tasks array to TaskItem components, handle empty state)
+- [X] T041 [US1] Create TasksScreen container in apps/web/src/screens/TasksScreen.tsx (fetch tasks on mount, pass to TaskList, manage loading state)
 
 ### Integration
 
-- [ ] T042 [US1] Integrate TasksScreen into AppShell in apps/web/src/screens/AppShell.tsx (replace placeholder content with TasksScreen, pass household_id prop)
+- [X] T042 [US1] Integrate TasksScreen into AppShell in apps/web/src/screens/AppShell.tsx (replace placeholder content with TasksScreen, pass household_id prop)
 
 ### Manual Testing
 
@@ -139,18 +139,18 @@
 
 ### Task Service Layer
 
-- [ ] T048 Implement createTask service function in apps/web/src/services/tasks.ts (insert task with household_id, title, default status 'incomplete')
+- [X] T048 Implement createTask service function in apps/web/src/services/tasks.ts (insert task with household_id, title, default status 'incomplete')
 
 ### UI Components
 
-- [ ] T049 [US2] Create AddTask component in apps/web/src/components/AddTask.tsx (input field for title, submit button, form validation)
-- [ ] T050 [US2] Add form validation in AddTask component (title required, 1-500 chars, display error toast for empty title)
-- [ ] T051 [US2] Implement form submission handler in AddTask component (call createTask service, clear form on success, show success toast)
+- [X] T049 [US2] Create AddTask component in apps/web/src/components/AddTask.tsx (input field for title, submit button, form validation)
+- [X] T050 [US2] Add form validation in AddTask component (title required, 1-500 chars, display error toast for empty title)
+- [X] T051 [US2] Implement form submission handler in AddTask component (call createTask service, clear form on success, show success toast)
 
 ### Integration
 
-- [ ] T052 [US2] Integrate AddTask into TasksScreen in apps/web/src/screens/TasksScreen.tsx (place above TaskList, pass onAddTask callback)
-- [ ] T053 [US2] Update TasksScreen to refresh task list after creation (optimistic UI update or re-fetch)
+- [X] T052 [US2] Integrate AddTask into TasksScreen in apps/web/src/screens/TasksScreen.tsx (place above TaskList, pass onAddTask callback)
+- [X] T053 [US2] Update TasksScreen to refresh task list after creation (optimistic UI update or re-fetch)
 
 ### Manual Testing
 
