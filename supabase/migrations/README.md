@@ -11,6 +11,8 @@ Migrations are applied in timestamp order:
 5. `20260113000100_005_admin_role_and_helpers.sql` - **Phase 1**: Role enum, helper functions
 6. `20260113000200_006_admin_only_invite_policies.sql` - **Phase 1**: Admin-only RLS policies
 7. `20260120090000_007_profiles_household_select.sql` - **Phase 1**: Household member profile visibility
+8. `20260120091000_008_transfer_household_ownership.sql` - **Phase 1**: Transfer ownership function
+9. `20260125021436_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies
 
 ## Phase 1 Migrations (Roles & Invites)
 
@@ -36,6 +38,31 @@ Expands profile visibility:
 
 - Allows authenticated household members to read `display_name` for other members in the same household
 - Keeps self-select access intact
+
+### 009_tasks_table.sql (Phase 5 - Planner MVP)
+
+Creates household task management foundation:
+
+**Table**: `tasks`
+- `id` (uuid, PK): Unique task identifier
+- `household_id` (uuid, FK → households): Household isolation key (NOT NULL, cascade delete)
+- `title` (text, 1-500 chars): Task description (NOT NULL)
+- `status` (text): 'incomplete' or 'complete' (NOT NULL, default 'incomplete')
+- `assigned_to` (uuid, FK → profiles): Optional assignment (nullable, set null on delete)
+- `due_date` (date): Optional due date
+- `created_at`, `updated_at` (timestamptz): Audit trail (auto-updated via trigger)
+
+**Indexes**:
+- `tasks_household_id_idx`: Primary query pattern (fetch all household tasks)
+- `tasks_assigned_to_idx`: Secondary query pattern (fetch tasks assigned to user)
+
+**RLS Policies** (member-level access, no admin restrictions):
+- `tasks_select_members`: Members can read their household's tasks
+- `tasks_insert_members`: Members can create tasks for their household
+- `tasks_update_members`: Members can update their household's tasks
+- `tasks_delete_members`: Members can delete their household's tasks
+
+**Security Model**: All household members have equal access to tasks (no admin-only restrictions). Household isolation enforced via `EXISTS` check on `household_members` table.
 
 ## Applying Migrations
 
@@ -438,6 +465,47 @@ UPDATE public.household_members
 SET role = 'member'
 WHERE user_id = '<last-admin-user>' AND household_id = '<household-id>';
 -- Expected: ERROR - Cannot demote the last admin in household
+```
+
+---
+
+### Table: `tasks`
+
+**RLS Status**: ✅ Enabled
+
+**Policies**:
+
+| Policy Name | Operation | Rule | Source |
+|-------------|-----------|------|--------|
+| `tasks_select_members` | SELECT | `is_household_member(household_id)` | Migration 009 |
+| `tasks_insert_members` | INSERT | `is_household_member(household_id)` | Migration 009 |
+| `tasks_update_members` | UPDATE | `is_household_member(household_id)` | Migration 009 |
+| `tasks_delete_members` | DELETE | `is_household_member(household_id)` | Migration 009 |
+
+**Security Guarantees**:
+- Users can only access tasks from their own household
+- Users CANNOT see or modify tasks from other households
+- All members have equal access (no admin restrictions on tasks)
+- Household isolation enforced via `EXISTS` clause on `household_members`
+
+**Performance**: Uses `tasks_household_id_idx` index for efficient household filtering
+
+**Test Query - Cross-Household Blocked**:
+```sql
+-- Should return 0 rows
+SET LOCAL role TO 'authenticated';
+SET LOCAL request.jwt.claims.sub TO '<user-in-hh1>';
+SELECT * FROM public.tasks WHERE household_id = '<hh2-id>';
+```
+
+**Test Query - Write Blocked**:
+```sql
+-- Should fail with RLS violation
+SET LOCAL role TO 'authenticated';
+SET LOCAL request.jwt.claims.sub TO '<user-in-hh1>';
+INSERT INTO public.tasks (household_id, title, status)
+VALUES ('<hh2-id>', 'Cross-household task', 'incomplete');
+-- Expected: ERROR - new row violates row-level security policy
 ```
 
 ---
