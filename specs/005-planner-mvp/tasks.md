@@ -188,12 +188,12 @@
 
 ### Manual Testing
 
-- [ ] T066 [US3] Test: Marking task complete updates status and shows visual indication (strikethrough, checkmark)
-- [ ] T067 [US3] Test: Marking task incomplete reverts visual styling (remove strikethrough)
-- [ ] T068 [US3] Test: Toggle behavior works repeatedly (complete → incomplete → complete)
-- [ ] T069 [US3] Test: Status change persists after page reload
-- [ ] T070 [US3] Test: Status change visible to other household members within 2 seconds (test in second browser tab, performance validation SC-004)
-- [ ] T071 [US3] Test: Concurrent status updates handled gracefully (two members toggle same task simultaneously)
+- [X] T066 [US3] Test: Marking task complete updates status and shows visual indication (strikethrough, checkmark)
+- [X] T067 [US3] Test: Marking task incomplete reverts visual styling (remove strikethrough)
+- [X] T068 [US3] Test: Toggle behavior works repeatedly (complete → incomplete → complete)
+- [X] T069 [US3] Test: Status change persists after page reload
+- [X] T070 [US3] Test: Status change visible to other household members within 2 seconds (test in second browser tab, performance validation SC-004)
+- [X] T071 [US3] Test: Concurrent status updates handled gracefully (two members toggle same task simultaneously)
 
 **Checkpoint**: User Story 3 complete - Task completion functional, MVP core features (view/create/complete) ready for deployment
 

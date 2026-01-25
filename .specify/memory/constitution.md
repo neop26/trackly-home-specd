@@ -1,12 +1,27 @@
 <!--
 Sync Impact Report (2026-01-26):
 
+Version Change: 1.2.0 → 1.2.1
+Reason: Clarified deployment process with three-tier promotion workflow (local → staging → production). PATCH version as this refines existing deployment guidance without adding new principles.
+
+Modified Sections:
+  - Deployment Process - Expanded with three-tier workflow and quality gates
+
+Templates Status:
+  ✅ All existing templates remain compliant
+
+Follow-up Actions:
+  - None: Clarification of existing deployment workflow
+
+Previous Changes (2026-01-26):
+
 Version Change: 1.1.0 → 1.2.0
 Reason: Added script organization standards to enforce separation of migrations from utility/test scripts. MINOR version as this adds new structural guidance without changing existing principles.
 
 Added Sections:
   - Script Organization - Mandatory structure for organizing scripts by function (azure/, github/, supabase/)
   - Script Placement Rules - Clear rules for where different script types belong
+  - Migration Naming Convention - Formal standard for migration file naming
 
 Modified Sections:
   - Development Workflow - Added Script Organization section before Branching Strategy
@@ -224,10 +239,44 @@ Every PR MUST satisfy:
 - [ ] Security checklist completed (per Principle I)
 
 ### Deployment Process
-- **Dev environment**: Automatic on push to `dev` branch
-- **Production**: Manual workflow dispatch (future) with approval gate
-- Pre-deployment: All tests passing, manual smoke test complete, security review, documentation updated, tracker updated
-- Post-deployment: Site loads without errors, login flow works, console clean, Supabase logs clean
+
+**Deployment Strategy**: Each specification follows a three-tier promotion workflow ensuring quality at every stage.
+
+**Tier 1 - Local Development**:
+- All implementation MUST be completed and tested locally first
+- All spec tasks MUST be validated and marked complete
+- Manual smoke tests MUST pass for all features
+- Build and lint checks MUST pass (`npm run build`, `npm run lint`)
+- RLS policies MUST be tested with SQL queries (if changed)
+- Database migrations MUST be validated locally
+- No code moves to Azure until spec is fully complete locally
+
+**Tier 2 - Staging (Azure Dev)**:
+- Promoted ONLY after local testing is 100% complete
+- Full validation in staging environment matching production
+- Cross-browser testing
+- Performance validation under realistic conditions
+- Security review and RLS audit
+- Integration testing with production-like data
+- Bug fixes applied and re-validated in staging
+
+**Tier 3 - Production (Azure Prod)**:
+- Promoted ONLY after staging validation is 100% complete
+- Manual approval gate required
+- Deployment during low-traffic window
+- Post-deployment validation checklist
+- Rollback plan prepared and tested
+- Monitoring and alerts configured
+
+**Rationale**: The three-tier workflow prevents issues from reaching production by catching them early in local development. Each tier acts as a quality gate, ensuring features are thoroughly validated before promotion. This staged approach reduces risk and enables rapid rollback if issues are discovered.
+
+**Pre-deployment Requirements** (per tier):
+- Local → Staging: All spec tasks complete, manual tests passing, documentation updated
+- Staging → Production: All staging tests passing, security review complete, approval obtained
+
+**Post-deployment Validation** (per tier):
+- Staging: Site loads, login flow works, console clean, Supabase logs clean, feature smoke test
+- Production: Same as staging plus monitoring alerts configured and baseline metrics captured
 
 ## Governance
 
@@ -306,4 +355,4 @@ Documents MUST be routed based on their purpose and longevity:
 
 **Rationale**: Different document types have different lifecycles. Permanent docs need version control and maintenance, while working docs are temporary and shouldn't clutter the main documentation structure.
 
-**Version**: 1.2.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-26
+**Version**: 1.2.1 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-26
