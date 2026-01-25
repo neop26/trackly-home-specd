@@ -66,33 +66,33 @@
 
 ### Database Schema
 
-- [ ] T019 Create migration file: npx supabase migration new tasks_table (creates supabase/migrations/[timestamp]_009_tasks_table.sql)
-- [ ] T020 Define tasks table schema in migration file (id, household_id, title, status, assigned_to, due_date, created_at, updated_at with constraints)
-- [ ] T021 Add indexes in migration file (tasks_household_id_idx, tasks_assigned_to_idx)
-- [ ] T022 Add updated_at trigger in migration file (set_tasks_updated_at using moddatetime extension)
-- [ ] T023 Enable RLS on tasks table in migration file
+- [X] T019 Create migration file: npx supabase migration new tasks_table (creates supabase/migrations/[timestamp]_009_tasks_table.sql)
+- [X] T020 Define tasks table schema in migration file (id, household_id, title, status, assigned_to, due_date, created_at, updated_at with constraints)
+- [X] T021 Add indexes in migration file (tasks_household_id_idx, tasks_assigned_to_idx)
+- [X] T022 Add updated_at trigger in migration file (set_tasks_updated_at using moddatetime extension)
+- [X] T023 Enable RLS on tasks table in migration file
 
 ### RLS Policies
 
-- [ ] T024 [P] Create tasks_select_members policy in migration file (members can read their household's tasks)
-- [ ] T025 [P] Create tasks_insert_members policy in migration file (members can create tasks for their household)
-- [ ] T026 [P] Create tasks_update_members policy in migration file (members can update their household's tasks)
-- [ ] T027 [P] Create tasks_delete_members policy in migration file (members can delete their household's tasks)
+- [X] T024 [P] Create tasks_select_members policy in migration file (members can read their household's tasks)
+- [X] T025 [P] Create tasks_insert_members policy in migration file (members can create tasks for their household)
+- [X] T026 [P] Create tasks_update_members policy in migration file (members can update their household's tasks)
+- [X] T027 [P] Create tasks_delete_members policy in migration file (members can delete their household's tasks)
 
 ### Migration Application & Validation
 
-- [ ] T028 Apply migration locally: npx supabase db reset
-- [ ] T029 Verify tasks table created correctly: query information_schema.tables
-- [ ] T030 Test RLS policy: Cross-household SELECT blocked (user A cannot see household B tasks)
-- [ ] T031 Test RLS policy: Same-household SELECT allowed (user A can see household A tasks)
-- [ ] T032 Test RLS policy: Cross-household INSERT blocked (user A cannot create task for household B)
-- [ ] T033 Test RLS policy: Same-household INSERT allowed (user A can create task for household A)
-- [ ] T034 Test RLS policy: Cross-household UPDATE blocked (user A cannot update household B tasks)
-- [ ] T035 Test RLS policy: Cross-household DELETE blocked (user A cannot delete household B tasks)
+- [X] T028 Apply migration locally: npx supabase db reset
+- [X] T029 Verify tasks table created correctly: query information_schema.tables
+- [X] T030 Test RLS policy: Cross-household SELECT blocked (user A cannot see household B tasks)
+- [X] T031 Test RLS policy: Same-household SELECT allowed (user A can see household A tasks)
+- [X] T032 Test RLS policy: Cross-household INSERT blocked (user A cannot create task for household B)
+- [X] T033 Test RLS policy: Same-household INSERT allowed (user A can create task for household A)
+- [X] T034 Test RLS policy: Cross-household UPDATE blocked (user A cannot update household B tasks)
+- [X] T035 Test RLS policy: Cross-household DELETE blocked (user A cannot delete household B tasks)
 
 ### Documentation
 
-- [ ] T036 Update supabase/migrations/README.md with tasks table documentation (schema, RLS policies, migration number)
+- [X] T036 Update supabase/migrations/README.md with tasks table documentation (schema, RLS policies, migration number)
 
 **Checkpoint**: Foundation ready - database schema complete, RLS verified, user story implementation can now begin in parallel
 

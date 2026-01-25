@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import InvitePartnerCard from "../components/InvitePartnerCard";
 import ManageRolesCard from "../components/ManageRolesCard";
+import TasksScreen from "./TasksScreen";
 import {
   getHouseholdForUser,
   type HouseholdContext,
@@ -96,11 +97,7 @@ export default function AppShell() {
         currentUserRole={ctx.role}
       />
 
-      <Box borderWidth={1} borderRadius="lg" p={4}>
-        <Text fontSize="sm" color="gray.700">
-          Planner comes next 🙂
-        </Text>
-      </Box>
+      <TasksScreen householdId={ctx.householdId} />
     </VStack>
   );
 }
