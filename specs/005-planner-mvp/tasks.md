@@ -29,30 +29,30 @@
 
 ### Dependency Installation & Configuration
 
-- [ ] T001 Install Chakra UI dependencies in apps/web/package.json (@chakra-ui/react@^2.8.2, @emotion/react@^11.11.3, @emotion/styled@^11.11.0, framer-motion@^10.18.0)
-- [ ] T002 Remove Tailwind CSS dependencies from apps/web/package.json (@tailwindcss/vite, tailwindcss)
-- [ ] T003 Create Chakra UI theme configuration in apps/web/src/theme.ts (brand colors, fonts)
-- [ ] T004 Update apps/web/src/App.tsx to wrap with ChakraProvider and apply theme
-- [ ] T005 Delete apps/web/src/index.css (Tailwind directives file)
-- [ ] T006 Remove Tailwind CSS import from apps/web/src/main.tsx
+- [X] T001 Install Chakra UI dependencies in apps/web/package.json (@chakra-ui/react@^2.8.2, @emotion/react@^11.11.3, @emotion/styled@^11.11.0, framer-motion@^10.18.0)
+- [X] T002 Remove Tailwind CSS dependencies from apps/web/package.json (@tailwindcss/vite, tailwindcss)
+- [X] T003 Create Chakra UI theme configuration in apps/web/src/theme.ts (brand colors, fonts)
+- [X] T004 Update apps/web/src/App.tsx to wrap with ChakraProvider and apply theme
+- [X] T005 Delete apps/web/src/index.css (Tailwind directives file)
+- [X] T006 Remove Tailwind CSS import from apps/web/src/main.tsx
 
 ### Component Migration
 
-- [ ] T007 [P] Migrate AppHeader component to Chakra UI in apps/web/src/components/AppHeader.tsx (replace Tailwind with Flex, Heading, Button)
-- [ ] T008 [P] Migrate ProtectedRoute component to Chakra UI in apps/web/src/ProtectedRoute.tsx (minimal styling changes)
-- [ ] T009 [P] Migrate LoginPage to Chakra UI in apps/web/src/screens/LoginPage.tsx (replace Tailwind with Box, Input, Button, Heading)
-- [ ] T010 [P] Migrate SetupPage to Chakra UI in apps/web/src/screens/SetupPage.tsx (replace Tailwind with Box, Input, Button, FormControl)
-- [ ] T011 [P] Migrate JoinPage to Chakra UI in apps/web/src/screens/JoinPage.tsx (replace Tailwind with Box, Input, Button, Text)
-- [ ] T012 Migrate InvitePartnerCard to Chakra UI in apps/web/src/components/InvitePartnerCard.tsx (replace Tailwind with Card, Input, Button, FormControl)
-- [ ] T013 Migrate ManageRolesCard to Chakra UI in apps/web/src/components/ManageRolesCard.tsx (replace Tailwind with Card, Select, Button)
-- [ ] T014 Migrate AppShell to Chakra UI in apps/web/src/screens/AppShell.tsx (replace Tailwind with Box, Container, VStack)
+- [X] T007 [P] Migrate AppHeader component to Chakra UI in apps/web/src/components/AppHeader.tsx (replace Tailwind with Flex, Heading, Button)
+- [X] T008 [P] Migrate ProtectedRoute component to Chakra UI in apps/web/src/ProtectedRoute.tsx (minimal styling changes)
+- [X] T009 [P] Migrate LoginPage to Chakra UI in apps/web/src/screens/LoginPage.tsx (replace Tailwind with Box, Input, Button, Heading)
+- [X] T010 [P] Migrate SetupPage to Chakra UI in apps/web/src/screens/SetupPage.tsx (replace Tailwind with Box, Input, Button, FormControl)
+- [X] T011 [P] Migrate JoinPage to Chakra UI in apps/web/src/screens/JoinPage.tsx (replace Tailwind with Box, Input, Button, Text)
+- [X] T012 Migrate InvitePartnerCard to Chakra UI in apps/web/src/components/InvitePartnerCard.tsx (replace Tailwind with Card, Input, Button, FormControl)
+- [X] T013 Migrate ManageRolesCard to Chakra UI in apps/web/src/components/ManageRolesCard.tsx (replace Tailwind with Card, Select, Button)
+- [X] T014 Migrate AppShell to Chakra UI in apps/web/src/screens/AppShell.tsx (replace Tailwind with Box, Container, VStack)
 
 ### Migration Validation
 
-- [ ] T015 Run build validation: npm run build succeeds without errors
-- [ ] T016 Run lint validation: npm run lint passes without warnings
-- [ ] T017 Visual regression test: All existing pages render correctly (Login, Setup, Join, AppShell)
-- [ ] T018 Verify no Tailwind classes remain in codebase (grep search for bg-, text-, p-, m-, flex, grid classes)
+- [X] T015 Run build validation: npm run build succeeds without errors
+- [X] T016 Run lint validation: npm run lint passes without warnings
+- [X] T017 Visual regression test: All existing pages render correctly (Login, Setup, Join, AppShell)
+- [X] T018 Verify no Tailwind classes remain in codebase (grep search for bg-, text-, p-, m-, flex, grid classes)
 
 **Checkpoint**: Phase 0 complete - all components migrated to Chakra UI, builds passing, visual validation complete
 
