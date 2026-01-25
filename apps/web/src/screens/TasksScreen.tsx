@@ -30,8 +30,8 @@ export default function TasksScreen({ householdId }: Props) {
     }
   }
 
-  async function handleAddTask(title: string) {
-    const newTask = await createTask(householdId, title);
+  async function handleAddTask(title: string, assignedTo?: string | null) {
+    const newTask = await createTask(householdId, title, assignedTo);
 
     // Optimistic update - add new task to top of list
     setTasks((prev) => [newTask, ...prev]);
@@ -82,7 +82,7 @@ export default function TasksScreen({ householdId }: Props) {
         </Text>
       </Box>
 
-      <AddTask onAddTask={handleAddTask} />
+      <AddTask householdId={householdId} onAddTask={handleAddTask} />
 
       <TaskList tasks={tasks} onToggleTask={handleToggleTask} />
     </VStack>

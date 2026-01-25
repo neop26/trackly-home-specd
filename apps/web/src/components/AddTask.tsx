@@ -5,18 +5,25 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   HStack,
+  VStack,
   useToast,
 } from "@chakra-ui/react";
+import { useHouseholdMembers } from "../services/members";
 
 type Props = {
-  onAddTask: (title: string) => Promise<void>;
+  householdId: string;
+  onAddTask: (title: string, assignedTo?: string | null) => Promise<void>;
 };
 
-export default function AddTask({ onAddTask }: Props) {
+export default function AddTask({ householdId, onAddTask }: Props) {
   const [title, setTitle] = useState("");
+  const [assignedTo, setAssignedTo] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
+
+  const { members, loading: membersLoading } = useHouseholdMembers(householdId);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,10 +52,11 @@ export default function AddTask({ onAddTask }: Props) {
 
     try {
       setSubmitting(true);
-      await onAddTask(trimmed);
+      await onAddTask(trimmed, assignedTo || null);
 
       // Clear form on success
       setTitle("");
+      setAssignedTo("");
 
       toast({
         title: "Task created",
@@ -71,11 +79,11 @@ export default function AddTask({ onAddTask }: Props) {
 
   return (
     <Box as="form" onSubmit={handleSubmit}>
-      <FormControl>
-        <FormLabel htmlFor="task-title" fontSize="sm" fontWeight="medium">
-          New Task
-        </FormLabel>
-        <HStack spacing={2}>
+      <VStack spacing={3} align="stretch">
+        <FormControl>
+          <FormLabel htmlFor="task-title" fontSize="sm" fontWeight="medium">
+            New Task
+          </FormLabel>
           <Input
             id="task-title"
             placeholder="What needs to be done?"
@@ -84,17 +92,40 @@ export default function AddTask({ onAddTask }: Props) {
             isDisabled={submitting}
             size="md"
           />
-          <Button
-            type="submit"
-            colorScheme="blue"
-            isLoading={submitting}
-            loadingText="Adding..."
-            size="md"
-          >
-            Add Task
-          </Button>
-        </HStack>
-      </FormControl>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel htmlFor="task-assignee" fontSize="sm" fontWeight="medium">
+            Assign To (Optional)
+          </FormLabel>
+          <HStack spacing={2}>
+            <Select
+              id="task-assignee"
+              placeholder="Unassigned"
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+              isDisabled={submitting || membersLoading}
+              size="md"
+              flex={1}
+            >
+              {members.map((member) => (
+                <option key={member.user_id} value={member.user_id}>
+                  {member.profile?.display_name || "Unknown"}
+                </option>
+              ))}
+            </Select>
+            <Button
+              type="submit"
+              colorScheme="blue"
+              isLoading={submitting}
+              loadingText="Adding..."
+              size="md"
+            >
+              Add Task
+            </Button>
+          </HStack>
+        </FormControl>
+      </VStack>
     </Box>
   );
 }

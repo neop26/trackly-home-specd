@@ -32,14 +32,20 @@ export default function TaskItem({ task, onToggle }: Props) {
         colorScheme="blue"
         size="lg"
       />
-      <Text
-        flex={1}
-        textDecoration={isComplete ? "line-through" : "none"}
-        color={isComplete ? "gray.600" : "gray.800"}
-        fontSize="md"
-      >
-        {task.title}
-      </Text>
+      <Box flex={1}>
+        <Text
+          textDecoration={isComplete ? "line-through" : "none"}
+          color={isComplete ? "gray.600" : "gray.800"}
+          fontSize="md"
+        >
+          {task.title}
+        </Text>
+        {task.assigned_to_name && (
+          <Text fontSize="sm" color="gray.500" mt={1}>
+            Assigned to: {task.assigned_to_name}
+          </Text>
+        )}
+      </Box>
     </Box>
   );
 }

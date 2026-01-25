@@ -207,15 +207,15 @@
 
 ### Service Layer Enhancement
 
-- [ ] T072 [US4] Update createTask function signature in apps/web/src/services/tasks.ts to accept optional assignedTo parameter
-- [ ] T073 [US4] Create getHouseholdMembers service function in apps/web/src/services/members.ts (fetch all members for dropdown, reuse existing service if available)
-- [ ] T074 [US4] Update Task interface in apps/web/src/services/tasks.ts to include assigned_to_name for display (join with profiles table or fetch separately)
+- [X] T072 [US4] Update createTask function signature in apps/web/src/services/tasks.ts to accept optional assignedTo parameter
+- [X] T073 [US4] Create getHouseholdMembers service function in apps/web/src/services/members.ts (fetch all members for dropdown, reuse existing service if available)
+- [X] T074 [US4] Update Task interface in apps/web/src/services/tasks.ts to include assigned_to_name for display (join with profiles table or fetch separately)
 
 ### UI Components
 
-- [ ] T075 [P] [US4] Add assignment dropdown to AddTask component in apps/web/src/components/AddTask.tsx (Select component with household members, "Unassigned" option)
-- [ ] T076 [P] [US4] Update TaskItem component to display assignee name in apps/web/src/components/TaskItem.tsx (show assignee or "Unassigned")
-- [ ] T077 [US4] Wire assignment selection through TasksScreen to createTask call in apps/web/src/screens/TasksScreen.tsx
+- [X] T075 [P] [US4] Add assignment dropdown to AddTask component in apps/web/src/components/AddTask.tsx (Select component with household members, "Unassigned" option)
+- [X] T076 [P] [US4] Update TaskItem component to display assignee name in apps/web/src/components/TaskItem.tsx (show assignee or "Unassigned")
+- [X] T077 [US4] Wire assignment selection through TasksScreen to createTask call in apps/web/src/screens/TasksScreen.tsx
 
 ### Manual Testing
 
