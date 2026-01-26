@@ -1,4 +1,4 @@
-import { Button, HStack, Select } from "@chakra-ui/react";
+import { Button, HStack, Select, ButtonGroup } from "@chakra-ui/react";
 import { useTaskFilters } from "../hooks/useTaskFilters";
 
 type Props = {
@@ -12,8 +12,14 @@ const SORT_OPTIONS = [
   { value: "assignee", label: "Assignee" },
 ] as const;
 
+const STATUS_OPTIONS = [
+  { value: "active", label: "Active" },
+  { value: "completed", label: "Completed" },
+  { value: "all", label: "All Tasks" },
+] as const;
+
 export default function TaskFilters({ onFiltersChange }: Props) {
-  const { filters, showMyTasks, clearMyTasks, isMyTasksActive, setSortBy } = useTaskFilters();
+  const { filters, showMyTasks, clearMyTasks, isMyTasksActive, setSortBy, setStatusFilter } = useTaskFilters();
 
   const handleMyTasksToggle = () => {
     if (isMyTasksActive) {
@@ -29,8 +35,26 @@ export default function TaskFilters({ onFiltersChange }: Props) {
     onFiltersChange?.();
   };
 
+  const handleStatusChange = (status: typeof filters.status) => {
+    setStatusFilter(status);
+    onFiltersChange?.();
+  };
+
   return (
     <HStack spacing={3} flexWrap="wrap">
+      <ButtonGroup size="sm" isAttached variant="outline">
+        {STATUS_OPTIONS.map((option) => (
+          <Button
+            key={option.value}
+            colorScheme={filters.status === option.value ? "blue" : "gray"}
+            variant={filters.status === option.value ? "solid" : "outline"}
+            onClick={() => handleStatusChange(option.value)}
+          >
+            {option.label}
+          </Button>
+        ))}
+      </ButtonGroup>
+
       <Button
         size="sm"
         colorScheme={isMyTasksActive ? "blue" : "gray"}

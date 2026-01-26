@@ -130,13 +130,21 @@ export default function TasksScreen({ householdId }: Props) {
   const filteredTasks = useMemo(() => {
     let result = tasks;
 
+    // Apply status filter
+    if (filters.status === "active") {
+      result = result.filter(task => task.status === "incomplete");
+    } else if (filters.status === "completed") {
+      result = result.filter(task => task.status === "complete");
+    }
+    // If status === "all", show all tasks (no filter)
+
     // Apply "My Tasks" filter
     if (filters.assignee === "me" && currentUserId) {
       result = result.filter(task => task.assigned_to === currentUserId);
     }
 
     return result;
-  }, [tasks, filters.assignee, currentUserId]);
+  }, [tasks, filters.status, filters.assignee, currentUserId]);
 
   // Apply sorting to filtered tasks
   const sortedTasks = useMemo(() => {

@@ -149,15 +149,15 @@
 
 ### Implementation for User Story 5
 
-- [ ] T055 [US5] Add status filter controls to TaskFilters component (Active Only, Completed Only, All Tasks)
-- [ ] T056 [US5] Update useTaskFilters hook to manage status filter state (default: 'active')
-- [ ] T057 [US5] Apply status filter in TaskList component:
+- [X] T055 [US5] Add status filter controls to TaskFilters component (Active Only, Completed Only, All Tasks)
+- [X] T056 [US5] Update useTaskFilters hook to manage status filter state (default: 'active')
+- [X] T057 [US5] Apply status filter in TaskList component:
   - Active: WHERE status = 'incomplete'
   - Completed: WHERE status = 'complete'  
   - All: no status filter
-- [ ] T058 [US5] Add "Show Completed" toggle button as alternative to dropdown
-- [ ] T059 [US5] Style completed tasks with strikethrough text and checkmark icon
-- [ ] T060 [US5] Update task display when status changes (mark complete/incomplete)
+- [X] T058 [US5] Add "Show Completed" toggle button as alternative to dropdown
+- [X] T059 [US5] Style completed tasks with strikethrough text and checkmark icon
+- [X] T060 [US5] Update task display when status changes (mark complete/incomplete)
 
 **Checkpoint**: User Story 5 complete - users can focus on active work or review accomplishments
 
