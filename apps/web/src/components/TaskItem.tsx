@@ -1,20 +1,33 @@
-import { Box, Checkbox, Text } from "@chakra-ui/react";
+import { Box, Checkbox, Text, IconButton, HStack } from "@chakra-ui/react";
+import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import type { Task } from "../services/tasks";
 
 type Props = {
   task: Task;
   onToggle?: (taskId: string, newStatus: "incomplete" | "complete") => void;
+  onEdit?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
 };
 
-export default function TaskItem({ task, onToggle }: Props) {
+export default function TaskItem({ task, onToggle, onEdit, onDelete }: Props) {
   const isComplete = task.status === "complete";
-
-  // Check if task is overdue: has due date, not complete, and date is in the past
   const isOverdue = !isComplete && task.due_date && new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0));
 
   const handleCheckboxChange = () => {
     if (onToggle) {
       onToggle(task.id, isComplete ? "incomplete" : "complete");
+    }
+  };
+
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(task);
+    }
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(task);
     }
   };
 
@@ -57,6 +70,24 @@ export default function TaskItem({ task, onToggle }: Props) {
           fontSize="sm" 
           color={isOverdue ? "red.600" : "gray.500"} 
           mt={1}
+      <HStack spacing={1}>
+        <IconButton
+          aria-label="Edit task"
+          icon={<EditIcon />}
+          size="sm"
+          variant="ghost"
+          colorScheme="blue"
+          onClick={handleEdit}
+        />
+        <IconButton
+          aria-label="Delete task"
+          icon={<DeleteIcon />}
+          size="sm"
+          variant="ghost"
+          colorScheme="red"
+          onClick={handleDelete}
+        />
+      </HStack>
           fontWeight={isOverdue ? "semibold" : "normal"}
         >
           {task.due_date ? (

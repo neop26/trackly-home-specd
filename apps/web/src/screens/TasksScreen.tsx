@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Box, Heading, Text, VStack, Spinner, useToast } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Spinner, useToast, useDisclosure } from "@chakra-ui/react";
 import { getTasks, createTask, updateTaskStatus, type Task } from "../services/tasks";
 import TaskList from "../components/TaskList";
 import AddTask from "../components/AddTask";
+import EditTaskModal from "../components/EditTaskModal";
+import DeleteTaskDialog from "../components/DeleteTaskDialog";
 
 type Props = {
   householdId: string;
@@ -10,6 +12,10 @@ type Props = {
 
 export default function TasksScreen({ householdId }: Props) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
@@ -80,7 +86,25 @@ export default function TasksScreen({ householdId }: Props) {
         description: errorMessage,
         status: "error",
         duration: 5000,
-        isClosable: true,
+   
+
+  function handleEditTask(task: Task) {
+    setSelectedTask(task);
+    onEditOpen();
+  }
+
+  function handleTaskUpdated(updatedTask: Task) {
+    setTasks((prev) => prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
+  }
+
+  function handleDeleteTask(task: Task) {
+    setTaskToDelete(task);
+    onDeleteOpen();
+  }
+
+  function handleTaskDeleted(taskId: string) {
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+  }     isClosable: true,
       });
       loadTasks(); // Reload to get correct state
     }
@@ -91,7 +115,26 @@ export default function TasksScreen({ householdId }: Props) {
       <Box p={6} display="flex" justifyContent="center" alignItems="center" minH="200px">
         <Spinner size="xl" color="blue.500" thickness="4px" />
       </Box>
-    );
+    );onEditTask={handleEditTask} onDeleteTask={handleDeleteTask} />
+
+      {selectedTask && (
+        <EditTaskModal
+          isOpen={isEditOpen}
+          onClose={() => { setSelectedTask(null); onEditClose(); }}
+          task={selectedTask}
+          householdId={householdId}
+          onTaskUpdated={handleTaskUpdated}
+        />
+      )}
+
+      {taskToDelete && (
+        <DeleteTaskDialog
+          isOpen={isDeleteOpen}
+          onClose={() => { setTaskToDelete(null); onDeleteClose(); }}
+          task={taskToDelete}
+          onTaskDeleted={handleTaskDeleted}
+        />
+      )}
   }
 
   if (error) {
