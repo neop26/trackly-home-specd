@@ -39,6 +39,7 @@ export async function getTasks(householdId: string): Promise<Task[]> {
  * @param title - Task description (1-500 characters)
  * @param assignedTo - Optional UUID of household member to assign task to
  * @param dueDate - Optional due date in YYYY-MM-DD format
+ * @param notes - Optional multi-line notes/description (max 5000 characters)
  * @returns Created task object
  * @throws Error if creation fails or validation fails
  */
@@ -46,7 +47,8 @@ export async function createTask(
   householdId: string,
   title: string,
   assignedTo?: string | null,
-  dueDate?: string | null
+  dueDate?: string | null,
+  notes?: string | null
 ): Promise<Task> {
   // Frontend validation (database also enforces)
   if (!title || title.trim().length === 0) {
@@ -57,6 +59,10 @@ export async function createTask(
     throw new Error("Task title must be 500 characters or less");
   }
 
+  if (notes !== undefined && notes !== null && notes.length > 5000) {
+    throw new Error("Notes must be 5000 characters or less");
+  }
+
   const { data, error } = await supabase
     .from("tasks")
     .insert({
@@ -65,6 +71,7 @@ export async function createTask(
       status: "incomplete",
       assigned_to: assignedTo || null,
       due_date: dueDate || null,
+      notes: notes || null,
     })
     .select(`
       *,

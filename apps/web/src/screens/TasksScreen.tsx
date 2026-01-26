@@ -1,13 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
-import { Box, Heading, Text, VStack, Spinner, useToast, useDisclosure } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Spinner, useToast, useDisclosure, Button, HStack } from "@chakra-ui/react";
 import { getTasks, createTask, updateTaskStatus, type Task } from "../services/tasks";
 import { supabase } from "../lib/supabaseClient";
+import { useHouseholdMembers } from "../services/members";
 import TaskList from "../components/TaskList";
 import AddTask from "../components/AddTask";
 import EditTaskModal from "../components/EditTaskModal";
 import DeleteTaskDialog from "../components/DeleteTaskDialog";
 import TaskFilters from "../components/TaskFilters";
+import BulkActionsBar from "../components/BulkActionsBar";
 import { useTaskFilters } from "../hooks/useTaskFilters";
+import { useTaskBulkActions } from "../hooks/useTaskBulkActions";
 
 type Props = {
   householdId: string;
@@ -24,6 +27,18 @@ export default function TasksScreen({ householdId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
   const { filters, isMyTasksActive } = useTaskFilters();
+  const {
+    isSelectionMode,
+    selectedTaskIds,
+    selectedCount,
+    toggleSelectionMode,
+    toggleTaskSelection,
+    selectAll,
+    clearSelection,
+    exitSelectionMode,
+    isTaskSelected,
+  } = useTaskBulkActions();
+  const { members } = useHouseholdMembers(householdId);
 
   useEffect(() => {
     // Get current user ID
@@ -61,9 +76,9 @@ export default function TasksScreen({ householdId }: Props) {
     }
   }
 
-  async function handleAddTask(title: string, assignedTo?: string | null, dueDate?: string | null) {
+  async function handleAddTask(title: string, assignedTo?: string | null, dueDate?: string | null, notes?: string | null) {
     try {
-      const newTask = await createTask(householdId, title, assignedTo, dueDate);
+      const newTask = await createTask(householdId, title, assignedTo, dueDate, notes);
 
       // Optimistic update - add new task to top of list
       setTasks((prev) => [newTask, ...prev]);
@@ -124,6 +139,16 @@ export default function TasksScreen({ householdId }: Props) {
 
   function handleTaskDeleted(taskId: string) {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
+  }
+
+  function handleSelectAll() {
+    const visibleTaskIds = sortedTasks.map((t) => t.id);
+    selectAll(visibleTaskIds);
+  }
+
+  function handleBulkActionComplete() {
+    // Reload tasks after bulk action completes
+    loadTasks();
   }
 
   // Apply filters to task list
@@ -234,6 +259,34 @@ export default function TasksScreen({ householdId }: Props) {
         </Text>
       </Box>
 
+      <HStack spacing={3}>
+        <Button
+          size="sm"
+          variant={isSelectionMode ? "solid" : "outline"}
+          colorScheme={isSelectionMode ? "blue" : "gray"}
+          onClick={toggleSelectionMode}
+        >
+          {isSelectionMode ? "Exit Selection Mode" : "Select Mode"}
+        </Button>
+        {isSelectionMode && sortedTasks.length > 0 && (
+          <Button size="sm" variant="outline" onClick={handleSelectAll}>
+            Select All ({sortedTasks.length})
+          </Button>
+        )}
+      </HStack>
+
+      {isSelectionMode && (
+        <BulkActionsBar
+          selectedCount={selectedCount}
+          selectedTaskIds={selectedTaskIds}
+          tasks={tasks}
+          householdMembers={members}
+          onActionComplete={handleBulkActionComplete}
+          onClearSelection={clearSelection}
+          onExitSelectionMode={exitSelectionMode}
+        />
+      )}
+
       <TaskFilters householdId={householdId} onFiltersChange={loadTasks} />
 
       <AddTask householdId={householdId} onAddTask={handleAddTask} />
@@ -249,11 +302,15 @@ export default function TasksScreen({ householdId }: Props) {
           </Text>
         </Box>
       ) : (
-        <TaskList 
-          tasks={sortedTasks} 
-          onToggleTask={handleToggleTask} 
-          onEditTask={handleEditTask} 
-          onDeleteTask={handleDeleteTask} 
+        <TaskList
+          tasks={sortedTasks}
+          selectionMode={isSelectionMode}
+          selectedTaskIds={selectedTaskIds}
+          onToggleSelection={toggleTaskSelection}
+          isTaskSelected={isTaskSelected}
+          onToggleTask={handleToggleTask}
+          onEditTask={handleEditTask}
+          onDeleteTask={handleDeleteTask}
         />
       )}
 

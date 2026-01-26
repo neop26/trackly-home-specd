@@ -4,12 +4,24 @@ import type { Task } from "../services/tasks";
 
 type Props = {
   tasks: Task[];
+  selectionMode?: boolean;
+  selectedTaskIds?: string[];
+  onToggleSelection?: (taskId: string) => void;
+  isTaskSelected?: (taskId: string) => boolean;
   onToggleTask?: (taskId: string, newStatus: "incomplete" | "complete") => void;
   onEditTask?: (task: Task) => void;
   onDeleteTask?: (task: Task) => void;
 };
 
-export default function TaskList({ tasks, onToggleTask, onEditTask, onDeleteTask }: Props) {
+export default function TaskList({ 
+  tasks, 
+  selectionMode = false,
+  onToggleSelection,
+  isTaskSelected,
+  onToggleTask, 
+  onEditTask, 
+  onDeleteTask 
+}: Props) {
   if (tasks.length === 0) {
     return (
       <Text fontSize="md" color="gray.600" textAlign="center" py={8}>
@@ -23,7 +35,10 @@ export default function TaskList({ tasks, onToggleTask, onEditTask, onDeleteTask
       {tasks.map((task) => (
         <TaskItem 
           key={task.id} 
-          task={task} 
+          task={task}
+          selectionMode={selectionMode}
+          isSelected={isTaskSelected ? isTaskSelected(task.id) : false}
+          onToggleSelection={onToggleSelection}
           onToggle={onToggleTask} 
           onEdit={onEditTask} 
           onDelete={onDeleteTask} 

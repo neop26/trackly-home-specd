@@ -194,15 +194,15 @@
 
 ### Implementation for User Story 7
 
-- [ ] T068 [P] [US7] Add notes textarea field to AddTask component in `apps/web/src/components/AddTask.tsx`
-- [ ] T069 [P] [US7] Add notes textarea field to EditTaskModal component (already exists from US1, verify it's functional)
-- [ ] T070 [US7] Add notes validation: max 5000 characters with character counter
-- [ ] T071 [US7] Preserve line breaks in notes (render as `white-space: pre-wrap`)
-- [ ] T072 [US7] Install react-linkify or similar: `npm install react-linkify` in apps/web
-- [ ] T073 [US7] Implement URL auto-linkification in task detail view using react-linkify
-- [ ] T074 [US7] Add note icon indicator to TaskItem when task has notes
-- [ ] T075 [US7] Expand TaskItem or create task detail view to display notes on click
-- [ ] T076 [US7] Ensure links open in new tab with `rel="noopener noreferrer"` for security
+- [X] T068 [P] [US7] Add notes textarea field to AddTask component in `apps/web/src/components/AddTask.tsx`
+- [X] T069 [P] [US7] Add notes textarea field to EditTaskModal component (already exists from US1, verify it's functional)
+- [X] T070 [US7] Add notes validation: max 5000 characters with character counter
+- [X] T071 [US7] Preserve line breaks in notes (render as `white-space: pre-wrap`)
+- [X] T072 [US7] Install react-linkify or similar: `npm install react-linkify` in apps/web
+- [X] T073 [US7] Implement URL auto-linkification in task detail view using react-linkify
+- [X] T074 [US7] Add note icon indicator to TaskItem when task has notes
+- [X] T075 [US7] Expand TaskItem or create task detail view to display notes on click
+- [X] T076 [US7] Ensure links open in new tab with `rel="noopener noreferrer"` for security
 
 **Checkpoint**: User Story 7 complete - tasks can include rich contextual information
 
@@ -216,19 +216,19 @@
 
 ### Implementation for User Story 8
 
-- [ ] T077 [P] [US8] Create BulkActionsBar component in `apps/web/src/components/BulkActionsBar.tsx`
-- [ ] T078 [US8] Add "Select Mode" toggle button to TasksScreen
-- [ ] T079 [US8] Update TaskItem to show checkbox when in selection mode
-- [ ] T080 [US8] Integrate useTaskBulkActions hook to manage selection state
-- [ ] T081 [US8] Add "Select All" button (selects all visible tasks respecting filters)
-- [ ] T082 [US8] Add "Clear Selection" button
-- [ ] T083 [US8] Display selection count in BulkActionsBar: "X tasks selected"
-- [ ] T084 [US8] Implement "Complete Selected" action calling `bulkUpdateTasks({ status: 'complete' })`
-- [ ] T085 [US8] Implement "Delete Selected" action with confirmation dialog
-- [ ] T086 [US8] Implement "Assign Selected to [Member]" dropdown action
-- [ ] T087 [US8] Skip already-completed tasks in bulk complete (show accurate count)
-- [ ] T088 [US8] Exit selection mode after bulk action completes
-- [ ] T089 [US8] Optimize bulk operations to complete within 2 seconds for 50 tasks
+- [X] T077 [P] [US8] Create BulkActionsBar component in `apps/web/src/components/BulkActionsBar.tsx`
+- [X] T078 [US8] Add "Select Mode" toggle button to TasksScreen
+- [X] T079 [US8] Update TaskItem to show checkbox when in selection mode
+- [X] T080 [US8] Integrate useTaskBulkActions hook to manage selection state
+- [X] T081 [US8] Add "Select All" button (selects all visible tasks respecting filters)
+- [X] T082 [US8] Add "Clear Selection" button
+- [X] T083 [US8] Display selection count in BulkActionsBar: "X tasks selected"
+- [X] T084 [US8] Implement "Complete Selected" action calling `bulkUpdateTasks({ status: 'complete' })`
+- [X] T085 [US8] Implement "Delete Selected" action with confirmation dialog
+- [X] T086 [US8] Implement "Assign Selected to [Member]" dropdown action
+- [X] T087 [US8] Skip already-completed tasks in bulk complete (show accurate count)
+- [X] T088 [US8] Exit selection mode after bulk action completes
+- [X] T089 [US8] Optimize bulk operations to complete within 2 seconds for 50 tasks
 
 **Checkpoint**: User Story 8 complete - efficiency gains for managing multiple related tasks
 
