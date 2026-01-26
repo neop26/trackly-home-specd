@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Box, Heading, Text, VStack, Spinner, useToast, useDisclosure } from "@chakra-ui/react";
 import { getTasks, createTask, updateTaskStatus, type Task } from "../services/tasks";
+import { supabase } from "../lib/supabaseClient";
 import TaskList from "../components/TaskList";
 import AddTask from "../components/AddTask";
 import EditTaskModal from "../components/EditTaskModal";
 import DeleteTaskDialog from "../components/DeleteTaskDialog";
+import TaskFilters from "../components/TaskFilters";
+import { useTaskFilters } from "../hooks/useTaskFilters";
 
 type Props = {
   householdId: string;
@@ -14,11 +17,24 @@ export default function TasksScreen({ householdId }: Props) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
+  const { filters, isMyTasksActive } = useTaskFilters();
+
+  useEffect(() => {
+    // Get current user ID
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      const userId = data.session?.user.id;
+      if (userId) {
+        setCurrentUserId(userId);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     loadTasks();
@@ -110,6 +126,21 @@ export default function TasksScreen({ householdId }: Props) {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   }
 
+  // Apply filters to task list
+  const filteredTasks = useMemo(() => {
+    let result = tasks;
+
+    // Apply "My Tasks" filter
+    if (filters.assignee === "me" && currentUserId) {
+      result = result.filter(task => task.assigned_to === currentUserId);
+    }
+
+    return result;
+  }, [tasks, filters.assignee, currentUserId]);
+
+  // Check if we should show empty state for My Tasks
+  const showMyTasksEmptyState = isMyTasksActive && filteredTasks.length === 0 && tasks.length > 0;
+
   if (loading) {
     return (
       <Box p={6} display="flex" justifyContent="center" alignItems="center" minH="200px">
@@ -135,9 +166,28 @@ export default function TasksScreen({ householdId }: Props) {
         </Text>
       </Box>
 
+      <TaskFilters onFiltersChange={loadTasks} />
+
       <AddTask householdId={householdId} onAddTask={handleAddTask} />
 
-      <TaskList tasks={tasks} onToggleTask={handleToggleTask} onEditTask={handleEditTask} onDeleteTask={handleDeleteTask} />
+      {showMyTasksEmptyState ? (
+        <Box textAlign="center" py={12}>
+          <Text fontSize="3xl" mb={2}>🎉</Text>
+          <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={1}>
+            You're all caught up!
+          </Text>
+          <Text fontSize="sm" color="gray.500">
+            No tasks assigned to you right now.
+          </Text>
+        </Box>
+      ) : (
+        <TaskList 
+          tasks={filteredTasks} 
+          onToggleTask={handleToggleTask} 
+          onEditTask={handleEditTask} 
+          onDeleteTask={handleDeleteTask} 
+        />
+      )}
 
       {selectedTask && (
         <EditTaskModal

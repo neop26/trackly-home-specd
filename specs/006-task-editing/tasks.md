@@ -105,14 +105,14 @@
 
 ### Implementation for User Story 3
 
-- [ ] T039 [P] [US3] Create TaskFilters component in `apps/web/src/components/TaskFilters.tsx`
-- [ ] T040 [US3] Add "My Tasks" quick filter button/toggle in TaskFilters component
-- [ ] T041 [US3] Integrate useTaskFilters hook to manage "My Tasks" filter state
-- [ ] T042 [US3] Update TaskList component to accept filter props and apply `assigned_to = currentUserId` filter
-- [ ] T043 [US3] Add empty state for "My Tasks" with no results: "You're all caught up! 🎉"
-- [ ] T044 [US3] Add clear filter button to return to all household tasks
-- [ ] T045 [US3] Persist "My Tasks" filter state in localStorage via useTaskFilters hook
-- [ ] T046 [US3] Modify TasksScreen in `apps/web/src/screens/TasksScreen.tsx` to integrate TaskFilters component
+- [X] T039 [P] [US3] Create TaskFilters component in `apps/web/src/components/TaskFilters.tsx`
+- [X] T040 [US3] Add "My Tasks" quick filter button/toggle in TaskFilters component
+- [X] T041 [US3] Integrate useTaskFilters hook to manage "My Tasks" filter state
+- [X] T042 [US3] Update TaskList component to accept filter props and apply `assigned_to = currentUserId` filter
+- [X] T043 [US3] Add empty state for "My Tasks" with no results: "You're all caught up! 🎉"
+- [X] T044 [US3] Add clear filter button to return to all household tasks
+- [X] T045 [US3] Persist "My Tasks" filter state in localStorage via useTaskFilters hook
+- [X] T046 [US3] Modify TasksScreen in `apps/web/src/screens/TasksScreen.tsx` to integrate TaskFilters component
 
 **Checkpoint**: User Story 3 complete - users have personalized "My Tasks" view with persistence
 
