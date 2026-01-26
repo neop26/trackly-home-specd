@@ -1,4 +1,15 @@
 import { useMemo, useState } from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { supabase } from "../lib/supabaseClient";
 
 type Props = {
@@ -28,14 +39,16 @@ export default function InvitePartnerCard({
 
   if (!isAdmin) {
     return (
-      <div className="rounded-lg border p-4 space-y-3">
-        <div>
-          <div className="font-semibold">Invite partner</div>
-          <div className="text-sm text-gray-600">
-            Only admins can invite members to the household.
-          </div>
-        </div>
-      </div>
+      <Box borderWidth={1} borderRadius="lg" p={4}>
+        <VStack spacing={3} align="stretch">
+          <Box>
+            <Heading size="sm">Invite partner</Heading>
+            <Text fontSize="sm" color="gray.600">
+              Only admins can invite members to the household.
+            </Text>
+          </Box>
+        </VStack>
+      </Box>
     );
   }
 
@@ -100,86 +113,95 @@ export default function InvitePartnerCard({
   }
 
   return (
-    <div className="rounded-lg border p-4 space-y-3">
-      <div>
-        <div className="font-semibold">Invite partner</div>
-        <div className="text-sm text-gray-600">
-          Send an invite email (Resend) and we’ll also give you a shareable
-          link.
-        </div>
-      </div>
+    <Box borderWidth={1} borderRadius="lg" p={4}>
+      <VStack spacing={3} align="stretch">
+        <Box>
+          <Heading size="sm">Invite partner</Heading>
+          <Text fontSize="sm" color="gray.600">
+            Send an invite email (Resend) and we'll also give you a shareable
+            link.
+          </Text>
+        </Box>
 
-      <div className="space-y-2">
-        <label htmlFor="invite-email" className="text-sm font-medium">
-          Partner email
-        </label>
+        <FormControl>
+          <FormLabel htmlFor="invite-email" fontSize="sm" fontWeight="medium">
+            Partner email
+          </FormLabel>
 
-        <div className="flex gap-2">
-          <input
-            id="invite-email"
-            aria-label="Partner email"
-            className="flex-1 rounded-lg border px-3 py-2"
-            placeholder="partner@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            inputMode="email"
-          />
-
-          <button
-            className="rounded-lg bg-black px-4 py-2 text-white"
-            onClick={sendInvite}
-            disabled={busy}
-          >
-            {busy ? "Sending..." : "Invite"}
-          </button>
-        </div>
-      </div>
-
-      {error && <div className="text-sm text-red-600">{error}</div>}
-
-      {inviteUrl && (
-        <div className="space-y-2 rounded-lg border p-3">
-          <div className="text-sm">
-            {emailSent
-              ? "Email sent ✅"
-              : "Email not sent (share link below) ⚠️"}
-          </div>
-
-          <div className="text-xs text-gray-600">
-            Invite link (copied to clipboard):
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              aria-label="Invite link"
-              className="flex-1 rounded-lg border px-3 py-2 text-sm"
-              value={inviteUrl}
-              readOnly
+          <Flex gap={2}>
+            <Input
+              id="invite-email"
+              aria-label="Partner email"
+              flex={1}
+              placeholder="partner@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              inputMode="email"
             />
 
-            <button
-              className="rounded-lg border px-3 py-2 text-sm"
-              onClick={() => copy(inviteUrl)}
+            <Button
+              colorScheme="blackAlpha"
+              bg="black"
+              color="white"
+              onClick={sendInvite}
+              isDisabled={busy}
             >
-              Copy
-            </button>
+              {busy ? "Sending..." : "Invite"}
+            </Button>
+          </Flex>
+        </FormControl>
 
-            {canShare && (
-              <button
-                className="rounded-lg border px-3 py-2 text-sm"
-                onClick={shareInvite}
-              >
-                Share
-              </button>
-            )}
-          </div>
+        {error && (
+          <Text fontSize="sm" color="red.600">
+            {error}
+          </Text>
+        )}
 
-          <div className="text-xs text-gray-500">
-            Tip: Share via WhatsApp/SMS if email delivery is slow.
-          </div>
-        </div>
-      )}
-    </div>
+        {inviteUrl && (
+          <Box borderWidth={1} borderRadius="lg" p={3}>
+            <VStack spacing={2} align="stretch">
+              <Text fontSize="sm">
+                {emailSent
+                  ? "Email sent ✅"
+                  : "Email not sent (share link below) ⚠️"}
+              </Text>
+
+              <Text fontSize="xs" color="gray.600">
+                Invite link (copied to clipboard):
+              </Text>
+
+              <Flex align="center" gap={2}>
+                <Input
+                  aria-label="Invite link"
+                  flex={1}
+                  fontSize="sm"
+                  value={inviteUrl}
+                  readOnly
+                />
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => copy(inviteUrl)}
+                >
+                  Copy
+                </Button>
+
+                {canShare && (
+                  <Button size="sm" variant="outline" onClick={shareInvite}>
+                    Share
+                  </Button>
+                )}
+              </Flex>
+
+              <Text fontSize="xs" color="gray.500">
+                Tip: Share via WhatsApp/SMS if email delivery is slow.
+              </Text>
+            </VStack>
+          </Box>
+        )}
+      </VStack>
+    </Box>
   );
 }

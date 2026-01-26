@@ -1,5 +1,41 @@
 <!--
-Sync Impact Report (2026-01-24):
+Sync Impact Report (2026-01-26):
+
+Version Change: 1.2.0 → 1.2.1
+Reason: Clarified deployment process with three-tier promotion workflow (local → staging → production). PATCH version as this refines existing deployment guidance without adding new principles.
+
+Modified Sections:
+  - Deployment Process - Expanded with three-tier workflow and quality gates
+
+Templates Status:
+  ✅ All existing templates remain compliant
+
+Follow-up Actions:
+  - None: Clarification of existing deployment workflow
+
+Previous Changes (2026-01-26):
+
+Version Change: 1.1.0 → 1.2.0
+Reason: Added script organization standards to enforce separation of migrations from utility/test scripts. MINOR version as this adds new structural guidance without changing existing principles.
+
+Added Sections:
+  - Script Organization - Mandatory structure for organizing scripts by function (azure/, github/, supabase/)
+  - Script Placement Rules - Clear rules for where different script types belong
+  - Migration Naming Convention - Formal standard for migration file naming
+
+Modified Sections:
+  - Development Workflow - Added Script Organization section before Branching Strategy
+
+Templates Status:
+  ✅ All existing templates remain compliant
+  ✅ New script/supabase/ folder created and populated with test scripts
+  ✅ Migration folder cleaned to only contain timestamped migrations
+
+Follow-up Actions:
+  - migrations/README.md updated to reference scripts/supabase/ for test scripts
+  - scripts/supabase/README.md created to document test script purpose and usage
+
+Previous Sync (2026-01-24):
 
 Version Change: 1.0.0 → 1.1.0
 Reason: Added secrets management pattern and clarified documentation guidelines. MINOR version as this adds new guidance without changing existing principles.
@@ -143,6 +179,34 @@ All project secrets MUST be stored in a `.secrets/` folder at the repository roo
 
 ## Development Workflow
 
+### Script Organization
+All utility scripts MUST be organized by function under the `scripts/` directory. Database migration scripts are the ONLY exception and belong in the migrations folder.
+
+**Required Structure**:
+```
+scripts/
+├── azure/        # Azure deployment and infrastructure scripts
+├── github/       # GitHub Actions, secrets, OIDC setup scripts
+└── supabase/     # Supabase testing, data generation, utility scripts
+```
+
+**Script Placement Rules**:
+- **Migration scripts ONLY**: `supabase/migrations/` - Timestamped migration files only (format: `YYYYMMDDHHMMSS_00X_description.sql`, e.g., `20260125021436_009_tasks_table.sql`)
+- **Test scripts**: `scripts/supabase/` - RLS tests, performance tests, data validation
+- **Data generation**: `scripts/supabase/` - Seed data, dummy data, test fixtures
+- **One-off utilities**: `scripts/supabase/` - Manual queries, cleanup scripts, investigation tools
+- **Azure operations**: `scripts/azure/` - Deployment, configuration, infrastructure
+- **GitHub automation**: `scripts/github/` - Repository setup, secrets management, OIDC
+
+**Migration Naming Convention**:
+- Format: `YYYYMMDDHHMMSS_00X_description.sql`
+- `YYYYMMDDHHMMSS`: Timestamp when migration was created
+- `00X`: Sequential 3-digit migration number with leading zeros (001, 002, 003, etc.)
+- `description`: Snake_case description of the migration purpose
+- Examples: `20260106203424_001_profiles.sql`, `20260125021436_009_tasks_table.sql`
+
+**Rationale**: Separating migrations from utility scripts ensures migration directories remain clean and only contain schema changes. This prevents confusion during deployment and makes it clear which files are automatically applied by migration tools versus which require manual execution.
+
 ### Branching Strategy
 | Branch | Purpose | Base | Merges To |
 |--------|---------|------|-----------|
@@ -175,10 +239,44 @@ Every PR MUST satisfy:
 - [ ] Security checklist completed (per Principle I)
 
 ### Deployment Process
-- **Dev environment**: Automatic on push to `dev` branch
-- **Production**: Manual workflow dispatch (future) with approval gate
-- Pre-deployment: All tests passing, manual smoke test complete, security review, documentation updated, tracker updated
-- Post-deployment: Site loads without errors, login flow works, console clean, Supabase logs clean
+
+**Deployment Strategy**: Each specification follows a three-tier promotion workflow ensuring quality at every stage.
+
+**Tier 1 - Local Development**:
+- All implementation MUST be completed and tested locally first
+- All spec tasks MUST be validated and marked complete
+- Manual smoke tests MUST pass for all features
+- Build and lint checks MUST pass (`npm run build`, `npm run lint`)
+- RLS policies MUST be tested with SQL queries (if changed)
+- Database migrations MUST be validated locally
+- No code moves to Azure until spec is fully complete locally
+
+**Tier 2 - Staging (Azure Dev)**:
+- Promoted ONLY after local testing is 100% complete
+- Full validation in staging environment matching production
+- Cross-browser testing
+- Performance validation under realistic conditions
+- Security review and RLS audit
+- Integration testing with production-like data
+- Bug fixes applied and re-validated in staging
+
+**Tier 3 - Production (Azure Prod)**:
+- Promoted ONLY after staging validation is 100% complete
+- Manual approval gate required
+- Deployment during low-traffic window
+- Post-deployment validation checklist
+- Rollback plan prepared and tested
+- Monitoring and alerts configured
+
+**Rationale**: The three-tier workflow prevents issues from reaching production by catching them early in local development. Each tier acts as a quality gate, ensuring features are thoroughly validated before promotion. This staged approach reduces risk and enables rapid rollback if issues are discovered.
+
+**Pre-deployment Requirements** (per tier):
+- Local → Staging: All spec tasks complete, manual tests passing, documentation updated
+- Staging → Production: All staging tests passing, security review complete, approval obtained
+
+**Post-deployment Validation** (per tier):
+- Staging: Site loads, login flow works, console clean, Supabase logs clean, feature smoke test
+- Production: Same as staging plus monitoring alerts configured and baseline metrics captured
 
 ## Governance
 
@@ -257,4 +355,4 @@ Documents MUST be routed based on their purpose and longevity:
 
 **Rationale**: Different document types have different lifecycles. Permanent docs need version control and maintenance, while working docs are temporary and shouldn't clutter the main documentation structure.
 
-**Version**: 1.1.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-24
+**Version**: 1.2.1 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-26
