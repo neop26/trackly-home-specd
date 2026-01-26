@@ -219,11 +219,11 @@
 
 ### Manual Testing
 
-- [ ] T078 [US4] Test: Task can be created with assigned member selected from dropdown
-- [ ] T079 [US4] Test: Task can be created unassigned (no member selected)
-- [ ] T080 [US4] Test: Assigned task displays assignee name in task list
-- [ ] T081 [US4] Test: Unassigned task shows "Unassigned" or blank assignment field
-- [ ] T082 [US4] Test: Assignment dropdown only shows members from same household (household isolation)
+- [X] T078 [US4] Test: Task can be created with assigned member selected from dropdown
+- [X] T079 [US4] Test: Task can be created unassigned (no member selected)
+- [X] T080 [US4] Test: Assigned task displays assignee name in task list
+- [X] T081 [US4] Test: Unassigned task shows "Unassigned" or blank assignment field
+- [X] T082 [US4] Test: Assignment dropdown only shows members from same household (household isolation)
 
 **Checkpoint**: User Story 4 complete - Task assignment functional, optional feature ready
 
@@ -248,12 +248,12 @@
 
 ### Manual Testing
 
-- [ ] T088 [US5] Test: Task can be created with due date selected
-- [ ] T089 [US5] Test: Task can be created without due date (optional field)
-- [ ] T090 [US5] Test: Task with due date displays formatted date in list
-- [ ] T091 [US5] Test: Task without due date shows "No due date" or blank due date field
-- [ ] T092 [US5] Test: Overdue task (due_date < today, status incomplete) shows visual warning (red text/icon)
-- [ ] T093 [US5] Test: Completed task with past due date does not show overdue warning
+- [X] T088 [US5] Test: Task can be created with due date selected
+- [X] T089 [US5] Test: Task can be created without due date (optional field)
+- [X] T090 [US5] Test: Task with due date displays formatted date in list
+- [X] T091 [US5] Test: Task without due date shows "No due date" or blank due date field
+- [X] T092 [US5] Test: Overdue task (due_date < today, status incomplete) shows visual warning (red text/icon)
+- [X] T093 [US5] Test: Completed task with past due date does not show overdue warning
 
 **Checkpoint**: User Story 5 complete - Due dates functional, all P0 and P1 features implemented
 

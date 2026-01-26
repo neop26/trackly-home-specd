@@ -50,23 +50,25 @@ export default function TaskItem({ task, onToggle }: Props) {
         >
           {task.title}
         </Text>
-        {task.assigned_to_name && (
-          <Text fontSize="sm" color="gray.500" mt={1}>
-            Assigned to: {task.assigned_to_name}
-          </Text>
-        )}
-        {task.due_date && (
-          <Text 
-            fontSize="sm" 
-            color={isOverdue ? "red.600" : "gray.500"} 
-            mt={1}
-            fontWeight={isOverdue ? "semibold" : "normal"}
-          >
-            {isOverdue && "⚠️ "}
-            Due: {formatDueDate(task.due_date)}
-            {isOverdue && " (Overdue)"}
-          </Text>
-        )}
+        <Text fontSize="sm" color="gray.500" mt={1}>
+          {task.assigned_to_name ? `Assigned to: ${task.assigned_to_name}` : "Unassigned"}
+        </Text>
+        <Text 
+          fontSize="sm" 
+          color={isOverdue ? "red.600" : "gray.500"} 
+          mt={1}
+          fontWeight={isOverdue ? "semibold" : "normal"}
+        >
+          {task.due_date ? (
+            <>
+              {isOverdue && "⚠️ "}
+              Due: {formatDueDate(task.due_date)}
+              {isOverdue && " (Overdue)"}
+            </>
+          ) : (
+            "No due date"
+          )}
+        </Text>
       </Box>
     </Box>
   );
