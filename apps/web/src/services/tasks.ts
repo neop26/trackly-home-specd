@@ -1,19 +1,7 @@
 import { supabase } from "../lib/supabaseClient";
+import type { Task, TaskUpdate } from "../types/task";
 
-/**
- * Task entity from tasks table with assignee display name
- */
-export interface Task {
-  id: string;
-  household_id: string;
-  title: string;
-  status: "incomplete" | "complete";
-  assigned_to: string | null;
-  assigned_to_name?: string | null; // Display name of assignee (joined from profiles)
-  due_date: string | null; // ISO date string
-  created_at: string; // ISO timestamp
-  updated_at: string; // ISO timestamp
-}
+export type { Task };
 
 /**
  * Fetch all tasks for a specific household with assignee display names
@@ -34,14 +22,16 @@ export async function getTasks(householdId: string): Promise<Task[]> {
   if (error) {
     throw new Error(`Unable to load tasks. Please check your connection and try again.`);
   }
-
-  // Map the joined profile data to assigned_to_name
-  return (data || []).map((task) => ({
-    ...task,
-    assigned_to_name: task.assigned_to_profile?.display_name || null,
-    assigned_to_profile: undefined, // Remove nested object
-  })) as Task[];
-}
+  const { data, error } = await supabase
+    .from("tasks")
+    .select(`
+      *,
+      assigned_to_profile:profiles!tasks_assigned_to_fkey(display_name)
+    `)
+    .eq("household_id", householdId)
+    .is("deleted_at", null)
+    .is("archived_at", null)
+    .order("created_at", { ascending: false});
 
 /**
  * Create a new task for a household
@@ -115,6 +105,64 @@ export async function updateTaskStatus(
   if (error) {
     throw new Error(`Unable to update task status. Please try again.`);
   }
+
+
+/**
+ * Update task fields (title, assignee, due date, notes)
+ */
+export async function updateTask(taskId: string, updates: TaskUpdate): Promise<Task> {
+  if (updates.title !== undefined) {
+    if (!updates.title || updates.title.trim().length === 0) {
+      throw new Error("Task title is required");
+    }
+    if (updates.title.length > 500) {
+      throw new Error("Task title must be 500 characters or less");
+    }
+  }
+  if (updates.notes !== undefined && updates.notes !== null && updates.notes.length > 5000) {
+    throw new Error("Notes must be 5000 characters or less");
+  }
+  const { data, error } = await supabase.from("tasks").update(updates).eq("id", taskId).select().single();
+  if (error) throw new Error(`Unable to update task. Please try again.`);
+  return data;
+}
+
+export async function softDeleteTask(taskId: string): Promise<Task> {
+  const { data, error } = await supabase.from("tasks").update({ deleted_at: new Date().toISOString() }).eq("id", taskId).select().single();
+  if (error) throw new Error(`Unable to delete task. Please try again.`);
+  return data;
+}
+
+export async function restoreTask(taskId: string): Promise<Task> {
+  const { data, error } = await supabase.from("tasks").update({ deleted_at: null }).eq("id", taskId).select().single();
+  if (error) throw new Error(`Unable to restore task. Please try again.`);
+  return data;
+}
+
+export async function archiveTask(taskId: string): Promise<Task> {
+  const { data, error } = await supabase.from("tasks").update({ archived_at: new Date().toISOString() }).eq("id", taskId).select().single();
+  if (error) throw new Error(`Unable to archive task. Please try again.`);
+  return data;
+}
+
+export async function bulkUpdateTasks(taskIds: string[], updates: Partial<Omit<Task, "id" | "household_id" | "created_at" | "updated_at">>): Promise<Task[]> {
+  if (taskIds.length === 0) return [];
+  const { data, error } = await supabase.from("tasks").update(updates).in("id", taskIds).select();
+  if (error) throw new Error(`Unable to update ${taskIds.length} tasks. Please try again.`);
+  return data || [];
+}
+
+export async function getDeletedTasks(householdId: string): Promise<Task[]> {
+  const { data, error } = await supabase.from("tasks").select("*").eq("household_id", householdId).not("deleted_at", "is", null).order("deleted_at", { ascending: false });
+  if (error) throw new Error(`Unable to load deleted tasks. Please check your connection and try again.`);
+  return data || [];
+}
+
+export async function getArchivedTasks(householdId: string): Promise<Task[]> {
+  const { data, error } = await supabase.from("tasks").select("*").eq("household_id", householdId).not("archived_at", "is", null).order("archived_at", { ascending: false });
+  if (error) throw new Error(`Unable to load archived tasks. Please check your connection and try again.`);
+  return data || [];
+}
 
   return data;
 }
