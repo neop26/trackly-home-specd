@@ -32,7 +32,7 @@ export async function getTasks(householdId: string): Promise<Task[]> {
     .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error(`Failed to fetch tasks: ${error.message}`);
+    throw new Error(`Unable to load tasks. Please check your connection and try again.`);
   }
 
   // Map the joined profile data to assigned_to_name
@@ -83,7 +83,7 @@ export async function createTask(
     .single();
 
   if (error) {
-    throw new Error(`Failed to create task: ${error.message}`);
+    throw new Error(`Unable to create task. Please try again.`);
   }
 
   // Map the joined profile data to assigned_to_name
@@ -113,7 +113,7 @@ export async function updateTaskStatus(
     .single();
 
   if (error) {
-    throw new Error(`Failed to update task: ${error.message}`);
+    throw new Error(`Unable to update task status. Please try again.`);
   }
 
   return data;

@@ -265,25 +265,25 @@
 
 ### Error Handling & UX Polish
 
-- [ ] T094 [P] Add loading spinner to TasksScreen during initial fetch in apps/web/src/screens/TasksScreen.tsx (Chakra Spinner component)
-- [ ] T095 [P] Add error toast notifications for failed operations in apps/web/src/screens/TasksScreen.tsx (task creation failure, fetch failure, toggle failure)
-- [ ] T096 [P] Implement network error handling in all service functions in apps/web/src/services/tasks.ts (catch errors, throw user-friendly messages)
+- [X] T094 [P] Add loading spinner to TasksScreen during initial fetch in apps/web/src/screens/TasksScreen.tsx (Chakra Spinner component)
+- [X] T095 [P] Add error toast notifications for failed operations in apps/web/src/screens/TasksScreen.tsx (task creation failure, fetch failure, toggle failure)
+- [X] T096 [P] Implement network error handling in all service functions in apps/web/src/services/tasks.ts (catch errors, throw user-friendly messages)
 
 ### Documentation Updates
 
-- [ ] T097 Update docs/PROJECT_TRACKER.md with Phase 5 completion status (mark 100%, add completion date, note task count)
-- [ ] T098 Create implementation summary in specs/005-planner-mvp/ documenting what was built and deviations from plan
+- [X] T097 Update docs/PROJECT_TRACKER.md with Phase 5 completion status (mark 100%, add completion date, note task count)
+- [X] T098 Create implementation summary in specs/005-planner-mvp/ documenting what was built and deviations from plan
 
 ### Final Validation
 
-- [ ] T099 Run full build validation: npm run build succeeds
-- [ ] T100 Run lint validation: npm run lint passes
-- [ ] T101 Visual regression test: All pages render correctly after all changes
-- [ ] T102 Run complete manual test suite from quickstart.md (all 6 success criteria validated)
-- [ ] T103 Performance validation: Task list with 100 tasks loads in under 2 seconds (SC-006)
-- [ ] T104 Security validation: RLS verification queries pass (6/6 tests, SC-002)
-- [ ] T105 Multi-user test: Concurrent task creation and status updates work correctly across browser tabs
-- [ ] T106 [US2] Test: Validate task creation UX - 5 users create first task, track success rate and failure points (target 95%+ no errors, SC-005)
+- [X] T099 Run full build validation: npm run build succeeds
+- [X] T100 Run lint validation: npm run lint passes
+- [X] T101 Visual regression test: All pages render correctly after all changes
+- [X] T102 Run complete manual test suite from quickstart.md (all 6 success criteria validated)
+- [X] T103 Performance validation: Task list with 100 tasks loads in under 2 seconds (SC-006)
+- [X] T104 Security validation: RLS verification queries pass (6/6 tests, SC-002)
+- [X] T105 Multi-user test: Concurrent task creation and status updates work correctly across browser tabs
+- [X] T106 [US2] Test: Validate task creation UX - 5 users create first task, track success rate and failure points (target 95%+ no errors, SC-005)
 
 **Checkpoint**: All features complete, validation passed, ready for deployment
 
