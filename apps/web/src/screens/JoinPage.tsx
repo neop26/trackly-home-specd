@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Box, Heading, Text, VStack } from "@chakra-ui/react";
 import { supabase } from "../lib/supabaseClient";
 import { useLocation, useNavigate } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
@@ -98,14 +99,22 @@ export default function JoinPage() {
   }, [location.search, location.pathname, navigate]);
 
   return (
-    <div className="p-6 space-y-6">
+    <VStack p={6} spacing={6} align="stretch">
       <AppHeader />
 
-      <div className="max-w-lg rounded-xl border p-6 space-y-2">
-        <div className="text-lg font-semibold">Join household</div>
-        <div className="text-sm text-gray-700">{status}</div>
-        {error && <div className="text-sm text-red-600">{error}</div>}
-      </div>
-    </div>
+      <Box maxW="lg" borderWidth={1} borderRadius="xl" p={6}>
+        <VStack spacing={2} align="stretch">
+          <Heading size="md">Join household</Heading>
+          <Text fontSize="sm" color="gray.700">
+            {status}
+          </Text>
+          {error && (
+            <Text fontSize="sm" color="red.600">
+              {error}
+            </Text>
+          )}
+        </VStack>
+      </Box>
+    </VStack>
   );
 }
