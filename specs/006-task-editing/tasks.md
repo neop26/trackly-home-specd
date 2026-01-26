@@ -19,7 +19,7 @@
 
 **Purpose**: Database schema extension and type definitions
 
-- [ ] T001 Create migration file `supabase/migrations/20260126000000_010_task_lifecycle.sql`
+- [X] T001 Create migration file `supabase/migrations/20260126000000_010_task_lifecycle.sql`
 - [ ] T002 Add `notes`, `deleted_at`, `archived_at` columns to tasks table per data-model.md
 - [ ] T003 [P] Add partial indexes for `deleted_at`, `archived_at`, and composite index for filtering
 - [ ] T004 [P] Add column comments for documentation in migration
