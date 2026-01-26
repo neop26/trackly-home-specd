@@ -138,8 +138,60 @@ export default function TasksScreen({ householdId }: Props) {
     return result;
   }, [tasks, filters.assignee, currentUserId]);
 
+  // Apply sorting to filtered tasks
+  const sortedTasks = useMemo(() => {
+    const result = [...filteredTasks];
+
+    switch (filters.sortBy) {
+      case "due_date":
+        // Sort by due_date ASC (nulls last), then by created_at ASC
+        result.sort((a, b) => {
+          // Handle null due dates (put them at the end)
+          if (!a.due_date && !b.due_date) return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          
+          // Compare due dates
+          const dateA = new Date(a.due_date).getTime();
+          const dateB = new Date(b.due_date).getTime();
+          if (dateA !== dateB) return dateA - dateB;
+          
+          // Same due date, sort by created_at
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        });
+        break;
+
+      case "created_at":
+        // Sort by created_at ASC (oldest first)
+        result.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        break;
+
+      case "title":
+        // Sort alphabetically by title (case-insensitive)
+        result.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+        break;
+
+      case "assignee":
+        // Sort by assignee name (unassigned first, then alphabetical)
+        result.sort((a, b) => {
+          const nameA = a.assigned_to_name || "";
+          const nameB = b.assigned_to_name || "";
+          
+          // Put unassigned tasks first
+          if (!nameA && !nameB) return 0;
+          if (!nameA) return -1;
+          if (!nameB) return 1;
+          
+          return nameA.toLowerCase().localeCompare(nameB.toLowerCase());
+        });
+        break;
+    }
+
+    return result;
+  }, [filteredTasks, filters.sortBy]);
+
   // Check if we should show empty state for My Tasks
-  const showMyTasksEmptyState = isMyTasksActive && filteredTasks.length === 0 && tasks.length > 0;
+  const showMyTasksEmptyState = isMyTasksActive && sortedTasks.length === 0 && tasks.length > 0;
 
   if (loading) {
     return (
@@ -182,7 +234,7 @@ export default function TasksScreen({ householdId }: Props) {
         </Box>
       ) : (
         <TaskList 
-          tasks={filteredTasks} 
+          tasks={sortedTasks} 
           onToggleTask={handleToggleTask} 
           onEditTask={handleEditTask} 
           onDeleteTask={handleDeleteTask} 

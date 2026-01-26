@@ -126,16 +126,16 @@
 
 ### Implementation for User Story 4
 
-- [ ] T047 [US4] Add sort dropdown to TaskFilters component (Due Date, Created Date, Title, Assignee)
-- [ ] T048 [US4] Update useTaskFilters hook to manage sort state (default: 'due_date')
-- [ ] T049 [US4] Implement client-side sort logic in TaskList component:
+- [X] T047 [US4] Add sort dropdown to TaskFilters component (Due Date, Created Date, Title, Assignee)
+- [X] T048 [US4] Update useTaskFilters hook to manage sort state (default: 'due_date')
+- [X] T049 [US4] Implement client-side sort logic in TaskList component:
   - Sort by due_date ASC (nulls last),
   - Sub-sort by created_at ASC for same due date
-- [ ] T050 [US4] Add sort option: Created Date (oldest first)
-- [ ] T051 [P] [US4] Add sort option: Title (alphabetical A-Z)
-- [ ] T052 [P] [US4] Add sort option: Assignee (group by assignee name)
-- [ ] T053 [US4] Persist selected sort method in localStorage via useTaskFilters hook
-- [ ] T054 [US4] Auto re-sort when task due_date is updated (listen for Realtime updates)
+- [X] T050 [US4] Add sort option: Created Date (oldest first)
+- [X] T051 [P] [US4] Add sort option: Title (alphabetical A-Z)
+- [X] T052 [P] [US4] Add sort option: Assignee (group by assignee name)
+- [X] T053 [US4] Persist selected sort method in localStorage via useTaskFilters hook
+- [X] T054 [US4] Auto re-sort when task due_date is updated (listen for Realtime updates)
 
 **Checkpoint**: User Story 4 complete - tasks sorted intelligently with user control
 
