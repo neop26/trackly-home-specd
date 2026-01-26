@@ -70,6 +70,19 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }: Props) {
           fontSize="sm" 
           color={isOverdue ? "red.600" : "gray.500"} 
           mt={1}
+          fontWeight={isOverdue ? "semibold" : "normal"}
+        >
+          {task.due_date ? (
+            <>
+              {isOverdue && "⚠️ "}
+              Due: {formatDueDate(task.due_date)}
+              {isOverdue && " (Overdue)"}
+            </>
+          ) : (
+            "No due date"
+          )}
+        </Text>
+      </Box>
       <HStack spacing={1}>
         <IconButton
           aria-label="Edit task"
@@ -88,19 +101,6 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }: Props) {
           onClick={handleDelete}
         />
       </HStack>
-          fontWeight={isOverdue ? "semibold" : "normal"}
-        >
-          {task.due_date ? (
-            <>
-              {isOverdue && "⚠️ "}
-              Due: {formatDueDate(task.due_date)}
-              {isOverdue && " (Overdue)"}
-            </>
-          ) : (
-            "No due date"
-          )}
-        </Text>
-      </Box>
     </Box>
   );
 }

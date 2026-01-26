@@ -19,9 +19,15 @@ export default function TaskList({ tasks, onToggleTask, onEditTask, onDeleteTask
   }
 
   return (
-    <VStack spacing={2} align="stretch">onEdit={onEditTask} onDelete={onDeleteTask} 
+    <VStack spacing={2} align="stretch">
       {tasks.map((task) => (
-        <TaskItem key={task.id} task={task} onToggle={onToggleTask} />
+        <TaskItem 
+          key={task.id} 
+          task={task} 
+          onToggle={onToggleTask} 
+          onEdit={onEditTask} 
+          onDelete={onDeleteTask} 
+        />
       ))}
     </VStack>
   );

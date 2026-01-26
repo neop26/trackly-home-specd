@@ -86,7 +86,11 @@ export default function TasksScreen({ householdId }: Props) {
         description: errorMessage,
         status: "error",
         duration: 5000,
-   
+        isClosable: true,
+      });
+      loadTasks(); // Reload to get correct state
+    }
+  }
 
   function handleEditTask(task: Task) {
     setSelectedTask(task);
@@ -104,10 +108,6 @@ export default function TasksScreen({ householdId }: Props) {
 
   function handleTaskDeleted(taskId: string) {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
-  }     isClosable: true,
-      });
-      loadTasks(); // Reload to get correct state
-    }
   }
 
   if (loading) {
@@ -115,26 +115,7 @@ export default function TasksScreen({ householdId }: Props) {
       <Box p={6} display="flex" justifyContent="center" alignItems="center" minH="200px">
         <Spinner size="xl" color="blue.500" thickness="4px" />
       </Box>
-    );onEditTask={handleEditTask} onDeleteTask={handleDeleteTask} />
-
-      {selectedTask && (
-        <EditTaskModal
-          isOpen={isEditOpen}
-          onClose={() => { setSelectedTask(null); onEditClose(); }}
-          task={selectedTask}
-          householdId={householdId}
-          onTaskUpdated={handleTaskUpdated}
-        />
-      )}
-
-      {taskToDelete && (
-        <DeleteTaskDialog
-          isOpen={isDeleteOpen}
-          onClose={() => { setTaskToDelete(null); onDeleteClose(); }}
-          task={taskToDelete}
-          onTaskDeleted={handleTaskDeleted}
-        />
-      )}
+    );
   }
 
   if (error) {
@@ -156,7 +137,26 @@ export default function TasksScreen({ householdId }: Props) {
 
       <AddTask householdId={householdId} onAddTask={handleAddTask} />
 
-      <TaskList tasks={tasks} onToggleTask={handleToggleTask} />
+      <TaskList tasks={tasks} onToggleTask={handleToggleTask} onEditTask={handleEditTask} onDeleteTask={handleDeleteTask} />
+
+      {selectedTask && (
+        <EditTaskModal
+          isOpen={isEditOpen}
+          onClose={() => { setSelectedTask(null); onEditClose(); }}
+          task={selectedTask}
+          householdId={householdId}
+          onTaskUpdated={handleTaskUpdated}
+        />
+      )}
+
+      {taskToDelete && (
+        <DeleteTaskDialog
+          isOpen={isDeleteOpen}
+          onClose={() => { setTaskToDelete(null); onDeleteClose(); }}
+          task={taskToDelete}
+          onTaskDeleted={handleTaskDeleted}
+        />
+      )}
     </VStack>
   );
 }

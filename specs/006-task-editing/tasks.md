@@ -20,12 +20,12 @@
 **Purpose**: Database schema extension and type definitions
 
 - [X] T001 Create migration file `supabase/migrations/20260126000000_010_task_lifecycle.sql`
-- [ ] T002 Add `notes`, `deleted_at`, `archived_at` columns to tasks table per data-model.md
-- [ ] T003 [P] Add partial indexes for `deleted_at`, `archived_at`, and composite index for filtering
-- [ ] T004 [P] Add column comments for documentation in migration
-- [ ] T005 Apply migration locally via `npx supabase db reset` and verify schema changes
-- [ ] T006 Update TypeScript task type in `apps/web/src/types/task.ts` with new columns
-- [ ] T007 [P] Create TaskUpdate and TaskFilters type definitions in `apps/web/src/types/task.ts`
+- [X] T002 Add `notes`, `deleted_at`, `archived_at` columns to tasks table per data-model.md
+- [X] T003 [P] Add partial indexes for `deleted_at`, `archived_at`, and composite index for filtering
+- [X] T004 [P] Add column comments for documentation in migration
+- [X] T005 Apply migration locally via `npx supabase db reset` and verify schema changes
+- [X] T006 Update TypeScript task type in `apps/web/src/types/task.ts` with new columns
+- [X] T007 [P] Create TaskUpdate and TaskFilters type definitions in `apps/web/src/types/task.ts`
 
 ---
 
@@ -35,14 +35,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Extend tasks service with `updateTask()` function in `apps/web/src/services/tasks.ts`
-- [ ] T009 [P] Add `softDeleteTask()` function in `apps/web/src/services/tasks.ts`
-- [ ] T010 [P] Add `restoreTask()` function in `apps/web/src/services/tasks.ts`
-- [ ] T011 [P] Add `archiveTask()` function in `apps/web/src/services/tasks.ts`
-- [ ] T012 Add `bulkUpdateTasks()` function in `apps/web/src/services/tasks.ts`
-- [ ] T013 Create useTaskFilters custom hook in `apps/web/src/hooks/useTaskFilters.ts` for filter/sort state
-- [ ] T014 [P] Create useTaskBulkActions custom hook in `apps/web/src/hooks/useTaskBulkActions.ts` for selection state
-- [ ] T015 Install date-fns if not present: `npm install date-fns` in apps/web
+- [X] T008 Extend tasks service with `updateTask()` function in `apps/web/src/services/tasks.ts`
+- [X] T009 [P] Add `softDeleteTask()` function in `apps/web/src/services/tasks.ts`
+- [X] T010 [P] Add `restoreTask()` function in `apps/web/src/services/tasks.ts`
+- [X] T011 [P] Add `archiveTask()` function in `apps/web/src/services/tasks.ts`
+- [X] T012 Add `bulkUpdateTasks()` function in `apps/web/src/services/tasks.ts`
+- [X] T013 Create useTaskFilters custom hook in `apps/web/src/hooks/useTaskFilters.ts` for filter/sort state
+- [X] T014 [P] Create useTaskBulkActions custom hook in `apps/web/src/hooks/useTaskBulkActions.ts` for selection state
+- [X] T015 Install date-fns if not present: `npm install date-fns` in apps/web
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -56,17 +56,17 @@
 
 ### Implementation for User Story 1
 
-- [ ] T016 [P] [US1] Create EditTaskModal component in `apps/web/src/components/EditTaskModal.tsx`
-- [ ] T017 [US1] Add form fields (title, assignee, due date, notes) using Chakra UI FormControl, Input, Textarea, Select
-- [ ] T018 [US1] Implement pre-population of form with current task values on modal open
-- [ ] T019 [US1] Add form validation (title required, notes max 5000 chars, due date format)
-- [ ] T020 [US1] Wire up save handler calling `updateTask()` service function
-- [ ] T021 [US1] Implement optimistic UI update with rollback on error
-- [ ] T022 [US1] Add cancel button that discards changes and closes modal
-- [ ] T023 [US1] Modify TaskItem component in `apps/web/src/components/TaskItem.tsx` to add Edit icon button
-- [ ] T024 [US1] Add onClick handler to Edit button that opens EditTaskModal with task data
-- [ ] T025 [US1] Add error toast notification for network/validation errors using Chakra useToast
-- [ ] T026 [US1] Add success toast notification on successful edit
+- [X] T016 [P] [US1] Create EditTaskModal component in `apps/web/src/components/EditTaskModal.tsx`
+- [X] T017 [US1] Add form fields (title, assignee, due date, notes) using Chakra UI FormControl, Input, Textarea, Select
+- [X] T018 [US1] Implement pre-population of form with current task values on modal open
+- [X] T019 [US1] Add form validation (title required, notes max 5000 chars, due date format)
+- [X] T020 [US1] Wire up save handler calling `updateTask()` service function
+- [X] T021 [US1] Implement optimistic UI update with rollback on error
+- [X] T022 [US1] Add cancel button that discards changes and closes modal
+- [X] T023 [US1] Modify TaskItem component in `apps/web/src/components/TaskItem.tsx` to add Edit icon button
+- [X] T024 [US1] Add onClick handler to Edit button that opens EditTaskModal with task data
+- [X] T025 [US1] Add error toast notification for network/validation errors using Chakra useToast
+- [X] T026 [US1] Add success toast notification on successful edit
 
 **Checkpoint**: User Story 1 complete - users can edit any task field and changes persist
 
@@ -80,18 +80,18 @@
 
 ### Implementation for User Story 2
 
-- [ ] T027 [P] [US2] Create DeleteTaskDialog component in `apps/web/src/components/DeleteTaskDialog.tsx`
-- [ ] T028 [US2] Implement confirmation dialog using Chakra AlertDialog component
-- [ ] T029 [US2] Wire up confirm button to call `softDeleteTask()` service function
-- [ ] T030 [US2] Modify TaskItem component to add Delete icon button (red color, warning style)
-- [ ] T031 [US2] Add onClick handler to Delete button that opens DeleteTaskDialog
+- [X] T027 [P] [US2] Create DeleteTaskDialog component in `apps/web/src/components/DeleteTaskDialog.tsx`
+- [X] T028 [US2] Implement confirmation dialog using Chakra AlertDialog component
+- [X] T029 [US2] Wire up confirm button to call `softDeleteTask()` service function
+- [X] T030 [US2] Modify TaskItem component to add Delete icon button (red color, warning style)
+- [X] T031 [US2] Add onClick handler to Delete button that opens DeleteTaskDialog
 - [ ] T032 [P] [US2] Create DeletedTasksView component in `apps/web/src/components/DeletedTasksView.tsx`
 - [ ] T033 [US2] Query tasks where `deleted_at IS NOT NULL` in DeletedTasksView
 - [ ] T034 [US2] Add Restore button for each deleted task calling `restoreTask()` service
 - [ ] T035 [US2] Add Permanently Delete button (admin-only) for tasks deleted > 30 days
 - [ ] T036 [US2] Implement role check (admin only) for permanent delete button visibility
 - [ ] T037 [US2] Add navigation link to DeletedTasksView in app sidebar or settings menu
-- [ ] T038 [US2] Modify main TaskList query to exclude deleted tasks: `WHERE deleted_at IS NULL`
+- [X] T038 [US2] Modify main TaskList query to exclude deleted tasks: `WHERE deleted_at IS NULL`
 
 **Checkpoint**: User Story 2 complete - users can soft-delete and restore tasks, admins can permanently delete old ones
 

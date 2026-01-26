@@ -17,21 +17,21 @@ export async function getTasks(householdId: string): Promise<Task[]> {
       assigned_to_profile:profiles!tasks_assigned_to_fkey(display_name)
     `)
     .eq("household_id", householdId)
+    .is("deleted_at", null)
+    .is("archived_at", null)
     .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(`Unable to load tasks. Please check your connection and try again.`);
   }
-  const { data, error } = await supabase
-    .from("tasks")
-    .select(`
-      *,
-      assigned_to_profile:profiles!tasks_assigned_to_fkey(display_name)
-    `)
-    .eq("household_id", householdId)
-    .is("deleted_at", null)
-    .is("archived_at", null)
-    .order("created_at", { ascending: false});
+
+  // Map the joined profile data to assigned_to_name
+  return (data || []).map((task) => ({
+    ...task,
+    assigned_to_name: task.assigned_to_profile?.display_name || null,
+    assigned_to_profile: undefined,
+  }));
+}
 
 /**
  * Create a new task for a household
@@ -106,6 +106,8 @@ export async function updateTaskStatus(
     throw new Error(`Unable to update task status. Please try again.`);
   }
 
+  return data;
+}
 
 /**
  * Update task fields (title, assignee, due date, notes)
@@ -162,7 +164,4 @@ export async function getArchivedTasks(householdId: string): Promise<Task[]> {
   const { data, error } = await supabase.from("tasks").select("*").eq("household_id", householdId).not("archived_at", "is", null).order("archived_at", { ascending: false });
   if (error) throw new Error(`Unable to load archived tasks. Please check your connection and try again.`);
   return data || [];
-}
-
-  return data;
 }
