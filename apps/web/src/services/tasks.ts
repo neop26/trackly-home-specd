@@ -165,3 +165,13 @@ export async function getArchivedTasks(householdId: string): Promise<Task[]> {
   if (error) throw new Error(`Unable to load archived tasks. Please check your connection and try again.`);
   return data || [];
 }
+
+/**
+ * Permanently delete a task (admin only, for tasks deleted > 30 days)
+ * @param taskId - UUID of the task
+ * @throws Error if delete fails
+ */
+export async function permanentDeleteTask(taskId: string): Promise<void> {
+  const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+  if (error) throw new Error(`Unable to permanently delete task. Please try again.`);
+}

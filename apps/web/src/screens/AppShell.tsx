@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Box, Text, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { supabase } from "../lib/supabaseClient";
 import { useLocation } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import InvitePartnerCard from "../components/InvitePartnerCard";
 import ManageRolesCard from "../components/ManageRolesCard";
 import TasksScreen from "./TasksScreen";
+import DeletedTasksView from "../components/DeletedTasksView";
 import {
   getHouseholdForUser,
   type HouseholdContext,
@@ -97,7 +98,21 @@ export default function AppShell() {
         currentUserRole={ctx.role}
       />
 
-      <TasksScreen householdId={ctx.householdId} />
+      <Tabs colorScheme="blue" variant="enclosed">
+        <TabList>
+          <Tab>Active Tasks</Tab>
+          <Tab>Deleted Tasks</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel px={0}>
+            <TasksScreen householdId={ctx.householdId} />
+          </TabPanel>
+          <TabPanel px={0}>
+            <DeletedTasksView householdId={ctx.householdId} userRole={ctx.role} />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </VStack>
   );
 }

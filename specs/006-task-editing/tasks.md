@@ -85,12 +85,12 @@
 - [X] T029 [US2] Wire up confirm button to call `softDeleteTask()` service function
 - [X] T030 [US2] Modify TaskItem component to add Delete icon button (red color, warning style)
 - [X] T031 [US2] Add onClick handler to Delete button that opens DeleteTaskDialog
-- [ ] T032 [P] [US2] Create DeletedTasksView component in `apps/web/src/components/DeletedTasksView.tsx`
-- [ ] T033 [US2] Query tasks where `deleted_at IS NOT NULL` in DeletedTasksView
-- [ ] T034 [US2] Add Restore button for each deleted task calling `restoreTask()` service
-- [ ] T035 [US2] Add Permanently Delete button (admin-only) for tasks deleted > 30 days
-- [ ] T036 [US2] Implement role check (admin only) for permanent delete button visibility
-- [ ] T037 [US2] Add navigation link to DeletedTasksView in app sidebar or settings menu
+- [X] T032 [P] [US2] Create DeletedTasksView component in `apps/web/src/components/DeletedTasksView.tsx`
+- [X] T033 [US2] Query tasks where `deleted_at IS NOT NULL` in DeletedTasksView
+- [X] T034 [US2] Add Restore button for each deleted task calling `restoreTask()` service
+- [X] T035 [US2] Add Permanently Delete button (admin-only) for tasks deleted > 30 days
+- [X] T036 [US2] Implement role check (admin only) for permanent delete button visibility
+- [X] T037 [US2] Add navigation link to DeletedTasksView in app sidebar or settings menu
 - [X] T038 [US2] Modify main TaskList query to exclude deleted tasks: `WHERE deleted_at IS NULL`
 
 **Checkpoint**: User Story 2 complete - users can soft-delete and restore tasks, admins can permanently delete old ones
