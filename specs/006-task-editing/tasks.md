@@ -171,16 +171,16 @@
 
 ### Implementation for User Story 6
 
-- [ ] T061 [US6] Add assignee filter dropdown to TaskFilters component
-- [ ] T062 [US6] Populate dropdown with all household members from household_members table
-- [ ] T063 [US6] Add "Unassigned" option to assignee dropdown
-- [ ] T064 [US6] Update useTaskFilters hook to manage assignee filter state
-- [ ] T065 [US6] Apply assignee filter in TaskList component:
+- [X] T061 [US6] Add assignee filter dropdown to TaskFilters component
+- [X] T062 [US6] Populate dropdown with all household members from household_members table
+- [X] T063 [US6] Add "Unassigned" option to assignee dropdown
+- [X] T064 [US6] Update useTaskFilters hook to manage assignee filter state
+- [X] T065 [US6] Apply assignee filter in TaskList component:
   - Specific member: WHERE assigned_to = userId
   - Unassigned: WHERE assigned_to IS NULL
   - All: no assignee filter
-- [ ] T066 [US6] Update filtered view when task is reassigned (remove from view or add)
-- [ ] T067 [US6] Support combining assignee filter with "My Tasks" (intersection logic)
+- [X] T066 [US6] Update filtered view when task is reassigned (remove from view or add)
+- [X] T067 [US6] Support combining assignee filter with "My Tasks" (intersection logic)
 
 **Checkpoint**: User Story 6 complete - household coordination with assignee visibility
 

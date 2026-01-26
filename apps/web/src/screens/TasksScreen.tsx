@@ -138,10 +138,18 @@ export default function TasksScreen({ householdId }: Props) {
     }
     // If status === "all", show all tasks (no filter)
 
-    // Apply "My Tasks" filter
+    // Apply assignee filter
     if (filters.assignee === "me" && currentUserId) {
+      // "My Tasks" - assigned to current user
       result = result.filter(task => task.assigned_to === currentUserId);
+    } else if (filters.assignee === "unassigned") {
+      // Unassigned tasks
+      result = result.filter(task => !task.assigned_to);
+    } else if (filters.assignee !== "all" && filters.assignee !== "me") {
+      // Specific user (UUID)
+      result = result.filter(task => task.assigned_to === filters.assignee);
     }
+    // If assignee === "all", show all tasks (no filter)
 
     return result;
   }, [tasks, filters.status, filters.assignee, currentUserId]);
@@ -226,7 +234,7 @@ export default function TasksScreen({ householdId }: Props) {
         </Text>
       </Box>
 
-      <TaskFilters onFiltersChange={loadTasks} />
+      <TaskFilters householdId={householdId} onFiltersChange={loadTasks} />
 
       <AddTask householdId={householdId} onAddTask={handleAddTask} />
 

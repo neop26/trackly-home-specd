@@ -1,7 +1,9 @@
 import { Button, HStack, Select, ButtonGroup } from "@chakra-ui/react";
 import { useTaskFilters } from "../hooks/useTaskFilters";
+import { useHouseholdMembers } from "../services/members";
 
 type Props = {
+  householdId: string;
   onFiltersChange?: () => void;
 };
 
@@ -18,8 +20,9 @@ const STATUS_OPTIONS = [
   { value: "all", label: "All Tasks" },
 ] as const;
 
-export default function TaskFilters({ onFiltersChange }: Props) {
-  const { filters, showMyTasks, clearMyTasks, isMyTasksActive, setSortBy, setStatusFilter } = useTaskFilters();
+export default function TaskFilters({ householdId, onFiltersChange }: Props) {
+  const { filters, showMyTasks, clearMyTasks, isMyTasksActive, setSortBy, setStatusFilter, setAssigneeFilter } = useTaskFilters();
+  const { members } = useHouseholdMembers(householdId);
 
   const handleMyTasksToggle = () => {
     if (isMyTasksActive) {
@@ -37,6 +40,11 @@ export default function TaskFilters({ onFiltersChange }: Props) {
 
   const handleStatusChange = (status: typeof filters.status) => {
     setStatusFilter(status);
+    onFiltersChange?.();
+  };
+
+  const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setAssigneeFilter(e.target.value as typeof filters.assignee);
     onFiltersChange?.();
   };
 
@@ -90,6 +98,23 @@ export default function TaskFilters({ onFiltersChange }: Props) {
           </option>
         ))}
       </Select>
+
+      <Select
+        size="sm"
+        width="auto"
+        minW="180px"
+        value={filters.assignee}
+        onChange={handleAssigneeChange}
+      >
+        <option value="all">All Members</option>
+        <option value="unassigned">Unassigned</option>
+        {members.map((member) => (
+          <option key={member.user_id} value={member.user_id}>
+            {member.profile?.display_name || "Unknown"}
+          </option>
+        ))}
+      </Select>
     </HStack>
   );
 }
+
