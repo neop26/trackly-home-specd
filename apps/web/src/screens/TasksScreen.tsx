@@ -26,7 +26,7 @@ export default function TasksScreen({ householdId }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
-  const { filters, isMyTasksActive } = useTaskFilters();
+  const { filters, isMyTasksActive, setStatusFilter, setAssigneeFilter, setSortBy, showMyTasks, clearMyTasks } = useTaskFilters();
   const {
     isSelectionMode,
     selectedTaskIds,
@@ -153,6 +153,13 @@ export default function TasksScreen({ householdId }: Props) {
 
   // Apply filters to task list
   const filteredTasks = useMemo(() => {
+    console.log('Filtering tasks:', { 
+      totalTasks: tasks.length, 
+      filters, 
+      currentUserId,
+      sampleTask: tasks[0] 
+    });
+    
     let result = tasks;
 
     // Apply status filter
@@ -162,6 +169,11 @@ export default function TasksScreen({ householdId }: Props) {
       result = result.filter(task => task.status === "complete");
     }
     // If status === "all", show all tasks (no filter)
+
+    console.log('After status filter:', { 
+      statusFilter: filters.status, 
+      resultCount: result.length 
+    });
 
     // Apply assignee filter
     if (filters.assignee === "me" && currentUserId) {
@@ -175,6 +187,11 @@ export default function TasksScreen({ householdId }: Props) {
       result = result.filter(task => task.assigned_to === filters.assignee);
     }
     // If assignee === "all", show all tasks (no filter)
+
+    console.log('After assignee filter:', { 
+      assigneeFilter: filters.assignee, 
+      resultCount: result.length 
+    });
 
     return result;
   }, [tasks, filters.status, filters.assignee, currentUserId]);
@@ -287,7 +304,17 @@ export default function TasksScreen({ householdId }: Props) {
         />
       )}
 
-      <TaskFilters householdId={householdId} onFiltersChange={loadTasks} />
+      <TaskFilters 
+        householdId={householdId} 
+        onFiltersChange={loadTasks}
+        filters={filters}
+        isMyTasksActive={isMyTasksActive}
+        onStatusChange={setStatusFilter}
+        onAssigneeChange={setAssigneeFilter}
+        onSortChange={setSortBy}
+        onMyTasksToggle={() => isMyTasksActive ? clearMyTasks() : showMyTasks()}
+        onClearMyTasks={clearMyTasks}
+      />
 
       <AddTask householdId={householdId} onAddTask={handleAddTask} />
 

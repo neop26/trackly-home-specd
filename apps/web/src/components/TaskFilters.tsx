@@ -5,6 +5,13 @@ import { useHouseholdMembers } from "../services/members";
 type Props = {
   householdId: string;
   onFiltersChange?: () => void;
+  filters: ReturnType<typeof useTaskFilters>['filters'];
+  isMyTasksActive: boolean;
+  onStatusChange: (status: 'active' | 'completed' | 'all') => void;
+  onAssigneeChange: (assignee: string) => void;
+  onSortChange: (sortBy: 'due_date' | 'created_at' | 'title' | 'assignee') => void;
+  onMyTasksToggle: () => void;
+  onClearMyTasks: () => void;
 };
 
 const SORT_OPTIONS = [
@@ -20,31 +27,40 @@ const STATUS_OPTIONS = [
   { value: "all", label: "All Tasks" },
 ] as const;
 
-export default function TaskFilters({ householdId, onFiltersChange }: Props) {
-  const { filters, showMyTasks, clearMyTasks, isMyTasksActive, setSortBy, setStatusFilter, setAssigneeFilter } = useTaskFilters();
+export default function TaskFilters({ 
+  householdId, 
+  onFiltersChange,
+  filters,
+  isMyTasksActive,
+  onStatusChange,
+  onAssigneeChange,
+  onSortChange,
+  onMyTasksToggle,
+  onClearMyTasks
+}: Props) {
   const { members } = useHouseholdMembers(householdId);
 
   const handleMyTasksToggle = () => {
-    if (isMyTasksActive) {
-      clearMyTasks();
-    } else {
-      showMyTasks();
-    }
+    console.log('My Tasks toggle clicked, current:', isMyTasksActive);
+    onMyTasksToggle();
     onFiltersChange?.();
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(e.target.value as typeof filters.sortBy);
+    console.log('Sort changed to:', e.target.value);
+    onSortChange(e.target.value as typeof filters.sortBy);
     onFiltersChange?.();
   };
 
   const handleStatusChange = (status: typeof filters.status) => {
-    setStatusFilter(status);
+    console.log('Status filter changed to:', status);
+    onStatusChange(status);
     onFiltersChange?.();
   };
 
   const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setAssigneeFilter(e.target.value as typeof filters.assignee);
+    console.log('Assignee filter changed to:', e.target.value);
+    onAssigneeChange(e.target.value);
     onFiltersChange?.();
   };
 
@@ -77,7 +93,7 @@ export default function TaskFilters({ householdId, onFiltersChange }: Props) {
           size="sm"
           variant="ghost"
           onClick={() => {
-            clearMyTasks();
+            onClearMyTasks();
             onFiltersChange?.();
           }}
         >
