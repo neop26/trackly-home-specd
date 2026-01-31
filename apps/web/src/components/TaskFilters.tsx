@@ -1,0 +1,132 @@
+import { Button, HStack, Select, ButtonGroup } from "@chakra-ui/react";
+import { useTaskFilters } from "../hooks/useTaskFilters";
+import { useHouseholdMembers } from "../services/members";
+
+type Props = {
+  householdId: string;
+  onFiltersChange?: () => void;
+  filters: ReturnType<typeof useTaskFilters>['filters'];
+  isMyTasksActive: boolean;
+  onStatusChange: (status: 'active' | 'completed' | 'all') => void;
+  onAssigneeChange: (assignee: string) => void;
+  onSortChange: (sortBy: 'due_date' | 'created_at' | 'title' | 'assignee') => void;
+  onMyTasksToggle: () => void;
+  onClearMyTasks: () => void;
+};
+
+const SORT_OPTIONS = [
+  { value: "due_date", label: "Due Date" },
+  { value: "created_at", label: "Created Date" },
+  { value: "title", label: "Title (A-Z)" },
+  { value: "assignee", label: "Assignee" },
+] as const;
+
+const STATUS_OPTIONS = [
+  { value: "active", label: "Active" },
+  { value: "completed", label: "Completed" },
+  { value: "all", label: "All Tasks" },
+] as const;
+
+export default function TaskFilters({ 
+  householdId, 
+  onFiltersChange,
+  filters,
+  isMyTasksActive,
+  onStatusChange,
+  onAssigneeChange,
+  onSortChange,
+  onMyTasksToggle,
+  onClearMyTasks
+}: Props) {
+  const { members } = useHouseholdMembers(householdId);
+
+  const handleMyTasksToggle = () => {
+    onMyTasksToggle();
+    onFiltersChange?.();
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onSortChange(e.target.value as typeof filters.sortBy);
+    onFiltersChange?.();
+  };
+
+  const handleStatusChange = (status: typeof filters.status) => {
+    onStatusChange(status);
+    onFiltersChange?.();
+  };
+
+  const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onAssigneeChange(e.target.value);
+    onFiltersChange?.();
+  };
+
+  return (
+    <HStack spacing={3} flexWrap="wrap">
+      <ButtonGroup size="sm" isAttached variant="outline">
+        {STATUS_OPTIONS.map((option) => (
+          <Button
+            key={option.value}
+            colorScheme={filters.status === option.value ? "blue" : "gray"}
+            variant={filters.status === option.value ? "solid" : "outline"}
+            onClick={() => handleStatusChange(option.value)}
+          >
+            {option.label}
+          </Button>
+        ))}
+      </ButtonGroup>
+
+      <Button
+        size="sm"
+        colorScheme={isMyTasksActive ? "blue" : "gray"}
+        variant={isMyTasksActive ? "solid" : "outline"}
+        onClick={handleMyTasksToggle}
+      >
+        {isMyTasksActive ? "Showing: My Tasks" : "My Tasks"}
+      </Button>
+      
+      {isMyTasksActive && (
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            onClearMyTasks();
+            onFiltersChange?.();
+          }}
+        >
+          Clear Filter
+        </Button>
+      )}
+
+      <Select
+        size="sm"
+        width="auto"
+        minW="150px"
+        value={filters.sortBy}
+        onChange={handleSortChange}
+      >
+        {SORT_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            Sort by: {option.label}
+          </option>
+        ))}
+      </Select>
+
+      <Select
+        size="sm"
+        width="auto"
+        minW="180px"
+        value={filters.assignee}
+        onChange={handleAssigneeChange}
+      >
+        <option value="all">All Members</option>
+        <option value="unassigned">Unassigned</option>
+        {members.map((member) => (
+          <option key={member.user_id} value={member.user_id}>
+            {member.profile?.display_name || "Unknown"}
+          </option>
+        ))}
+      </Select>
+    </HStack>
+  );
+}
+

@@ -6,21 +6,23 @@ import {
   FormLabel,
   Input,
   Select,
-  HStack,
   VStack,
   useToast,
+  Textarea,
+  Text,
 } from "@chakra-ui/react";
 import { useHouseholdMembers } from "../services/members";
 
 type Props = {
   householdId: string;
-  onAddTask: (title: string, assignedTo?: string | null, dueDate?: string | null) => Promise<void>;
+  onAddTask: (title: string, assignedTo?: string | null, dueDate?: string | null, notes?: string | null) => Promise<void>;
 };
 
 export default function AddTask({ householdId, onAddTask }: Props) {
   const [title, setTitle] = useState("");
   const [assignedTo, setAssignedTo] = useState<string>("");
   const [dueDate, setDueDate] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const toast = useToast();
 
@@ -51,14 +53,26 @@ export default function AddTask({ householdId, onAddTask }: Props) {
       return;
     }
 
+    if (notes.length > 5000) {
+      toast({
+        title: "Notes must be 5000 characters or less",
+        description: `Current length: ${notes.length} characters`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
       setSubmitting(true);
-      await onAddTask(trimmed, assignedTo || null, dueDate || null);
+      await onAddTask(trimmed, assignedTo || null, dueDate || null, notes || null);
 
       // Clear form on success
       setTitle("");
       setAssignedTo("");
       setDueDate("");
+      setNotes("");
 
       toast({
         title: "Task created",
@@ -120,27 +134,45 @@ export default function AddTask({ householdId, onAddTask }: Props) {
           <FormLabel htmlFor="task-due-date" fontSize="sm" fontWeight="medium">
             Due Date (Optional)
           </FormLabel>
-          <HStack spacing={2}>
-            <Input
-              id="task-due-date"
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              isDisabled={submitting}
-              size="md"
-              flex={1}
-            />
-            <Button
-              type="submit"
-              colorScheme="blue"
-              isLoading={submitting}
-              loadingText="Adding..."
-              size="md"
-            >
-              Add Task
-            </Button>
-          </HStack>
+          <Input
+            id="task-due-date"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            isDisabled={submitting}
+            size="md"
+          />
         </FormControl>
+
+        <FormControl>
+          <FormLabel htmlFor="task-notes" fontSize="sm" fontWeight="medium">
+            Notes (Optional)
+            <Text as="span" fontSize="sm" color="gray.500" ml={2}>
+              ({notes.length} / 5000 characters)
+            </Text>
+          </FormLabel>
+          <Textarea
+            id="task-notes"
+            placeholder="Add additional details, links, or context..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            isDisabled={submitting}
+            rows={4}
+            resize="vertical"
+            size="md"
+          />
+        </FormControl>
+
+        <Button
+          type="submit"
+          colorScheme="blue"
+          isLoading={submitting}
+          loadingText="Adding..."
+          size="md"
+          width="full"
+        >
+          Add Task
+        </Button>
       </VStack>
     </Box>
   );
