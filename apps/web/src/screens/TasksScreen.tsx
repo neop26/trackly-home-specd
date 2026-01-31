@@ -53,6 +53,7 @@ export default function TasksScreen({ householdId }: Props) {
 
   useEffect(() => {
     loadTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [householdId]);
 
   async function loadTasks() {

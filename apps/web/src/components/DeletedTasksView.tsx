@@ -30,13 +30,14 @@ export default function DeletedTasksView({ householdId, userRole }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useState<HTMLButtonElement | null>(null);
+  const cancelRef = useState<HTMLButtonElement>(null);
   const toast = useToast();
 
   const isAdmin = ["owner", "admin"].includes(userRole);
 
   useEffect(() => {
     loadDeletedTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [householdId]);
 
   async function loadDeletedTasks() {
@@ -215,7 +216,7 @@ export default function DeletedTasksView({ householdId, userRole }: Props) {
       </VStack>
 
       {/* Confirm Permanent Delete Dialog */}
-      <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef as any} onClose={onClose}>
+      <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -228,7 +229,7 @@ export default function DeletedTasksView({ householdId, userRole }: Props) {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef as any} onClick={onClose}>
+              <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
               <Button colorScheme="red" onClick={confirmPermanentDelete} ml={3}>
