@@ -1,0 +1,207 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Test environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - local
+          - dev
+          - production
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - critical
+          - regression
+          - all
+      browser:
+        description: 'Browser to test'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - 'apps/web/**'
+      - 'testing_engine/**'
+
+env:
+  CI: true
+  NODE_VERSION: '20'
+
+jobs:
+  e2e-tests:
+    name: E2E Tests (${{ inputs.environment || 'dev' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: testing_engine/package-lock.json
+
+      - name: Install dependencies
+        working-directory: testing_engine
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: testing_engine
+        run: npx playwright install --with-deps ${{ inputs.browser || 'chromium' }}
+
+      - name: Set environment URL
+        id: set-url
+        run: |
+          case "${{ inputs.environment || 'dev' }}" in
+            "local")
+              echo "BASE_URL=http://localhost:5173" >> $GITHUB_ENV
+              echo "START_SERVER=true" >> $GITHUB_ENV
+              ;;
+            "dev")
+              echo "BASE_URL=https://witty-bay-0b4318700.1.azurestaticapps.net" >> $GITHUB_ENV
+              ;;
+            "production")
+              echo "BASE_URL=https://ashy-moss-09645d800.2.azurestaticapps.net" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Build app (for local testing)
+        if: inputs.environment == 'local' || github.event_name == 'pull_request'
+        working-directory: apps/web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Parse testing checklist
+        working-directory: testing_engine
+        run: npm run parse:checklist
+
+      - name: Run E2E tests
+        working-directory: testing_engine
+        run: |
+          GREP_PATTERN=""
+          case "${{ inputs.test_suite || 'smoke' }}" in
+            "smoke")
+              GREP_PATTERN="@smoke"
+              ;;
+            "critical")
+              GREP_PATTERN="@critical"
+              ;;
+            "regression")
+              GREP_PATTERN="@regression"
+              ;;
+            "all")
+              GREP_PATTERN=""
+              ;;
+          esac
+          
+          if [ -n "$GREP_PATTERN" ]; then
+            npx playwright test --grep "$GREP_PATTERN" --project=${{ inputs.browser || 'chromium' }}
+          else
+            npx playwright test --project=${{ inputs.browser || 'chromium' }}
+          fi
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          START_SERVER: ${{ env.START_SERVER }}
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ inputs.environment || 'dev' }}-${{ inputs.browser || 'chromium' }}
+          path: |
+            testing_engine/reports/
+            testing_engine/test-results/
+          retention-days: 30
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ inputs.environment || 'dev' }}
+          path: testing_engine/reports/html/
+          retention-days: 30
+
+      - name: Generate test summary
+        if: always()
+        working-directory: testing_engine
+        run: |
+          echo "## 🧪 E2E Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment || 'dev' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Browser:** ${{ inputs.browser || 'chromium' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Test Suite:** ${{ inputs.test_suite || 'smoke' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f reports/checklist-results.json ]; then
+            TOTAL=$(jq '.summary.total' reports/checklist-results.json)
+            PASSED=$(jq '.summary.passed' reports/checklist-results.json)
+            FAILED=$(jq '.summary.failed' reports/checklist-results.json)
+            PASS_RATE=$(jq -r '.summary.passRate' reports/checklist-results.json)
+            
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Total Tests | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+            echo "| Pass Rate | $PASS_RATE |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  smoke-tests:
+    name: Smoke Tests (Quick)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: testing_engine/package-lock.json
+
+      - name: Install dependencies
+        working-directory: testing_engine
+        run: npm ci
+
+      - name: Install Playwright (Chromium only)
+        working-directory: testing_engine
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        working-directory: testing_engine
+        run: npx playwright test --grep @smoke --project=chromium
+        env:
+          BASE_URL: https://witty-bay-0b4318700.1.azurestaticapps.net
+          CI: true
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: smoke-test-failures
+          path: testing_engine/reports/
+          retention-days: 7
