@@ -209,6 +209,9 @@ test.describe('Task Management - Core CRUD', () => {
       const taskTitle = testData.uniqueTaskTitle('Complete Me');
       await tasksPage.createTask({ title: taskTitle });
 
+      // Switch to "All" view so task stays visible after completion
+      await tasksPage.filterByStatus('all');
+      
       await tasksPage.toggleTaskCompletion(taskTitle);
       await tasksPage.assertTaskCompleted(taskTitle);
     });
@@ -216,6 +219,9 @@ test.describe('Task Management - Core CRUD', () => {
     test('should mark task incomplete when clicking again @critical', async () => {
       const taskTitle = testData.uniqueTaskTitle('Toggle Task');
       await tasksPage.createTask({ title: taskTitle });
+
+      // Switch to "All" view so task stays visible through status changes
+      await tasksPage.filterByStatus('all');
 
       // Complete
       await tasksPage.toggleTaskCompletion(taskTitle);
@@ -229,6 +235,9 @@ test.describe('Task Management - Core CRUD', () => {
     test('should apply visual distinction to completed tasks', async ({ page }) => {
       const taskTitle = testData.uniqueTaskTitle('Styled Task');
       await tasksPage.createTask({ title: taskTitle });
+
+      // Switch to "All" view so task stays visible after completion
+      await tasksPage.filterByStatus('all');
 
       await tasksPage.toggleTaskCompletion(taskTitle);
 

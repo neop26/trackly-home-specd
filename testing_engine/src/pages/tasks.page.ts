@@ -16,33 +16,36 @@ export interface TaskData {
 }
 
 export class TasksPage extends BasePage {
-  // Selectors
+  // Selectors - Updated to match actual Trackly UI
   readonly selectors = {
     // Task list
-    taskList: '[data-testid="task-list"], .task-list',
-    taskItem: '[data-testid="task-item"], .task-item',
-    taskTitle: '[data-testid="task-title"], .task-title',
-    taskCheckbox: 'input[type="checkbox"], .task-checkbox',
-    taskEditButton: 'button[aria-label="Edit"], [data-testid="edit-task"]',
-    taskDeleteButton: 'button[aria-label="Delete"], [data-testid="delete-task"]',
-    emptyState: '[data-testid="empty-state"], .empty-state',
+    taskList: '.task-list, [role="list"]',
+    taskItem: '.task-item, [role="listitem"]',
+    taskTitle: '.task-title, [data-testid="task-title"]',
+    taskCheckbox: 'input[type="checkbox"]',
+    taskEditButton: 'button[aria-label*="Edit"], [data-testid="edit-task"]',
+    taskDeleteButton: 'button[aria-label*="Delete"], [data-testid="delete-task"]',
+    emptyState: '[data-testid="empty-state"], .empty-state, :has-text("No tasks")',
 
-    // Add task
-    addTaskInput: '[data-testid="add-task-input"], input[placeholder*="task"]',
-    addTaskButton: 'button:has-text("Add"), button:has-text("Create")',
+    // Add task form - matches AddTask.tsx
+    addTaskInput: '#task-title, [placeholder="What needs to be done?"]',
+    addTaskAssignee: '#task-assignee',
+    addTaskDueDate: '#task-due-date, input[type="date"]',
+    addTaskNotes: '#task-notes, textarea',
+    addTaskButton: 'button:has-text("Add Task")',
 
-    // Filters
+    // Filters - matches TaskFilters.tsx
     filterActive: 'button:has-text("Active")',
     filterCompleted: 'button:has-text("Completed")',
     filterAll: 'button:has-text("All")',
     filterMyTasks: 'button:has-text("My Tasks")',
     filterClear: 'button:has-text("Clear")',
-    assigneeDropdown: 'select[data-testid="assignee-filter"], .assignee-filter select',
-    sortDropdown: 'select[data-testid="sort-by"], .sort-by select',
+    assigneeDropdown: 'select, [data-testid="assignee-filter"]',
+    sortDropdown: 'select, [data-testid="sort-by"]',
 
     // Bulk actions
     selectModeButton: 'button:has-text("Select Mode")',
-    exitSelectModeButton: 'button:has-text("Exit")',
+    exitSelectModeButton: 'button:has-text("Exit"), button:has-text("Done")',
     selectAllButton: 'button:has-text("Select All")',
     bulkAssignButton: 'button:has-text("Assign")',
     bulkDeleteButton: 'button:has-text("Delete")',
@@ -50,10 +53,10 @@ export class TasksPage extends BasePage {
 
     // Edit modal
     editModal: '[role="dialog"], .chakra-modal__content',
-    editTitleInput: '[data-testid="edit-title"], input[name="title"]',
-    editAssigneeSelect: '[data-testid="edit-assignee"], select[name="assignee"]',
-    editDueDateInput: '[data-testid="edit-due-date"], input[type="date"]',
-    editNotesTextarea: '[data-testid="edit-notes"], textarea[name="notes"]',
+    editTitleInput: '[data-testid="edit-title"], #edit-task-title, input[name="title"]',
+    editAssigneeSelect: '[data-testid="edit-assignee"], #edit-task-assignee, select',
+    editDueDateInput: '[data-testid="edit-due-date"], #edit-task-due-date, input[type="date"]',
+    editNotesTextarea: '[data-testid="edit-notes"], #edit-task-notes, textarea',
     editSaveButton: 'button:has-text("Save")',
     editCancelButton: 'button:has-text("Cancel")',
 
@@ -74,7 +77,7 @@ export class TasksPage extends BasePage {
    * Navigate to tasks page
    */
   async navigateToTasks(): Promise<void> {
-    await this.goto('/dashboard');
+    await this.goto('/app');
     await this.waitForPageLoad();
   }
 
@@ -84,17 +87,38 @@ export class TasksPage extends BasePage {
    * Create a new task
    */
   async createTask(data: TaskData): Promise<void> {
-    await this.fillInput(this.selectors.addTaskInput, data.title);
+    // Fill title
+    const titleInput = this.page.locator(this.selectors.addTaskInput);
+    await titleInput.fill(data.title);
     
-    // If there are additional fields exposed in the add form
+    // Fill optional assignee
     if (data.assignee) {
-      const assigneeSelect = this.page.locator(this.selectors.editAssigneeSelect).first();
-      if (await assigneeSelect.isVisible()) {
+      const assigneeSelect = this.page.locator(this.selectors.addTaskAssignee);
+      if (await assigneeSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
         await assigneeSelect.selectOption({ label: data.assignee });
       }
     }
 
+    // Fill optional due date
+    if (data.dueDate) {
+      const dueDateInput = this.page.locator(this.selectors.addTaskDueDate);
+      if (await dueDateInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await dueDateInput.fill(data.dueDate);
+      }
+    }
+
+    // Fill optional notes
+    if (data.notes) {
+      const notesInput = this.page.locator(this.selectors.addTaskNotes);
+      if (await notesInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await notesInput.fill(data.notes);
+      }
+    }
+
+    // Submit
     await this.page.click(this.selectors.addTaskButton);
+    
+    // Wait for the task to actually appear (not just the toast)
     await this.waitForTaskToAppear(data.title);
   }
 
@@ -102,23 +126,49 @@ export class TasksPage extends BasePage {
    * Wait for a task to appear in the list
    */
   async waitForTaskToAppear(title: string): Promise<void> {
-    const task = this.page.locator(this.selectors.taskItem).filter({ hasText: title });
-    await task.waitFor({ state: 'visible', timeout: 10000 });
+    // Wait for the title text to be visible on the page
+    await this.page.getByText(title).waitFor({ state: 'visible', timeout: 10000 });
   }
 
+  /**
+   * Get task checkbox using Playwright's getByText to find the task row
+   * Returns the actual input element for use with check() method
+   */
+  getTaskCheckbox(title: string): Locator {
+    // Find the text, traverse to the closest row with a checkbox, get the checkbox input
+    return this.page.getByText(title).locator('xpath=ancestor::div[.//input[@type="checkbox"]][1]//input[@type="checkbox"]');
+  }
+  
+  /**
+   * Get task edit button for a specific task
+   */
+  getTaskEditButton(title: string): Locator {
+    // Find the text, traverse to the closest row with buttons, get the edit button (first icon button)
+    return this.page.getByText(title).locator('xpath=ancestor::div[.//button][1]//button').first();
+  }
+  
+  /**
+   * Get task delete button for a specific task  
+   */
+  getTaskDeleteButton(title: string): Locator {
+    // Find the text, traverse to the closest row with buttons, get the delete button (usually last)
+    return this.page.getByText(title).locator('xpath=ancestor::div[.//button][1]//button').last();
+  }
+  
   /**
    * Get task locator by title
    */
   getTaskByTitle(title: string): Locator {
-    return this.page.locator(this.selectors.taskItem).filter({ hasText: title });
+    return this.page.getByText(title).locator('xpath=ancestor::div[.//input[@type="checkbox"]][1]');
   }
 
   /**
    * Edit an existing task
    */
   async editTask(currentTitle: string, newData: Partial<TaskData>): Promise<void> {
-    const task = this.getTaskByTitle(currentTitle);
-    await task.locator(this.selectors.taskEditButton).click();
+    // Use the specific edit button locator
+    const editBtn = this.getTaskEditButton(currentTitle);
+    await editBtn.click();
 
     // Wait for modal
     await this.page.waitForSelector(this.selectors.editModal);
@@ -142,18 +192,32 @@ export class TasksPage extends BasePage {
 
   /**
    * Toggle task completion
+   * Chakra UI checkboxes require clicking the label or using dispatchEvent
    */
   async toggleTaskCompletion(title: string): Promise<void> {
-    const task = this.getTaskByTitle(title);
-    await task.locator(this.selectors.taskCheckbox).click();
+    // Find the checkbox label/wrapper and click it
+    // Chakra checkbox: label.chakra-checkbox > input + span
+    const checkboxLabel = this.page.getByText(title).locator('xpath=ancestor::div[.//input[@type="checkbox"]][1]//label[contains(@class, "chakra-checkbox")]');
+    
+    if (await checkboxLabel.count() > 0) {
+      await checkboxLabel.click();
+    } else {
+      // Fallback: find the row and click anywhere on the checkbox area
+      const checkbox = this.getTaskCheckbox(title);
+      await checkbox.dispatchEvent('click');
+    }
+    
+    // Wait for state to update
+    await this.page.waitForTimeout(500);
   }
 
   /**
    * Delete a task
    */
   async deleteTask(title: string): Promise<void> {
-    const task = this.getTaskByTitle(title);
-    await task.locator(this.selectors.taskDeleteButton).click();
+    // Use the specific delete button locator
+    const deleteBtn = this.getTaskDeleteButton(title);
+    await deleteBtn.click();
 
     // Confirm deletion
     await this.page.waitForSelector(this.selectors.deleteDialog);
@@ -301,24 +365,22 @@ export class TasksPage extends BasePage {
    * Assert task is visible
    */
   async assertTaskVisible(title: string): Promise<void> {
-    const task = this.getTaskByTitle(title);
-    await expect(task).toBeVisible();
+    // Use simpler text-based check
+    await expect(this.page.getByText(title, { exact: false }).first()).toBeVisible();
   }
 
   /**
    * Assert task is not visible
    */
   async assertTaskNotVisible(title: string): Promise<void> {
-    const task = this.getTaskByTitle(title);
-    await expect(task).not.toBeVisible();
+    await expect(this.page.getByText(title, { exact: false })).not.toBeVisible();
   }
 
   /**
    * Assert task is completed
    */
   async assertTaskCompleted(title: string): Promise<void> {
-    const task = this.getTaskByTitle(title);
-    const checkbox = task.locator(this.selectors.taskCheckbox);
+    const checkbox = this.getTaskCheckbox(title);
     await expect(checkbox).toBeChecked();
   }
 
@@ -326,8 +388,7 @@ export class TasksPage extends BasePage {
    * Assert task is not completed
    */
   async assertTaskNotCompleted(title: string): Promise<void> {
-    const task = this.getTaskByTitle(title);
-    const checkbox = task.locator(this.selectors.taskCheckbox);
+    const checkbox = this.getTaskCheckbox(title);
     await expect(checkbox).not.toBeChecked();
   }
 

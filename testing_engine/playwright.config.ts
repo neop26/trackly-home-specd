@@ -50,6 +50,9 @@ export default defineConfig({
     // Base URL
     baseURL: BASE_URL,
 
+    // Use stored auth state
+    storageState: './config/storage-state.json',
+
     // Collect trace when retrying a failed test
     trace: 'on-first-retry',
 
