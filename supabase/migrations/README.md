@@ -12,8 +12,7 @@ Migrations are applied in timestamp order:
 6. `20260113000200_006_admin_only_invite_policies.sql` - **Phase 1**: Admin-only RLS policies
 7. `20260120090000_007_profiles_household_select.sql` - **Phase 1**: Household member profile visibility
 8. `20260120091000_008_transfer_household_ownership.sql` - **Phase 1**: Transfer ownership function
-9. `20260125021436_009_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies
-
+9. `20260125021436_009_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies9. `20260126000000_010_task_lifecycle.sql` - **Phase 6 (Task Lifecycle Enhancement)**: Extended tasks table with notes, deleted_at, archived_at
 ## Phase 1 Migrations (Roles & Invites)
 
 ### 005_admin_role_and_helpers.sql
@@ -39,30 +38,23 @@ Expands profile visibility:
 - Allows authenticated household members to read `display_name` for other members in the same household
 - Keeps self-select access intact
 
-### 009_tasks_table.sql (Phase 5 - Planner MVP)
+### 010_task_lifecycle.sql (Phase 6 - Task Lifecycle Enhancement)
 
-Creates household task management foundation:
+Extends tasks table for full lifecycle management:
 
-**Table**: `tasks`
-- `id` (uuid, PK): Unique task identifier
-- `household_id` (uuid, FK → households): Household isolation key (NOT NULL, cascade delete)
-- `title` (text, 1-500 chars): Task description (NOT NULL)
-- `status` (text): 'incomplete' or 'complete' (NOT NULL, default 'incomplete')
-- `assigned_to` (uuid, FK → profiles): Optional assignment (nullable, set null on delete)
-- `due_date` (date): Optional due date
-- `created_at`, `updated_at` (timestamptz): Audit trail (auto-updated via trigger)
+**New Columns**:
+- `notes` (TEXT, nullable): Optional multi-line task notes (max 5000 chars)
+- `deleted_at` (TIMESTAMP WITH TIME ZONE, nullable): Soft-delete timestamp
+- `archived_at` (TIMESTAMP WITH TIME ZONE, nullable): Archive timestamp
 
 **Indexes**:
-- `tasks_household_id_idx`: Primary query pattern (fetch all household tasks)
-- `tasks_assigned_to_idx`: Secondary query pattern (fetch tasks assigned to user)
+- `tasks_deleted_at_idx`: Efficient filtering of deleted tasks
+- `tasks_archived_at_idx`: Efficient filtering of archived tasks
+- `tasks_household_assigned_status_idx`: Composite index for filter combinations
 
-**RLS Policies** (member-level access, no admin restrictions):
-- `tasks_select_members`: Members can read their household's tasks
-- `tasks_insert_members`: Members can create tasks for their household
-- `tasks_update_members`: Members can update their household's tasks
-- `tasks_delete_members`: Members can delete their household's tasks
+**RLS Policies**: Inherits existing member-level access policies from Phase 5. New columns automatically protected by household isolation.
 
-**Security Model**: All household members have equal access to tasks (no admin-only restrictions). Household isolation enforced via `EXISTS` check on `household_members` table.
+**Security Model**: All household members have equal access to edit, delete, and archive tasks. No admin restrictions on task operations.
 
 ## Applying Migrations
 

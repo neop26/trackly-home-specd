@@ -1,7 +1,7 @@
 # Trackly Home — Product Requirements Document (PRD)
 
 **Version:** 2.0  
-**Last Updated:** 2026-01-26  
+**Last Updated:** 2026-01-31  
 **Status:** MVP Complete | V1 Planning
 
 ---
@@ -30,7 +30,7 @@
 
 **Trackly Home** is a privacy-first household coordination app designed to help families manage their daily lives together. The platform enables secure household workspaces where family members can collaborate on tasks, schedules, and activities while maintaining strict data isolation from other households.
 
-**Current State:** MVP Complete (Phases 1-5)  
+**Current State:** MVP Complete (Phases 1-6)  
 **Next Milestone:** V1 Beta Release  
 **Target:** Become the essential household management tool for modern families
 
@@ -803,6 +803,7 @@ Open App → Calendar View → See Week → Add Event → Assign to Child → Se
 |---------|------|---------|
 | 1.0 | 2026-01-18 | Initial PRD |
 | 2.0 | 2026-01-26 | MVP complete, V1/V2/V3 roadmap added |
+| 2.1 | 2026-01-31 | Phase 6 (Task Lifecycle Enhancement) complete |
 
 ---
 
