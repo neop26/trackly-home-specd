@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Box,
   Text,
@@ -30,7 +30,7 @@ export default function DeletedTasksView({ householdId, userRole }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useState<HTMLButtonElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const toast = useToast();
 
   const isAdmin = ["owner", "admin"].includes(userRole);
