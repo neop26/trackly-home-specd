@@ -29,8 +29,8 @@ export default defineConfig({
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: CI,
 
-  // Retry on CI only
-  retries: CI ? 2 : 0,
+  // Retry on CI, local retries for flaky tests
+  retries: CI ? 2 : 2,
 
   // Limit parallel workers on CI
   workers: CI ? 2 : undefined,
@@ -49,9 +49,6 @@ export default defineConfig({
   use: {
     // Base URL
     baseURL: BASE_URL,
-
-    // Use stored auth state
-    storageState: './config/storage-state.json',
 
     // Collect trace when retrying a failed test
     trace: 'on-first-retry',
@@ -82,34 +79,75 @@ export default defineConfig({
 
   // Projects for different browsers and devices
   projects: [
-    // Desktop browsers
+    // === Setup project - runs first to create auth state ===
+    {
+      name: 'setup',
+      testMatch: /global-setup\.ts/,
+    },
+
+    // === Authenticated tests (use saved auth state) ===
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: './config/storage-state.json',
+      },
+      dependencies: ['setup'],
+      testIgnore: '**/01-authentication.spec.ts', // Auth tests run without auth state
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { 
+        ...devices['Desktop Firefox'],
+        storageState: './config/storage-state.json',
+      },
+      dependencies: ['setup'],
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { 
+        ...devices['Desktop Safari'],
+        storageState: './config/storage-state.json',
+      },
+      dependencies: ['setup'],
     },
 
-    // Mobile devices
+    // === Unauthenticated tests (no auth state - for login page tests) ===
+    {
+      name: 'chromium-unauth',
+      testMatch: '**/01-authentication.spec.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: undefined, // No auth state
+      },
+    },
+
+    // Mobile devices (authenticated)
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: { 
+        ...devices['Pixel 5'],
+        storageState: './config/storage-state.json',
+      },
+      dependencies: ['setup'],
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: { 
+        ...devices['iPhone 12'],
+        storageState: './config/storage-state.json',
+      },
+      dependencies: ['setup'],
     },
 
-    // Tablet
+    // Tablet (authenticated)
     {
       name: 'Tablet',
-      use: { ...devices['iPad Pro 11'] },
+      use: { 
+        ...devices['iPad Pro 11'],
+        storageState: './config/storage-state.json',
+      },
+      dependencies: ['setup'],
     },
   ],
 

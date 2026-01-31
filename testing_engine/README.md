@@ -155,13 +155,60 @@ npx playwright test --grep "@critical|@smoke"
 npx playwright test --grep-invert @manual
 ```
 
+## 🔑 Authentication
+
+This testing engine solves the magic link authentication challenge using Supabase Admin API:
+
+### How It Works
+
+1. **No Passwords Required**: Trackly uses magic link authentication only
+2. **Admin API Bypass**: Uses Supabase's `auth.admin.generateLink()` to create auth links
+3. **Automatic Session**: Saves browser storage state for all subsequent tests
+
+### Required Environment Variables
+
+```env
+SUPABASE_URL=http://localhost:54321  # or your Supabase project URL
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+TEST_USER_EMAIL=e2e-test@trackly.local
+```
+
+### How to Get Credentials
+
+**Local (Docker Supabase):**
+```bash
+cd supabase
+cat .env  # Contains service_role_key
+```
+
+**Hosted Supabase:**
+1. Go to your project settings
+2. Navigate to API section
+3. Copy the `service_role` key (keep this secret!)
+
 ## 📊 Reports
 
 ### View HTML Report
+
+After running tests:
 ```bash
 npm run report
-# Or
-open reports/html/index.html
+# Or manually open:
+npx playwright show-report
+```
+
+This opens an interactive HTML report showing:
+- Test pass/fail status
+- Test duration
+- Screenshots of failures
+- Video recordings (on failure)
+- Trace files for debugging
+
+### View Test Traces
+
+For failed tests with traces:
+```bash
+npx playwright show-trace reports/test-results/path-to-trace/trace.zip
 ```
 
 ### Checklist Compliance Report
@@ -297,5 +344,21 @@ The parser expects this markdown format:
 ---
 
 **Version:** 1.0.0  
-**Last Updated:** 2026-01-31  
+**Last Updated:** 2025-01-31  
 **Playwright Version:** 1.50.0
+
+## 🔐 GitHub Actions Secrets
+
+For CI/CD, add these secrets to your repository:
+
+| Secret | Description |
+|--------|-------------|
+| `DEV_SUPABASE_URL` | Dev environment Supabase URL |
+| `DEV_SUPABASE_SERVICE_ROLE_KEY` | Dev Supabase service role key |
+| `E2E_TEST_USER_EMAIL` | Email for test user (optional, defaults to `e2e-test@trackly.dev`) |
+
+### Adding Secrets
+
+1. Go to your repository Settings
+2. Navigate to Secrets and Variables → Actions
+3. Add each secret with the appropriate value

@@ -16,32 +16,34 @@ export interface TaskData {
 }
 
 export class TasksPage extends BasePage {
-  // Selectors - Updated to match actual Trackly UI
+  // Selectors - Using data-testid attributes for stability
   readonly selectors = {
     // Task list
-    taskList: '.task-list, [role="list"]',
-    taskItem: '.task-item, [role="listitem"]',
-    taskTitle: '.task-title, [data-testid="task-title"]',
-    taskCheckbox: 'input[type="checkbox"]',
-    taskEditButton: 'button[aria-label*="Edit"], [data-testid="edit-task"]',
-    taskDeleteButton: 'button[aria-label*="Delete"], [data-testid="delete-task"]',
-    emptyState: '[data-testid="empty-state"], .empty-state, :has-text("No tasks")',
+    taskList: '[data-testid="task-list"]',
+    taskItem: '[data-testid="task-item"]',
+    taskTitle: '[data-testid="task-title"]',
+    taskCheckbox: '[data-testid="task-checkbox"] input',
+    taskEditButton: '[data-testid="task-edit-btn"]',
+    taskDeleteButton: '[data-testid="task-delete-btn"]',
+    emptyState: '[data-testid="empty-state"], :text("No tasks")',
 
-    // Add task form - matches AddTask.tsx
-    addTaskInput: '#task-title, [placeholder="What needs to be done?"]',
-    addTaskAssignee: '#task-assignee',
-    addTaskDueDate: '#task-due-date, input[type="date"]',
-    addTaskNotes: '#task-notes, textarea',
-    addTaskButton: 'button:has-text("Add Task")',
+    // Add task form
+    addTaskForm: '[data-testid="add-task-form"]',
+    addTaskInput: '[data-testid="task-title-input"]',
+    addTaskAssignee: '[data-testid="task-assignee-select"]',
+    addTaskDueDate: '[data-testid="task-due-date-input"]',
+    addTaskNotes: '[data-testid="task-notes-input"]',
+    addTaskButton: '[data-testid="add-task-btn"]',
 
-    // Filters - matches TaskFilters.tsx
-    filterActive: 'button:has-text("Active")',
-    filterCompleted: 'button:has-text("Completed")',
-    filterAll: 'button:has-text("All")',
-    filterMyTasks: 'button:has-text("My Tasks")',
-    filterClear: 'button:has-text("Clear")',
-    assigneeDropdown: 'select, [data-testid="assignee-filter"]',
-    sortDropdown: 'select, [data-testid="sort-by"]',
+    // Filters
+    filterGroup: '[data-testid="status-filter-group"]',
+    filterActive: '[data-testid="filter-active"]',
+    filterCompleted: '[data-testid="filter-completed"]',
+    filterAll: '[data-testid="filter-all"]',
+    filterMyTasks: '[data-testid="filter-my-tasks"]',
+    filterClear: '[data-testid="clear-my-tasks"]',
+    assigneeDropdown: '[data-testid="assignee-select"]',
+    sortDropdown: '[data-testid="sort-select"]',
 
     // Bulk actions
     selectModeButton: 'button:has-text("Select Mode")',
@@ -49,14 +51,14 @@ export class TasksPage extends BasePage {
     selectAllButton: 'button:has-text("Select All")',
     bulkAssignButton: 'button:has-text("Assign")',
     bulkDeleteButton: 'button:has-text("Delete")',
-    selectedCount: '[data-testid="selected-count"], .selected-count',
+    selectedCount: '[data-testid="selected-count"]',
 
     // Edit modal
-    editModal: '[role="dialog"], .chakra-modal__content',
-    editTitleInput: '[data-testid="edit-title"], #edit-task-title, input[name="title"]',
-    editAssigneeSelect: '[data-testid="edit-assignee"], #edit-task-assignee, select',
-    editDueDateInput: '[data-testid="edit-due-date"], #edit-task-due-date, input[type="date"]',
-    editNotesTextarea: '[data-testid="edit-notes"], #edit-task-notes, textarea',
+    editModal: '[role="dialog"]',
+    editTitleInput: '#edit-task-title, [data-testid="edit-title"]',
+    editAssigneeSelect: '#edit-task-assignee, [data-testid="edit-assignee"]',
+    editDueDateInput: '#edit-task-due-date, [data-testid="edit-due-date"]',
+    editNotesTextarea: '#edit-task-notes, [data-testid="edit-notes"]',
     editSaveButton: 'button:has-text("Save")',
     editCancelButton: 'button:has-text("Cancel")',
 
@@ -315,11 +317,12 @@ export class TasksPage extends BasePage {
   }
 
   /**
-   * Select a task in selection mode
+   * Select a task in selection mode (clicks label for Chakra UI compatibility)
    */
   async selectTask(title: string): Promise<void> {
     const task = this.getTaskByTitle(title);
-    await task.locator(this.selectors.taskCheckbox).click();
+    // For Chakra UI, dispatch click event on the input
+    await task.locator('[data-testid="task-checkbox"] input').dispatchEvent('click');
   }
 
   /**

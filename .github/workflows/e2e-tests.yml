@@ -114,14 +114,23 @@ jobs:
               ;;
           esac
           
+          # Choose project based on browser (use auth and unauth for chromium)
+          PROJECT="${{ inputs.browser || 'chromium' }}"
+          if [ "$PROJECT" == "chromium" ]; then
+            PROJECT="chromium --project=chromium-unauth"
+          fi
+          
           if [ -n "$GREP_PATTERN" ]; then
-            npx playwright test --grep "$GREP_PATTERN" --project=${{ inputs.browser || 'chromium' }}
+            npx playwright test --grep "$GREP_PATTERN" --project=$PROJECT
           else
-            npx playwright test --project=${{ inputs.browser || 'chromium' }}
+            npx playwright test --project=$PROJECT
           fi
         env:
           BASE_URL: ${{ env.BASE_URL }}
           START_SERVER: ${{ env.START_SERVER }}
+          SUPABASE_URL: ${{ secrets.DEV_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.DEV_SUPABASE_SERVICE_ROLE_KEY }}
+          TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL || 'e2e-test@trackly.dev' }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -193,10 +202,13 @@ jobs:
 
       - name: Run smoke tests
         working-directory: testing_engine
-        run: npx playwright test --grep @smoke --project=chromium
+        run: npx playwright test --grep @smoke --project=chromium --project=chromium-unauth
         env:
           BASE_URL: https://witty-bay-0b4318700.1.azurestaticapps.net
           CI: true
+          SUPABASE_URL: ${{ secrets.DEV_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.DEV_SUPABASE_SERVICE_ROLE_KEY }}
+          TEST_USER_EMAIL: ${{ secrets.E2E_TEST_USER_EMAIL || 'e2e-test@trackly.dev' }}
 
       - name: Upload results
         uses: actions/upload-artifact@v4

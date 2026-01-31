@@ -8,16 +8,17 @@ import { Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
 
 export class AuthPage extends BasePage {
-  // Selectors
+  // Selectors - using data-testid for stability
   readonly selectors = {
-    emailInput: 'input[type="email"], input[name="email"]',
-    passwordInput: 'input[type="password"], input[name="password"]',
-    signInButton: 'button:has-text("Sign In"), button:has-text("Sign in")',
-    signOutButton: 'button:has-text("Sign Out"), button:has-text("Sign out")',
-    magicLinkButton: 'button:has-text("Send Magic Link")',
-    errorMessage: '[role="alert"], .error-message',
-    loadingSpinner: '[role="progressbar"], .chakra-spinner',
-    profileMenu: '[data-testid="profile-menu"], button:has-text("Profile")',
+    loginPage: '[data-testid="login-page"]',
+    emailInput: '[data-testid="email-input"]',
+    magicLinkButton: '[data-testid="magic-link-btn"]',
+    magicLinkForm: '[data-testid="magic-link-form"]',
+    magicLinkSent: '[data-testid="magic-link-sent"]',
+    googleButton: '[data-testid="google-signin-btn"]',
+    signOutButton: '[data-testid="signout-btn"]',
+    errorMessage: '[data-testid="auth-error"]',
+    loadingSpinner: '.chakra-spinner',
   };
 
   constructor(page: Page) {
@@ -25,10 +26,10 @@ export class AuthPage extends BasePage {
   }
 
   /**
-   * Navigate to auth page
+   * Navigate to login page
    */
-  async navigateToAuth(): Promise<void> {
-    await this.goto('/auth');
+  async navigateToLogin(): Promise<void> {
+    await this.goto('/login');
     await this.waitForPageLoad();
   }
 
@@ -36,77 +37,69 @@ export class AuthPage extends BasePage {
    * Sign in with email (magic link)
    */
   async signInWithMagicLink(email: string): Promise<void> {
-    await this.fillInput(this.selectors.emailInput, email);
+    await this.page.fill(this.selectors.emailInput, email);
     await this.page.click(this.selectors.magicLinkButton);
-    await this.waitForToast('Magic link sent');
-  }
-
-  /**
-   * Sign in with email and password (if supported)
-   */
-  async signInWithPassword(email: string, password: string): Promise<void> {
-    await this.fillInput(this.selectors.emailInput, email);
-    await this.fillInput(this.selectors.passwordInput, password);
-    await this.page.click(this.selectors.signInButton);
-    await this.waitForPageLoad();
+    // Wait for confirmation message
+    await this.page.waitForSelector(this.selectors.magicLinkSent, { timeout: 10000 });
   }
 
   /**
    * Sign out
    */
   async signOut(): Promise<void> {
-    // Try to find sign out button directly or in menu
     const signOutBtn = this.page.locator(this.selectors.signOutButton);
     
-    if (await signOutBtn.isVisible()) {
+    if (await signOutBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await signOutBtn.click();
-    } else {
-      // Try profile menu first
-      const profileMenu = this.page.locator(this.selectors.profileMenu);
-      if (await profileMenu.isVisible()) {
-        await profileMenu.click();
-        await signOutBtn.click();
-      }
+      await this.waitForPageLoad();
     }
-
-    await this.waitForPageLoad();
   }
 
   /**
-   * Check if user is authenticated
+   * Check if user is authenticated (sign out button visible)
    */
   async isAuthenticated(): Promise<boolean> {
     try {
-      // Check for presence of authenticated UI elements
       const signOutBtn = this.page.locator(this.selectors.signOutButton);
-      const profileMenu = this.page.locator(this.selectors.profileMenu);
-      
-      return (await signOutBtn.isVisible()) || (await profileMenu.isVisible());
+      return await signOutBtn.isVisible({ timeout: 3000 });
     } catch {
       return false;
     }
   }
 
   /**
-   * Assert user is on auth page
+   * Assert user is on login page
    */
-  async assertOnAuthPage(): Promise<void> {
-    await this.assertUrlContains('/auth');
+  async assertOnLoginPage(): Promise<void> {
+    await expect(this.page.locator(this.selectors.loginPage)).toBeVisible();
   }
 
   /**
-   * Assert user is signed in
+   * Assert email input is visible
    */
-  async assertSignedIn(): Promise<void> {
-    const isAuth = await this.isAuthenticated();
-    expect(isAuth).toBe(true);
+  async assertEmailInputVisible(): Promise<void> {
+    await expect(this.page.locator(this.selectors.emailInput)).toBeVisible();
   }
 
   /**
-   * Assert user is signed out
+   * Assert magic link option is available
    */
-  async assertSignedOut(): Promise<void> {
-    await this.assertOnAuthPage();
+  async assertMagicLinkOptionVisible(): Promise<void> {
+    await expect(this.page.locator(this.selectors.magicLinkButton)).toBeVisible();
+  }
+
+  /**
+   * Assert magic link was sent
+   */
+  async assertMagicLinkSent(): Promise<void> {
+    await expect(this.page.locator(this.selectors.magicLinkSent)).toBeVisible();
+  }
+
+  /**
+   * Assert sign out button is visible (user is authenticated)
+   */
+  async assertSignOutVisible(): Promise<void> {
+    await expect(this.page.locator(this.selectors.signOutButton)).toBeVisible();
   }
 
   /**
@@ -114,7 +107,7 @@ export class AuthPage extends BasePage {
    */
   async getErrorMessage(): Promise<string> {
     const error = this.page.locator(this.selectors.errorMessage);
-    if (await error.isVisible()) {
+    if (await error.isVisible({ timeout: 3000 }).catch(() => false)) {
       return (await error.textContent()) || '';
     }
     return '';
@@ -124,26 +117,8 @@ export class AuthPage extends BasePage {
    * Wait for redirect after authentication
    */
   async waitForAuthRedirect(): Promise<void> {
-    await this.page.waitForURL(url => !url.pathname.includes('/auth'), {
+    await this.page.waitForURL(url => !url.pathname.includes('/login'), {
       timeout: 30000,
     });
-  }
-
-  /**
-   * Authenticate via Supabase API (for test setup)
-   * Uses stored session to skip UI login
-   */
-  async authenticateViaApi(email: string, accessToken: string): Promise<void> {
-    await this.page.evaluate(({ token }) => {
-      localStorage.setItem('supabase.auth.token', JSON.stringify({
-        currentSession: {
-          access_token: token,
-          token_type: 'bearer',
-        },
-      }));
-    }, { token: accessToken });
-
-    await this.page.reload();
-    await this.waitForPageLoad();
   }
 }

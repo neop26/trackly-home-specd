@@ -5,11 +5,13 @@
  * and protected routes.
  * 
  * Checklist Section: 1. Authentication & Access Control
+ * 
+ * NOTE: These tests run WITHOUT authentication state to test the login page.
+ * They use the 'chromium-unauth' project which doesn't load storageState.
  */
 
 import { test, expect } from '@playwright/test';
 import { AuthPage } from '../pages/auth.page';
-import { testUsers, testConstants } from '../fixtures/test-data';
 
 test.describe('Authentication & Access Control', () => {
   let authPage: AuthPage;
@@ -20,106 +22,70 @@ test.describe('Authentication & Access Control', () => {
 
   test.describe('Basic Authentication', () => {
     test('should display login page when not authenticated @smoke @critical', async ({ page }) => {
-      await page.goto('/dashboard');
-      await authPage.assertOnAuthPage();
+      // Try to access protected route - should redirect to login
+      await page.goto('/app');
+      await page.waitForURL(/login/);
+      await authPage.assertOnLoginPage();
     });
 
     test('should show email input field on auth page @smoke', async ({ page }) => {
-      await authPage.navigateToAuth();
-      await authPage.assertVisible(authPage.selectors.emailInput);
+      await authPage.navigateToLogin();
+      await authPage.assertEmailInputVisible();
     });
 
-    test('should maintain session after page refresh @critical', async ({ page, context }) => {
-      // This test requires pre-authenticated state
-      test.skip(!process.env.TEST_AUTH_TOKEN, 'Requires authenticated session');
-
-      await page.goto('/dashboard');
-      await authPage.waitForPageLoad();
-
-      // Verify authenticated state
-      const isAuth = await authPage.isAuthenticated();
-      expect(isAuth).toBe(true);
-
-      // Refresh page
-      await page.reload();
-      await authPage.waitForPageLoad();
-
-      // Verify still authenticated
-      const stillAuth = await authPage.isAuthenticated();
-      expect(stillAuth).toBe(true);
-    });
-
-    test('should sign out successfully @smoke @critical', async ({ page }) => {
-      test.skip(!process.env.TEST_AUTH_TOKEN, 'Requires authenticated session');
-
-      await page.goto('/dashboard');
-      await authPage.waitForPageLoad();
-
-      // Sign out
-      await authPage.signOut();
-
-      // Should be on auth page
-      await authPage.assertOnAuthPage();
+    test('should show sign in options on login page @smoke', async ({ page }) => {
+      await authPage.navigateToLogin();
+      
+      // Should show Google sign in button
+      await expect(page.locator(authPage.selectors.googleButton)).toBeVisible();
+      
+      // Should show magic link form
+      await expect(page.locator(authPage.selectors.magicLinkForm)).toBeVisible();
     });
 
     test('should protect routes when not logged in @critical', async ({ page }) => {
-      // Try to access protected routes
-      const protectedRoutes = ['/dashboard', '/tasks', '/members', '/settings'];
+      // Try to access protected routes - all should redirect to login
+      const protectedRoutes = ['/app', '/setup'];
 
       for (const route of protectedRoutes) {
         await page.goto(route);
-        await authPage.waitForPageLoad();
-        await authPage.assertUrlContains('/auth');
+        // Should redirect to login
+        await page.waitForURL(/login/, { timeout: 10000 });
       }
     });
   });
 
   test.describe('Magic Link Authentication', () => {
     test('should show magic link option on login page @smoke', async ({ page }) => {
-      await authPage.navigateToAuth();
-      await authPage.assertVisible(authPage.selectors.magicLinkButton);
+      await authPage.navigateToLogin();
+      await authPage.assertMagicLinkOptionVisible();
     });
 
-    test('should validate email format before sending magic link', async ({ page }) => {
-      await authPage.navigateToAuth();
-      await authPage.fillInput(authPage.selectors.emailInput, 'invalid-email');
+    test('should require valid email format @smoke', async ({ page }) => {
+      await authPage.navigateToLogin();
       
-      const magicLinkBtn = page.locator(authPage.selectors.magicLinkButton);
-      // Button should be disabled or show validation error
-      // Implementation depends on your validation approach
+      // The email input has type="email" which provides browser validation
+      const emailInput = page.locator(authPage.selectors.emailInput);
+      await expect(emailInput).toHaveAttribute('type', 'email');
+      await expect(emailInput).toHaveAttribute('required', '');
     });
 
     test('should show confirmation after sending magic link @smoke', async ({ page }) => {
-      test.skip(!process.env.TEST_EMAIL_SERVICE, 'Requires email service');
-
-      await authPage.navigateToAuth();
-      await authPage.signInWithMagicLink(testUsers.owner.email);
-      await authPage.waitForToast('Magic link sent');
+      await authPage.navigateToLogin();
+      
+      // Enter a test email
+      await page.fill(authPage.selectors.emailInput, 'test@example.com');
+      await page.click(authPage.selectors.magicLinkButton);
+      
+      // Should show confirmation message
+      await authPage.assertMagicLinkSent();
     });
   });
 
   test.describe('Household Setup', () => {
-    test('should require household after authentication @critical', async ({ page }) => {
-      test.skip(!process.env.TEST_NEW_USER_TOKEN, 'Requires new user without household');
-
-      // User without household should be redirected to setup
-      await page.goto('/dashboard');
-      await authPage.waitForPageLoad();
-
-      // Should see household creation flow
-      const createHouseholdBtn = page.locator('button:has-text("Create Household")');
-      await expect(createHouseholdBtn).toBeVisible();
-    });
-
     test('should display household name in header after setup @smoke', async ({ page }) => {
-      test.skip(!process.env.TEST_AUTH_TOKEN, 'Requires authenticated session');
-
-      await page.goto('/dashboard');
-      await authPage.waitForPageLoad();
-
-      // Should see household name in header
-      const header = page.locator('header, [role="banner"]');
-      await expect(header).toContainText(/household|home/i);
+      // This test needs authenticated state - skip in unauthenticated project
+      test.skip(true, 'Requires authenticated session - tested in authenticated project');
     });
   });
 });

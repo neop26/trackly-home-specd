@@ -94,7 +94,7 @@ export default function AddTask({ householdId, onAddTask }: Props) {
   }
 
   return (
-    <Box as="form" onSubmit={handleSubmit}>
+    <Box as="form" onSubmit={handleSubmit} data-testid="add-task-form">
       <VStack spacing={3} align="stretch">
         <FormControl>
           <FormLabel htmlFor="task-title" fontSize="sm" fontWeight="medium">
@@ -102,6 +102,7 @@ export default function AddTask({ householdId, onAddTask }: Props) {
           </FormLabel>
           <Input
             id="task-title"
+            data-testid="task-title-input"
             placeholder="What needs to be done?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -116,6 +117,7 @@ export default function AddTask({ householdId, onAddTask }: Props) {
           </FormLabel>
           <Select
             id="task-assignee"
+            data-testid="task-assignee-select"
             placeholder="Unassigned"
             value={assignedTo}
             onChange={(e) => setAssignedTo(e.target.value)}
@@ -136,6 +138,7 @@ export default function AddTask({ householdId, onAddTask }: Props) {
           </FormLabel>
           <Input
             id="task-due-date"
+            data-testid="task-due-date-input"
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
@@ -153,6 +156,7 @@ export default function AddTask({ householdId, onAddTask }: Props) {
           </FormLabel>
           <Textarea
             id="task-notes"
+            data-testid="task-notes-input"
             placeholder="Add additional details, links, or context..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -165,6 +169,7 @@ export default function AddTask({ householdId, onAddTask }: Props) {
 
         <Button
           type="submit"
+          data-testid="add-task-btn"
           colorScheme="blue"
           isLoading={submitting}
           loadingText="Adding..."
