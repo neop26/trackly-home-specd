@@ -41,25 +41,21 @@ export default function TaskFilters({
   const { members } = useHouseholdMembers(householdId);
 
   const handleMyTasksToggle = () => {
-    console.log('My Tasks toggle clicked, current:', isMyTasksActive);
     onMyTasksToggle();
     onFiltersChange?.();
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('Sort changed to:', e.target.value);
     onSortChange(e.target.value as typeof filters.sortBy);
     onFiltersChange?.();
   };
 
   const handleStatusChange = (status: typeof filters.status) => {
-    console.log('Status filter changed to:', status);
     onStatusChange(status);
     onFiltersChange?.();
   };
 
   const handleAssigneeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('Assignee filter changed to:', e.target.value);
     onAssigneeChange(e.target.value);
     onFiltersChange?.();
   };
