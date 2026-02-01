@@ -51,6 +51,9 @@ export default function TaskItem({ task, selectionMode = false, isSelected = fal
 
   return (
     <Box
+      data-testid="task-item"
+      data-task-id={task.id}
+      data-task-status={task.status}
       borderWidth={1}
       borderRadius="lg"
       p={3}
@@ -60,6 +63,7 @@ export default function TaskItem({ task, selectionMode = false, isSelected = fal
     >
       <HStack alignItems="center" gap={3}>
         <Checkbox
+          data-testid="task-checkbox"
           isChecked={selectionMode ? isSelected : isComplete}
           onChange={handleCheckboxChange}
           colorScheme="blue"
@@ -68,6 +72,7 @@ export default function TaskItem({ task, selectionMode = false, isSelected = fal
         <VStack flex={1} align="stretch" spacing={1}>
           <HStack>
             <Text
+              data-testid="task-title"
               textDecoration={isComplete ? "line-through" : "none"}
               color={isComplete ? "gray.600" : "gray.800"}
               fontSize="md"
@@ -136,6 +141,7 @@ export default function TaskItem({ task, selectionMode = false, isSelected = fal
         </VStack>
         <HStack spacing={1}>
           <IconButton
+            data-testid="task-edit-btn"
             aria-label="Edit task"
             icon={<EditIcon />}
             size="sm"
@@ -144,6 +150,7 @@ export default function TaskItem({ task, selectionMode = false, isSelected = fal
             onClick={handleEdit}
           />
           <IconButton
+            data-testid="task-delete-btn"
             aria-label="Delete task"
             icon={<DeleteIcon />}
             size="sm"

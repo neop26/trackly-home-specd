@@ -76,7 +76,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Flex minH="100vh" align="center" justify="center" p={6}>
+    <Flex minH="100vh" align="center" justify="center" p={6} data-testid="login-page">
       <Box
         w="full"
         maxW="md"
@@ -94,19 +94,25 @@ export default function LoginPage() {
             </Box>
 
             {isAuthenticated && (
-              <Button size="sm" variant="outline" onClick={handleSignOut}>
+              <Button 
+                data-testid="signout-btn"
+                size="sm" 
+                variant="outline" 
+                onClick={handleSignOut}
+              >
                 Sign out
               </Button>
             )}
           </Flex>
 
           {error && (
-            <Text fontSize="sm" color="red.600">
+            <Text fontSize="sm" color="red.600" data-testid="auth-error">
               {error}
             </Text>
           )}
 
           <Button
+            data-testid="google-signin-btn"
             w="full"
             colorScheme="blackAlpha"
             bg="black"
@@ -120,8 +126,9 @@ export default function LoginPage() {
             or
           </Text>
 
-          <VStack as="form" spacing={3} onSubmit={sendMagicLink}>
+          <VStack as="form" spacing={3} onSubmit={sendMagicLink} data-testid="magic-link-form">
             <Input
+              data-testid="email-input"
               type="email"
               placeholder="you@email.com"
               value={email}
@@ -129,13 +136,18 @@ export default function LoginPage() {
               required
             />
 
-            <Button w="full" variant="outline" type="submit">
+            <Button 
+              data-testid="magic-link-btn"
+              w="full" 
+              variant="outline" 
+              type="submit"
+            >
               Send magic link
             </Button>
           </VStack>
 
           {sent && (
-            <Text fontSize="sm" color="green.700">
+            <Text fontSize="sm" color="green.700" data-testid="magic-link-sent">
               Magic link sent. Check your email (or Mailpit/Inbucket if local).
             </Text>
           )}

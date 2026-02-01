@@ -61,11 +61,13 @@ export default function TaskFilters({
   };
 
   return (
-    <HStack spacing={3} flexWrap="wrap">
-      <ButtonGroup size="sm" isAttached variant="outline">
+    <HStack spacing={3} flexWrap="wrap" data-testid="task-filters">
+      <ButtonGroup size="sm" isAttached variant="outline" data-testid="status-filter-group">
         {STATUS_OPTIONS.map((option) => (
           <Button
             key={option.value}
+            data-testid={`filter-${option.value}`}
+            data-active={filters.status === option.value}
             colorScheme={filters.status === option.value ? "blue" : "gray"}
             variant={filters.status === option.value ? "solid" : "outline"}
             onClick={() => handleStatusChange(option.value)}
@@ -76,6 +78,8 @@ export default function TaskFilters({
       </ButtonGroup>
 
       <Button
+        data-testid="filter-my-tasks"
+        data-active={isMyTasksActive}
         size="sm"
         colorScheme={isMyTasksActive ? "blue" : "gray"}
         variant={isMyTasksActive ? "solid" : "outline"}
@@ -86,6 +90,7 @@ export default function TaskFilters({
       
       {isMyTasksActive && (
         <Button
+          data-testid="clear-my-tasks"
           size="sm"
           variant="ghost"
           onClick={() => {
@@ -98,6 +103,7 @@ export default function TaskFilters({
       )}
 
       <Select
+        data-testid="sort-select"
         size="sm"
         width="auto"
         minW="150px"
@@ -112,6 +118,7 @@ export default function TaskFilters({
       </Select>
 
       <Select
+        data-testid="assignee-select"
         size="sm"
         width="auto"
         minW="180px"
