@@ -186,23 +186,213 @@ docs(readme): update local development instructions
 
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
-### Spec-Driven Development Workflow
+## Spec-Driven Development Framework
 
-This project uses **SpecKit** for feature development:
+This project uses **SpecKit** - a comprehensive spec-driven development framework located in `.specify/`. All feature development follows this structured workflow.
 
-1. **Specification:** Each feature has a `specs/{feature}/` directory containing:
-   - `spec.md` - Requirements and user stories
-   - `plan.md` - Technical design and implementation plan
-   - `tasks.md` - Task breakdown with checkboxes
-   - `checklists/` - Validation checklists (ux.md, security.md, etc.)
+### .specify/ Directory Structure
 
-2. **Custom Agents:** Available in `.github/agents/` (prefixed with `speckit.`):
-   - `speckit.implement` - Execute tasks from `tasks.md`
-   - `speckit.analyze` - Cross-artifact consistency analysis
-   - `speckit.checklist` - Generate custom checklists
-   - See agent files for complete capabilities
+```
+.specify/
+├── memory/                    # Project governance
+│   └── constitution.md        # Core principles (non-negotiable)
+├── scripts/                   # Automation scripts
+│   └── bash/
+│       ├── create-new-feature.sh      # Initialize new feature branch & spec
+│       ├── check-prerequisites.sh     # Validate workflow prerequisites
+│       ├── setup-plan.sh              # Initialize plan.md
+│       ├── update-agent-context.sh    # Sync agent context files
+│       └── common.sh                  # Shared utilities
+└── templates/                 # Document templates
+    ├── spec-template.md       # Feature specification template
+    ├── plan-template.md       # Implementation plan template
+    ├── tasks-template.md      # Task breakdown template
+    ├── checklist-template.md  # Validation checklist template
+    └── agent-file-template.md # Agent context template
+```
 
-3. **Before implementing a feature:** Check if a spec exists in `specs/` and read `spec.md`, `plan.md`, and `tasks.md` for context.
+### Available Slash Commands
+
+Use these commands in chat to trigger specialized workflows (defined in `.github/prompts/`):
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `/speckit.specify` | Create/refine feature spec (`spec.md`) | Starting a new feature, capturing requirements |
+| `/speckit.plan` | Create implementation plan (`plan.md`) | After spec is complete, before coding |
+| `/speckit.tasks` | Generate task list (`tasks.md`) | After plan is complete, to break down work |
+| `/speckit.checklist` | Generate context-specific checklists | Need security/UX/pre-deploy validation checklist |
+| `/speckit.implement` | Execute tasks from `tasks.md` | Ready to implement code, respects dependencies |
+| `/speckit.analyze` | Validate cross-artifact consistency | Before implementation, check for conflicts/gaps |
+| `/speckit.constitution` | View/validate/update constitution | Check governance rules, validate compliance |
+| `/speckit.clarify` | Interactively clarify requirements | Resolve `[NEEDS CLARIFICATION]` markers |
+| `/speckit.taskstoissues` | Convert tasks to GitHub Issues | Ready for team collaboration/project tracking |
+
+### Typical Workflow
+
+```bash
+# 1. Create new feature branch and spec
+.specify/scripts/bash/create-new-feature.sh "Feature description" --short-name "short-name"
+
+# 2. Use slash commands to develop specification
+/speckit.specify        # Create spec.md with requirements (uses spec-template.md)
+/speckit.plan           # Create plan.md with technical design (uses plan-template.md)
+/speckit.tasks          # Create tasks.md with task breakdown (uses tasks-template.md)
+
+# 3. Validate before implementation
+/speckit.analyze        # Check consistency across spec.md, plan.md, tasks.md
+/speckit.checklist      # Generate validation checklists (uses checklist-template.md)
+
+# 4. Implement
+/speckit.implement      # Execute tasks in dependency order
+```
+
+### Automation Scripts
+
+**`create-new-feature.sh`** - Initialize new feature:
+```bash
+# Auto-detect next feature number
+.specify/scripts/bash/create-new-feature.sh "Add task management system"
+
+# Specify custom branch name
+.specify/scripts/bash/create-new-feature.sh "OAuth integration" --short-name "oauth"
+
+# Override feature number
+.specify/scripts/bash/create-new-feature.sh "Feature description" --number 10
+```
+Creates: `specs/###-feature-name/` directory and feature branch.
+
+**`check-prerequisites.sh`** - Validate workflow state:
+```bash
+# Check basic prerequisites (for /speckit.plan)
+.specify/scripts/bash/check-prerequisites.sh --json
+
+# Check implementation prerequisites (for /speckit.implement)
+.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
+
+# Get paths only (no validation)
+.specify/scripts/bash/check-prerequisites.sh --paths-only
+```
+Validates: feature branch, spec.md, plan.md, tasks.md existence.
+
+**`update-agent-context.sh`** - Sync agent context files:
+```bash
+# Update all existing agent files
+.specify/scripts/bash/update-agent-context.sh
+
+# Update specific agent type
+.specify/scripts/bash/update-agent-context.sh claude
+```
+Supports: Claude, Gemini, Copilot, Cursor, Qwen, Windsurf, etc.
+
+### Specification Structure
+
+Each feature has a `specs/{###-feature-name}/` directory containing:
+
+| File | Created By | Purpose |
+|------|------------|---------|
+| `spec.md` | `/speckit.specify` | Requirements, user stories (P1/P2/P3), acceptance criteria |
+| `plan.md` | `/speckit.plan` | Technical design, architecture, constitution check |
+| `tasks.md` | `/speckit.tasks` | Task breakdown organized by user story |
+| `checklists/` | `/speckit.checklist` | Validation checklists (security.md, ux.md, etc.) |
+| `data-model.md` | Manual/agent | Database schema design (if DB changes) |
+| `contracts/` | Manual/agent | API contracts (if new endpoints) |
+| `research.md` | Manual/agent | Technical research and spike results |
+| `quickstart.md` | Manual/agent | Setup/testing guide (for complex features) |
+
+**Before implementing a feature:** Check if a spec exists in `specs/` and read `spec.md`, `plan.md`, and `tasks.md` for context.
+
+### Constitution Authority
+
+`.specify/memory/constitution.md` defines **non-negotiable** principles that supersede all other practices. Every feature plan MUST include a "Constitution Check" section validating compliance with:
+
+1. **Security First** - RLS enabled, auth validated, no PII logged
+2. **Vertical Slices** - User stories independently deliverable
+3. **Minimal Changes** - Simplest solution, no over-engineering
+4. **Document As You Go** - Docs part of "done"
+5. **Test Before Deploy** - No untested code in shared branches
+
+See [Core Principles (Constitution)](#core-principles-constitution) section for details.
+
+### Template-Based Development
+
+All specs follow standardized templates in `.specify/templates/`:
+
+**spec-template.md** - Enforces:
+- Prioritized user stories (P1/P2/P3)
+- Independent testability
+- Edge case consideration
+- Security requirements
+- Success criteria
+
+**plan-template.md** - Enforces:
+- Constitution check (5 principles)
+- Technical context (stack, constraints, performance goals)
+- Database design with RLS policies
+- Security considerations checklist
+- Testing plan (manual + RLS verification)
+
+**tasks-template.md** - Enforces:
+- Organization by user story (not by layer)
+- Foundation phase (blocking prerequisites)
+- Parallel execution opportunities marked with `[P]`
+- Each story independently deliverable
+- Checkpoint validations
+
+**checklist-template.md** - Provides:
+- Pre-implementation checklist
+- Security checklist (DB, Edge Functions, Frontend, Data Isolation)
+- Pre-merge checklist
+- Pre-deploy checklist
+- RLS audit checklist
+
+### Slash Command Details
+
+**Slash command implementations:** See `.github/prompts/*.prompt.md` for complete documentation.
+
+**Key behaviors:**
+- `/speckit.implement` - Checks checklists before implementation, stops if incomplete (unless user confirms)
+- `/speckit.analyze` - Strictly read-only, identifies inconsistencies across artifacts
+- `/speckit.tasks` - Organizes tasks by user story (not technical layers)
+- `/speckit.checklist` - Context-aware based on feature type (DB changes, auth, etc.)
+
+### Common Workflows
+
+**Starting a new feature:**
+```bash
+# 1. Create branch and spec directory
+.specify/scripts/bash/create-new-feature.sh "My feature description"
+
+# 2. Fill in specification
+/speckit.specify
+
+# 3. Create technical plan
+/speckit.plan
+
+# 4. Break down into tasks
+/speckit.tasks
+
+# 5. Validate before coding
+/speckit.analyze
+```
+
+**Before implementing:**
+```bash
+# Check prerequisites
+.specify/scripts/bash/check-prerequisites.sh --json --require-tasks
+
+# Generate validation checklists
+/speckit.checklist security
+/speckit.checklist pre-deploy
+
+# Start implementation
+/speckit.implement
+```
+
+**During implementation:**
+- Update `tasks.md` with `[x]` as tasks complete
+- Follow task dependencies (tasks list prerequisites)
+- Run manual tests at each user story checkpoint
+- Keep documentation current (per Constitution Principle IV)
 
 ### Environment Variables
 

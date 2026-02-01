@@ -4,11 +4,42 @@
         "speckit.specify": true,
         "speckit.plan": true,
         "speckit.tasks": true,
-        "speckit.implement": true
+        "speckit.implement": true,
+        "speckit.analyze": true,
+        "speckit.checklist": true,
+        "speckit.clarify": true,
+        "speckit.taskstoissues": true
     },
     "chat.tools.terminal.autoApprove": {
         ".specify/scripts/bash/": true,
         ".specify/scripts/powershell/": true
-    }
+    },
+    "git.inputValidationLength": 72,
+    "git.inputValidationSubjectLength": 72,
+    "git.branchPrefix": "feat/",
+    "conventionalCommits.scopes": [
+        "auth",
+        "invite",
+        "household",
+        "roles",
+        "db",
+        "edge-fn",
+        "ui",
+        "routing",
+        "security",
+        "deploy",
+        "docs",
+        "config",
+        "tasks",
+        "planner"
+    ],
+    "conventionalCommits.showEditor": true,
+    "conventionalCommits.emojiFormat": "none",
+    "conventionalCommits.lineBreak": "\n\n",
+    "conventionalCommits.promptBody": true,
+    "conventionalCommits.promptFooter": false,
+    "git.postCommitCommand": "none",
+    "git.enableSmartCommit": false,
+    "git.confirmSync": true
 }
 
