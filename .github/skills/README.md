@@ -13,6 +13,7 @@ This directory contains [Agent Skills](https://agentskills.io/specification) for
 | [deployment](deployment/SKILL.md) | CI/CD deployment | Deploying to dev/prod |
 | [testing](testing/SKILL.md) | Manual & automated tests | Creating test plans, running tests |
 | [documentation](documentation/SKILL.md) | Docs maintenance | Updating READMEs, PRD, tracker |
+| [documentation-sync](documentation-sync/SKILL.md) | Pre-PR doc sync | Before creating PR to main |
 | [code-review](code-review/SKILL.md) | PR review | Reviewing pull requests |
 | [rls-policy](rls-policy/SKILL.md) | Row Level Security | Adding/modifying RLS policies |
 | [task-management](task-management/SKILL.md) | Task system | Working with task features |

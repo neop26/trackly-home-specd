@@ -1,0 +1,1 @@
+All Detailed PRD's are stored in this directory. Each file contains comprehensive information about the product requirements, including features, user stories, acceptance criteria, and any relevant diagrams or mockups.

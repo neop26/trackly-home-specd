@@ -10,9 +10,10 @@ Trackly Home is a consumer MVP for helping a household (starting with two people
 | Phase 2: Security   | ✅ Complete    | RLS audit, function security          |
 | Phase 3: UX Routing | ✅ Complete    | Onboarding state machine              |
 | Phase 4: Deploy     | ✅ Complete    | CI/CD, PR checks, auto-deploy         |
-| Phase 5: Planner    | ⬜ Not Started | Basic task management                 |
+| Phase 5: Planner    | ✅ Complete    | Basic task management                 |
+| Phase 6: Task Edit  | 🟡 In Progress | Task editing, filters, bulk actions   |
 
-**MVP Target:** 2026-02-28
+**MVP Target:** 2026-02-28 ✅ Complete
 
 > For detailed tracking, see [`docs/PROJECT_TRACKER.md`](docs/PROJECT_TRACKER.md)
 
@@ -62,12 +63,20 @@ Trackly Home is a consumer MVP for helping a household (starting with two people
 - Secure invite system (hashed tokens, expiry)
 - Role management UI (admin-only)
 - Partner invite UI (admin-only)
+- **Task management (create, view, complete, assign, due dates)**
+- **Task editing (title, assignee, due date, notes)**
+- **Task filters (my tasks, status, assignee, sort options)**
+- **Bulk task actions (complete, delete, assign multiple)**
+- **Soft delete with restore capability**
 
 ### Coming Soon
 
-- Task management (Phase 5)
+- Task archiving and advanced lifecycle management
 - Google OAuth sign-in
 - Production deployment pipeline
+- Mobile app (React Native)
+- External calendar sync
+- AI-powered task suggestions
 
 ---
 
@@ -195,6 +204,7 @@ VITE_SUPABASE_ANON_KEY=eyJ...
 | `households`        | Household entity with owner_user_id                 |
 | `household_members` | Membership join table (user_id, household_id, role) |
 | `invites`           | Invitations (token_hash, expiry, invited_email)     |
+| `tasks`             | Household tasks (title, status, assigned_to, due_date, notes, lifecycle fields) |
 
 ### Roles
 

@@ -1,7 +1,7 @@
 # Trackly Home — Product Requirements Document (PRD)
 
-**Version:** 2.0  
-**Last Updated:** 2026-01-31  
+**Version:** 2.3  
+**Last Updated:** 2026-02-03  
 **Status:** MVP Complete | V1 Planning
 
 ---
@@ -30,7 +30,7 @@
 
 **Trackly Home** is a privacy-first household coordination app designed to help families manage their daily lives together. The platform enables secure household workspaces where family members can collaborate on tasks, schedules, and activities while maintaining strict data isolation from other households.
 
-**Current State:** MVP Complete (Phases 1-6)  
+**Current State:** MVP Complete (Phases 1-5) | Phase 6 (Task Editing) 85% Complete  
 **Next Milestone:** V1 Beta Release  
 **Target:** Become the essential household management tool for modern families
 
@@ -145,7 +145,7 @@ Become the **operating system for household management**, supporting:
 
 ## 4. MVP Status
 
-### Completed (Phases 1-5)
+### Completed (Phases 1-5) | In Progress (Phase 6)
 
 | Phase | Feature | Status |
 |-------|---------|--------|
@@ -154,6 +154,7 @@ Become the **operating system for household management**, supporting:
 | 3 | UX Routing & Onboarding | ✅ Complete |
 | 4 | Deploy Discipline (CI/CD) | ✅ Complete |
 | 5 | Planner MVP (Task Management) | ✅ Complete |
+| 6 | Task Editing & Filters | 🟡 85% Complete |
 
 ### What MVP Delivers
 
@@ -162,19 +163,19 @@ Become the **operating system for household management**, supporting:
 3. **Invitations:** Secure token-based invite/join flow
 4. **Roles:** Owner/Admin/Member with proper permissions
 5. **Tasks:** Create, view, complete, assign, due dates
-6. **Security:** RLS isolation, zero cross-household leaks
-7. **Infrastructure:** CI/CD pipelines, dev/prod environments
+6. **Task Management:** Edit, delete (soft), notes, filters, bulk actions
+7. **Security:** RLS isolation, zero cross-household leaks
+8. **Infrastructure:** CI/CD pipelines, dev/prod environments
 
 ### MVP Limitations (Being Addressed in V1)
 
-- No task editing or deletion
 - No recurring tasks
 - No notifications
 - No calendar view
 - No mobile optimization
-- No search/filter
 - No categories/tags
 - No events (only tasks)
+- Task archiving (P3, optional)
 
 ---
 
@@ -540,18 +541,18 @@ Open App → Calendar View → See Week → Add Event → Assign to Child → Se
 **Target:** 2026-02-28 (4 weeks from MVP)  
 **Theme:** "Make It Usable Daily"
 
-### Phase 6: Task Lifecycle Enhancement (Week 1)
-| ID | Feature | Priority | Effort |
-|----|---------|----------|--------|
-| 6.1 | Edit task (title, assignee, due date) | P0 | Medium |
-| 6.2 | Delete task (soft delete) | P0 | Low |
-| 6.3 | Task notes/description field | P1 | Low |
-| 6.4 | Task sort by due date | P0 | Low |
-| 6.5 | Task filter by status | P0 | Low |
-| 6.6 | Task filter by assignee | P1 | Low |
-| 6.7 | "My Tasks" quick filter | P0 | Low |
-| 6.8 | Bulk complete tasks | P1 | Medium |
-| 6.9 | Archive completed tasks | P2 | Medium |
+### Phase 6: Task Lifecycle Enhancement (Week 1) ✅ 85% Complete
+| ID | Feature | Priority | Effort | Status |
+|----|---------|----------|--------|--------|
+| 6.1 | Edit task (title, assignee, due date) | P0 | Medium | ✅ Complete |
+| 6.2 | Delete task (soft delete) | P0 | Low | ✅ Complete |
+| 6.3 | Task notes/description field | P1 | Low | ✅ Complete |
+| 6.4 | Task sort by due date | P0 | Low | ✅ Complete |
+| 6.5 | Task filter by status | P0 | Low | ✅ Complete |
+| 6.6 | Task filter by assignee | P1 | Low | ✅ Complete |
+| 6.7 | "My Tasks" quick filter | P0 | Low | ✅ Complete |
+| 6.8 | Bulk complete tasks | P1 | Medium | ✅ Complete |
+| 6.9 | Archive completed tasks | P2 | Medium | 🔴 Not Started |
 
 ### Phase 7: Categories & Organization (Week 1)
 | ID | Feature | Priority | Effort |
@@ -804,6 +805,8 @@ Open App → Calendar View → See Week → Add Event → Assign to Child → Se
 | 1.0 | 2026-01-18 | Initial PRD |
 | 2.0 | 2026-01-26 | MVP complete, V1/V2/V3 roadmap added |
 | 2.1 | 2026-01-31 | Phase 6 (Task Lifecycle Enhancement) complete |
+| 2.2 | 2026-02-02 | Phase 6 in progress, task editing features added |
+| 2.3 | 2026-02-03 | Phase 6 85% complete, archiving feature remaining |
 
 ---
 
