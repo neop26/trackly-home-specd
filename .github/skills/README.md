@@ -17,6 +17,8 @@ This directory contains [Agent Skills](https://agentskills.io/specification) for
 | [code-review](code-review/SKILL.md) | PR review | Reviewing pull requests |
 | [rls-policy](rls-policy/SKILL.md) | Row Level Security | Adding/modifying RLS policies |
 | [task-management](task-management/SKILL.md) | Task system | Working with task features |
+| [branch-pruning](branch-pruning/SKILL.md) | Prune stale branches | Cleaning up merged branches |
+| [branch-rebase](branch-rebase/SKILL.md) | Rebase with parent | Syncing feature/dev branches |
 
 ## Skill Format
 
