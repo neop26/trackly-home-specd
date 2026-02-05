@@ -17,7 +17,6 @@ Historical documents from completed development phases are stored in [archive/](
 
 | Folder | Purpose |
 |--------|---------|
-| [operations/](operations/) | Deployment runbooks and environment setup notes |
-| [process/](process/) | SDLC process and standards |
+| [process/](process/) | SDLC process and operations notes |
 | [detailedprd/](detailedprd/) | Deep-dive PRD references |
 | [working_folder/](working_folder/) | Temporary working documents |

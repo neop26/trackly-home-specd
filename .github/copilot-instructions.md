@@ -636,6 +636,58 @@ Member → Read household data, use features
 - No secrets in client (service role key never exposed to browser)
 - Standardized errors (responses **MUST NOT** leak internal details)
 
+## Feature Tracking Workflow
+
+### Before Starting Any New Work
+
+1. **Check PROJECT_TRACKER.md** - What phase are we in? What's in progress?
+2. **Check last commit** - `git log -1` to see where we left off
+3. **Validate feature exists** - Is the request already in PRD?
+
+### New Feature Request Flow
+
+When a user requests a feature NOT in PRD/Tracker:
+
+1. **Search PRD**: `grep -i "keyword" docs/TRACKLY_HOME_PRD.md`
+2. **Search Tracker**: `grep -i "keyword" docs/PROJECT_TRACKER.md`
+3. **If not found**: Add to PRD under appropriate version (V1/V2/V3)
+4. **Mark status**: `🔴 Not Started`
+5. **Inform user**: Feature has been tracked for version X
+
+**Never implement untracked features.** All work traces back to PRD.
+
+### Session Continuity
+
+PROJECT_TRACKER must always show current state:
+
+**Before ending session:**
+- Update task status (🟢/🟡/🔴)
+- Add completion dates
+- Note blockers and next steps in "Notes & Decisions"
+
+**When resuming:**
+- Read PROJECT_TRACKER Quick Status Overview
+- Check Notes & Decisions for last session summary
+- Continue from documented next steps
+
+### Version Assignment Guidelines
+
+| Complexity | User Impact | Timeline | Version |
+|------------|-------------|----------|--------|
+| Low | High | Urgent | V1 |
+| Medium | Medium | Soon | V1/V2 |
+| High | Any | Can wait | V2/V3 |
+| Research needed | Any | Unknown | V2/V3 |
+
+### Quick Status Skill
+
+Use the `project-status` skill for:
+- Resuming after a break
+- Validating feature requests
+- Understanding current priorities
+
+See `.github/skills/project-status/SKILL.md` for detailed guidance.
+
 ## Constitution Compliance
 
 - All PRs **MUST** be reviewed against the constitution

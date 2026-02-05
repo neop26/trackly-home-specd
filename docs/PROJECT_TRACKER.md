@@ -6,6 +6,8 @@
 
 > **Note:** Timeline assumes dedicated development effort. Dates should be adjusted based on actual velocity and resource availability. See Risk Register for potential delays.
 
+**Status Legend:** 🟢 Complete | 🟡 In Progress | 🔴 Not Started | ⚪ Blocked
+
 ---
 
 ## Quick Status Overview
@@ -174,6 +176,23 @@
 ---
 
 ## Notes & Decisions
+
+### Session Summary Template
+
+**Date:** YYYY-MM-DD  
+**Context:** What was the focus of this session
+
+**Completed:**
+- [Task ID] - [Short description]
+
+**In Progress:**
+- [Task ID] - [Short description + blockers]
+
+**Next Session:**
+- [ ] [Specific next step]
+- [ ] [Specific next step]
+
+---
 
 ### 2026-02-03 - Phase 6 85% Complete 🟡
 - **Task Editing Features Complete**: All core editing functionality implemented

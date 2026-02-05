@@ -1,5 +1,23 @@
 <!--
-Sync Impact Report (2026-01-26):
+Sync Impact Report (2026-02-06):
+
+Version Change: 1.2.1 → 1.3.0
+Reason: Added Feature Tracking Workflow to ensure all features are tracked in PRD before implementation and PROJECT_TRACKER always reflects current state for session continuity. MINOR version as this adds new workflow guidance.
+
+Added Sections:
+  - Feature Tracking Workflow - Mandatory flow for new feature requests
+  - Single Source of Truth - PRD and Tracker responsibilities
+  - Session Continuity - Requirements for maintaining project state
+  - Version Assignment - Guidelines for assigning features to versions
+
+Templates Status:
+  ✅ All existing templates remain compliant
+
+Follow-up Actions:
+  - Created project-status skill to support this workflow
+  - Updated copilot-instructions.md with workflow guidance
+
+Previous Changes (2026-01-26):
 
 Version Change: 1.2.0 → 1.2.1
 Reason: Clarified deployment process with three-tier promotion workflow (local → staging → production). PATCH version as this refines existing deployment guidance without adding new principles.
@@ -118,6 +136,42 @@ Validate all changes locally before merging. No untested code SHALL reach shared
 - For new features: tests written first, verify tests fail, then implement (Red-Green-Refactor when tests required)
 
 **Rationale**: Catching errors locally is faster and cheaper than debugging in deployed environments. The project currently relies on manual testing (Phase 1 complete); automated testing is planned for later phases.
+
+## Feature Tracking Workflow
+
+### Single Source of Truth
+The PRD (`docs/TRACKLY_HOME_PRD.md`) and PROJECT_TRACKER (`docs/PROJECT_TRACKER.md`) are the authoritative sources for all features and progress.
+
+**PRD Responsibility**: Defines WHAT features exist and their version scope (MVP/V1/V2/V3)
+**Tracker Responsibility**: Shows WHERE we are - current phase, task status, progress
+
+### New Feature Request Flow
+When a new feature or request is discussed that doesn't exist in PRD/Tracker:
+
+1. **Validate**: Search PRD and Tracker for existing coverage
+2. **Document**: Add to PRD under appropriate version section (V1/V2/V3)
+3. **Status**: Mark as `🔴 Not Started` until work begins
+4. **Notify**: Inform user the feature has been tracked
+
+**Never implement untracked features.** All work MUST trace back to PRD requirements.
+
+### Session Continuity
+PROJECT_TRACKER MUST always reflect current state so development can resume after any break:
+
+- **Before ending session**: Update tracker with progress, blockers, next steps
+- **When resuming**: Read tracker to understand current state and priorities
+- **After completing tasks**: Mark tasks complete with date and notes
+
+**Rationale**: Clear tracking enables asynchronous work, prevents duplicate effort, and ensures all stakeholders understand project state at any time.
+
+### Version Assignment
+
+| Complexity | User Impact | Timeline | Assign To |
+|------------|-------------|----------|----------|
+| Low | High | Urgent | V1 |
+| Medium | Medium | Soon | V1/V2 |
+| High | Any | Can wait | V2/V3 |
+| Research needed | Any | Unknown | V2/V3 |
 
 ## Security Requirements
 
@@ -355,4 +409,4 @@ Documents MUST be routed based on their purpose and longevity:
 
 **Rationale**: Different document types have different lifecycles. Permanent docs need version control and maintenance, while working docs are temporary and shouldn't clutter the main documentation structure.
 
-**Version**: 1.2.1 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-01-26
+**Version**: 1.3.0 | **Ratified**: 2026-01-21 | **Last Amended**: 2026-02-06
