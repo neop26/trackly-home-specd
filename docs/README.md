@@ -7,17 +7,17 @@ Core project documentation lives here.
 | Document | Purpose |
 |----------|---------|
 | [TRACKLY_HOME_PRD.md](TRACKLY_HOME_PRD.md) | Product requirements with V1/V2/V3 roadmap |
-| [MVP_STATUS_REPORT.md](MVP_STATUS_REPORT.md) | Current MVP status and honest assessment |
-| [SDLC_PROCESS.md](SDLC_PROCESS.md) | Development process and standards |
+| [PROJECT_TRACKER.md](PROJECT_TRACKER.md) | Active phase and milestone tracking |
 
 ## Archived Documents
 
 Historical documents from completed development phases are stored in [archive/](archive/).
 
-| Document | Description |
-|----------|-------------|
-| [PROJECT_TRACKER_MVP.md](archive/PROJECT_TRACKER_MVP.md) | Original MVP tracker (Phases 1-5) |
+## Other Documentation
 
-## Working Documents
-
-Working documents and session notes are in [working_folder/](working_folder/).
+| Folder | Purpose |
+|--------|---------|
+| [operations/](operations/) | Deployment runbooks and environment setup notes |
+| [process/](process/) | SDLC process and standards |
+| [detailedprd/](detailedprd/) | Deep-dive PRD references |
+| [working_folder/](working_folder/) | Temporary working documents |

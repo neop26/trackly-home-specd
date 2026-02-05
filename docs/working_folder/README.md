@@ -30,29 +30,7 @@ Per the [Constitution (v1.1.0)](../../.specify/memory/constitution.md#intelligen
 
 ## Current Contents
 
-### `/testing-guides/` - Deploy Discipline Testing Procedures
-**Created**: 2026-01-24  
-**Purpose**: One-time validation procedures for Deploy Discipline feature (004)  
-**Lifecycle**: Temporary - delete after feature testing complete and merged
-
-Contains step-by-step test validation guides for CI/CD workflows:
-- [README.md](testing-guides/README.md) - Testing orchestration
-- [PR_QUALITY_GATES_TEST.md](testing-guides/PR_QUALITY_GATES_TEST.md) - Phase 1 validation
-- [SWA_PRODUCTION_DEPLOY_TEST.md](testing-guides/SWA_PRODUCTION_DEPLOY_TEST.md) - Phase 3 validation
-- [SUPABASE_PRODUCTION_DEPLOY_TEST.md](testing-guides/SUPABASE_PRODUCTION_DEPLOY_TEST.md) - Phase 4 validation
-
-**Action After Use**: Once all tests pass and feature merges, delete this folder.
-
----
-
-### `SESSION_SUMMARY_2026-01-24.md` - Agent Analysis Report
-**Created**: 2026-01-24  
-**Type**: Agent-generated summary  
-**Lifecycle**: Temporary - informational snapshot
-
-Contains comprehensive feature analysis and progress summary from GitHub Copilot agent session. Useful for context during active development, but has no long-term value after feature completion.
-
-**Action After Feature Close**: Delete or archive.
+This folder is currently empty. Add only temporary, in-progress documents here.
 
 ---
 

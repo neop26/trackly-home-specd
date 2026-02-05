@@ -115,7 +115,7 @@ This directory contains detailed test validation procedures for the Deploy Disci
 - [ ] Have GitHub CLI configured (`gh auth login`)
 - [ ] Know your Azure SWA resource names (dev and prod)
 - [ ] Know your Supabase project refs (dev and prod)
-- [ ] Review [../../.github/SECRETS.md](../../.github/SECRETS.md) for context
+- [ ] Review [../../../.github/SECRETS.md](../../../.github/SECRETS.md) for context
 
 ### During Testing
 - **Take screenshots**: Capture evidence of success/failure
@@ -134,7 +134,7 @@ This directory contains detailed test validation procedures for the Deploy Disci
 1. **Do not proceed**: Fix the issue before continuing
 2. **Document the failure**: Screenshot, error message, what you expected
 3. **Debug**: Check workflow logs, GitHub secrets, Azure/Supabase dashboards
-4. **Get help**: Reference [../SECRETS.md](../SECRETS.md) for troubleshooting
+4. **Get help**: Reference [../../../.github/SECRETS.md](../../../.github/SECRETS.md) for troubleshooting
 5. **Retest after fix**: Repeat the failed test to confirm resolution
 
 ---
@@ -236,10 +236,10 @@ Once all tests pass:
 
 ## Questions or Issues?
 
-- **Secrets Configuration**: See [../../.github/SECRETS.md](../../.github/SECRETS.md)
-- **Workflow Details**: See [../.github/workflows/](../.github/workflows/)
-- **Specification**: See [../../specs/004-deploy-discipline/spec.md](../../specs/004-deploy-discipline/spec.md)
-- **Task Breakdown**: See [../../specs/004-deploy-discipline/tasks.md](../../specs/004-deploy-discipline/tasks.md)
+- **Secrets Configuration**: See [../../../.github/SECRETS.md](../../../.github/SECRETS.md)
+- **Workflow Details**: See [../../../.github/workflows/](../../../.github/workflows/)
+- **Specification**: See [../../../specs/004-deploy-discipline/spec.md](../../../specs/004-deploy-discipline/spec.md)
+- **Task Breakdown**: See [../../../specs/004-deploy-discipline/tasks.md](../../../specs/004-deploy-discipline/tasks.md)
 
 ---
 

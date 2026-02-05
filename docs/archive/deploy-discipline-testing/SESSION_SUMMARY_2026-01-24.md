@@ -47,7 +47,7 @@ Based on comprehensive analysis of the Deploy Discipline feature, I've completed
 
 ---
 
-### 2. `docs/working_folder/testing-guides/README.md` (NEW)
+### 2. `docs/archive/deploy-discipline-testing/README.md` (NEW)
 **Purpose**: Orchestrates the testing process
 **Location**: Working document per Constitution documentation routing
 
@@ -62,7 +62,7 @@ Based on comprehensive analysis of the Deploy Discipline feature, I've completed
 
 ---
 
-### 3. `docs/working_folder/testing-guides/PR_QUALITY_GATES_TEST.md` (NEW)
+### 3. `docs/archive/deploy-discipline-testing/PR_QUALITY_GATES_TEST.md` (NEW)
 **Phase**: 1 (Tasks T021-T023)  
 **Duration**: ~1 hour
 **Location**: Working document per Constitution documentation routing
@@ -82,7 +82,7 @@ Based on comprehensive analysis of the Deploy Discipline feature, I've completed
 
 ---
 
-### 4. `docs/working_folder/testing-guides/SWA_PRODUCTION_DEPLOY_TEST.md` (NEW)
+### 4. `docs/archive/deploy-discipline-testing/SWA_PRODUCTION_DEPLOY_TEST.md` (NEW)
 **Phase**: 3 (Tasks T045-T048)  
 **Duration**: ~3 hours
 **Location**: Working document per Constitution documentation routing
@@ -97,7 +97,7 @@ Based on comprehensive analysis of the Deploy Discipline feature, I've completed
 
 ---
 
-### 5. `docs/working_folder/testing-guides/SUPABASE_PRODUCTION_DEPLOY_TEST.md` (NEW)
+### 5. `docs/archive/deploy-discipline-testing/SUPABASE_PRODUCTION_DEPLOY_TEST.md` (NEW)
 **Phase**: 4 (Tasks T061-T065)  
 **Duration**: ~3 hours
 **Location**: Working document per Constitution documentation routing
@@ -168,10 +168,10 @@ Execute the testing tasks to validate deployed workflows:
 
 ```bash
 # 1. Open test validation guide
-open docs/working_folder/testing-guides/README.md
+open docs/archive/deploy-discipline-testing/README.md
 
 # 2. Execute Phase 1 testing (T021-T023) - ~1 hour
-# Follow docs/working_folder/testing-guides/PR_QUALITY_GATES_TEST.md
+# Follow docs/archive/deploy-discipline-testing/PR_QUALITY_GATES_TEST.md
 
 # 3. Execute regression tests (T045, T061) - ~1 hour
 # Dev deployments should still work - low risk
@@ -190,10 +190,10 @@ Complete production deployment testing:
 
 ```bash
 # 1. Execute Phase 3 testing (T046-T048) - ~2 hours
-# Follow docs/working_folder/testing-guides/SWA_PRODUCTION_DEPLOY_TEST.md
+# Follow docs/archive/deploy-discipline-testing/SWA_PRODUCTION_DEPLOY_TEST.md
 
 # 2. Execute Phase 4 testing (T062-T065) - ~2 hours
-# Follow docs/working_folder/testing-guides/SUPABASE_PRODUCTION_DEPLOY_TEST.md
+# Follow docs/archive/deploy-discipline-testing/SUPABASE_PRODUCTION_DEPLOY_TEST.md
 
 # 3. Validate secrets documentation (T079-T081) - ~1 hour
 # Follow instructions in .github/SECRETS.md to retrieve actual secrets
@@ -215,7 +215,7 @@ End-to-end testing and polish:
 # Full PR → main → prod deployment with both SWA and Supabase
 
 # 2. Complete Phase 7 polish (T098-T105) - ~1 hour
-# Update PROJECT_TRACKER.md, SDLC_PROCESS.md, README.md
+# Update PROJECT_TRACKER.md, docs/process/SDLC_PROCESS.md, docs/README.md
 ```
 
 **Why this is the final step**:
@@ -299,8 +299,8 @@ If blocked, the test documents capture failure details for debugging.
 ```bash
 # Add all new documentation
 git add .github/SECRETS.md \
-        docs/working_folder/testing-guides/ \
-        docs/working_folder/SESSION_SUMMARY_2026-01-24.md \
+        docs/archive/deploy-discipline-testing/ \
+        docs/archive/deploy-discipline-testing/SESSION_SUMMARY_2026-01-24.md \
         specs/004-deploy-discipline/tasks.md
 
 # Commit
@@ -367,13 +367,13 @@ git push origin 004-deploy-discipline
 
 ## Need Help?
 
-- **Testing procedures**: See [docs/working_folder/testing-guides/README.md](testing-guides/README.md)
-- **Secrets setup**: See [.github/SECRETS.md](.github/SECRETS.md)
-- **Workflow details**: See [.github/workflows/](.github/workflows/)
-- **Feature spec**: See [specs/004-deploy-discipline/spec.md](specs/004-deploy-discipline/spec.md)
+- **Testing procedures**: See [docs/archive/deploy-discipline-testing/README.md](README.md)
+- **Secrets setup**: See [.github/SECRETS.md](../../../.github/SECRETS.md)
+- **Workflow details**: See [.github/workflows/](../../../.github/workflows/)
+- **Feature spec**: See [specs/004-deploy-discipline/spec.md](../../../specs/004-deploy-discipline/spec.md)
 
 ---
 
 **Bottom Line**: You're 73% complete on Deploy Discipline. The remaining 27% is testing and polish - critical for production readiness. Start with the test validation guides and work through them systematically. Budget ~2 days (11 hours) to complete.
 
-**Start here**: [docs/working_folder/testing-guides/README.md](testing-guides/README.md)
+**Start here**: [docs/archive/deploy-discipline-testing/README.md](README.md)

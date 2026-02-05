@@ -38,8 +38,8 @@ This document defines the Software Development Lifecycle (SDLC) process for Trac
 
 ### 2.1 Starting New Work
 
-1. **Check the PRD**: Ensure the work aligns with [TRACKLY_HOME_PRD.md](./TRACKLY_HOME_PRD.md)
-2. **Check the Tracker**: Update [PROJECT_TRACKER.md](./PROJECT_TRACKER.md) status
+1. **Check the PRD**: Ensure the work aligns with [TRACKLY_HOME_PRD.md](../TRACKLY_HOME_PRD.md)
+2. **Check the Tracker**: Update [PROJECT_TRACKER.md](../PROJECT_TRACKER.md) status
 3. **Create a branch**: From `dev` branch using naming convention
 4. **Set up local environment**: Follow README.md instructions
 
@@ -280,7 +280,7 @@ SELECT * FROM households WHERE id = 'other-household-id';
 
 Trackly Home uses GitHub Actions for automated CI/CD with separate workflows for frontend (Azure SWA) and backend (Supabase).
 
-**Complete workflow documentation:** [.github/workflows/README.md](../.github/workflows/README.md)
+**Complete workflow documentation:** [.github/workflows/README.md](../../.github/workflows/README.md)
 
 ### 7.2 Development Environment
 
@@ -387,7 +387,7 @@ Trackly Home uses GitHub Actions for automated CI/CD with separate workflows for
 | `SUPABASE_DB_PASSWORD` | Database password |
 | `SUPABASE_ACCESS_TOKEN` | CLI authentication |
 
-**Complete secrets documentation:** [.github/SECRETS.md](../.github/SECRETS.md)
+**Complete secrets documentation:** [.github/SECRETS.md](../../.github/SECRETS.md)
 
 ### 7.8 Pre-Deployment Checklist
 
