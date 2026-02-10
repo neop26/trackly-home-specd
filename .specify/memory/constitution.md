@@ -366,7 +366,7 @@ When a change violates a core principle (e.g., Minimal Changes), it MUST be just
 
 ### Technology Constraints
 The project's technology stack is defined in README.md and PRD:
-- **Frontend**: Vite + React 18 + TypeScript + Tailwind CSS
+- **Frontend**: Vite + React 18 + TypeScript + Chakra UI
 - **Backend**: Supabase (Auth, PostgreSQL, Edge Functions - Deno)
 - **Hosting**: Azure Static Web Apps
 - **CI/CD**: GitHub Actions

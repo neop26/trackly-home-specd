@@ -133,7 +133,7 @@ comment on column public.tasks.archived_at is 'Archive timestamp - null means ac
 
 ### RLS Policies Required
 
-**No new RLS policies required** - existing `tasks` table policies already cover all operations (SELECT, INSERT, UPDATE, DELETE) for household members.
+**RLS update required** - enforce admin-only permanent delete (tasks deleted > 30 days) with household ownership verification.
 
 **RLS Inheritance**: New columns (`notes`, `deleted_at`, `archived_at`) automatically inherit existing RLS policies:
 - `tasks_select_members`: Members can read tasks (including new columns) where household_id matches
