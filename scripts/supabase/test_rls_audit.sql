@@ -553,6 +553,87 @@ END $$;
 \echo ''
 
 -- =====================================================================
+-- PHASE 5.5: TASK PERMANENT DELETE ENFORCEMENT
+-- =====================================================================
+
+\echo ''
+\echo '===== PHASE 5.5: Testing Task Permanent Delete Enforcement ====='
+\echo ''
+
+-- T025: Verify admin-only permanent delete on tasks (deleted > 30 days)
+\echo 'T025: Testing task permanent delete enforcement...'
+DO $$
+DECLARE
+  v_test_users record;
+  v_user_a_uuid uuid;
+  v_user_c_uuid uuid;
+  v_hh1_uuid uuid;
+  v_task_old uuid;
+  v_task_recent uuid;
+  v_deleted_count integer;
+BEGIN
+  v_test_users := get_test_users();
+  v_user_a_uuid := v_test_users.user_a;
+  v_user_c_uuid := v_test_users.user_c;
+
+  SELECT id INTO v_hh1_uuid FROM public.households WHERE name = 'TEST-HH-1';
+
+  -- Create two soft-deleted tasks as admin/owner
+  PERFORM set_config('role', 'authenticated', true);
+  PERFORM set_config('request.jwt.claims.sub', v_user_a_uuid::text, true);
+
+  INSERT INTO public.tasks (household_id, title, status, deleted_at)
+  VALUES (v_hh1_uuid, 'TEST-DELETE-OLD', 'complete', now() - interval '31 days')
+  RETURNING id INTO v_task_old;
+
+  INSERT INTO public.tasks (household_id, title, status, deleted_at)
+  VALUES (v_hh1_uuid, 'TEST-DELETE-RECENT', 'complete', now() - interval '2 days')
+  RETURNING id INTO v_task_recent;
+
+  -- Non-admin member delete should be blocked (if member exists)
+  IF v_user_c_uuid IS NOT NULL THEN
+    PERFORM set_config('role', 'authenticated', true);
+    PERFORM set_config('request.jwt.claims.sub', v_user_c_uuid::text, true);
+
+    DELETE FROM public.tasks WHERE id = v_task_old;
+    GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
+
+    IF v_deleted_count = 0 THEN
+      RAISE NOTICE '✅ T025 PASS: Non-admin member delete blocked';
+    ELSE
+      RAISE EXCEPTION '❌ T025 FAIL: Non-admin member delete succeeded';
+    END IF;
+  ELSE
+    RAISE NOTICE '⚠ T025 SKIP: No member user available for non-admin test';
+  END IF;
+
+  -- Admin delete should succeed for old tasks
+  PERFORM set_config('role', 'authenticated', true);
+  PERFORM set_config('request.jwt.claims.sub', v_user_a_uuid::text, true);
+
+  DELETE FROM public.tasks WHERE id = v_task_old;
+  GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
+
+  IF v_deleted_count = 1 THEN
+    RAISE NOTICE '✅ T025 PASS: Admin delete allowed for tasks deleted > 30 days';
+  ELSE
+    RAISE EXCEPTION '❌ T025 FAIL: Admin delete blocked for eligible task';
+  END IF;
+
+  -- Admin delete should be blocked for recent deletes
+  DELETE FROM public.tasks WHERE id = v_task_recent;
+  GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
+
+  IF v_deleted_count = 0 THEN
+    RAISE NOTICE '✅ T025 PASS: Admin delete blocked for recent deleted task';
+  ELSE
+    RAISE EXCEPTION '❌ T025 FAIL: Admin delete allowed for recent deleted task';
+  END IF;
+
+  PERFORM set_config('role', 'postgres', true);
+END $$;
+
+-- =====================================================================
 -- PHASE 6: USER STORY 4 - PREVENT HELPER FUNCTION RECURSION
 -- =====================================================================
 

@@ -235,7 +235,7 @@ Over time, completed tasks accumulate and clutter views. Users should be able to
 - **SR-002**: Task deletion MUST verify the authenticated user is a member of the household owning the task
 - **SR-003**: Permanent deletion MUST be restricted to admin role only and require household ownership verification
 - **SR-004**: Bulk action endpoints MUST validate household membership for every task in the selection
-- **SR-005**: System MUST prevent cross-household task modification attempts and log such attempts as potential security incidents
+- **SR-005**: System MUST prevent cross-household task modification attempts and log a non-PII incident record (task ID + household ID hash, no user identifiers or emails)
 - **SR-006**: Restored tasks MUST maintain their original household_id to prevent cross-household data leakage
 
 ### Key Entities

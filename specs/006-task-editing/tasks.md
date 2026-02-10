@@ -90,6 +90,8 @@
 - [X] T034 [US2] Add Restore button for each deleted task calling `restoreTask()` service
 - [X] T035 [US2] Add Permanently Delete button (admin-only) for tasks deleted > 30 days
 - [X] T036 [US2] Implement role check (admin only) for permanent delete button visibility
+- [X] T035a [US2] Add RLS policy or SQL function enforcing admin-only permanent delete (deleted > 30 days)
+- [X] T035b [US2] Add SQL verification for admin-only permanent delete enforcement
 - [X] T037 [US2] Add navigation link to DeletedTasksView in app sidebar or settings menu
 - [X] T038 [US2] Modify main TaskList query to exclude deleted tasks: `WHERE deleted_at IS NULL`
 
@@ -268,6 +270,7 @@
 - [ ] T104 Verify Realtime subscriptions update all views (deleted tasks, archived tasks, filtered views)
 - [ ] T105 Test performance with 100 tasks: list render < 1.5s, filter/sort < 1s
 - [ ] T106 Test cross-household security: verify RLS blocks editing/deleting other household's tasks
+- [ ] T106a Verify incident logging payload is non-PII (task ID + household ID hash only)
 - [ ] T107 Run full manual test suite from quickstart.md (94 test scenarios)
 - [ ] T108 Verify mobile responsiveness of all new components (TaskFilters, modals, bulk actions bar)
 - [ ] T109 Update PRD Phase 6 requirements status in `docs/TRACKLY_HOME_PRD.md` to "Complete"

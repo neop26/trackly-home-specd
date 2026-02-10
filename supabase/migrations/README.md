@@ -12,7 +12,9 @@ Migrations are applied in timestamp order:
 6. `20260113000200_006_admin_only_invite_policies.sql` - **Phase 1**: Admin-only RLS policies
 7. `20260120090000_007_profiles_household_select.sql` - **Phase 1**: Household member profile visibility
 8. `20260120091000_008_transfer_household_ownership.sql` - **Phase 1**: Transfer ownership function
-9. `20260125021436_009_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies9. `20260126000000_010_task_lifecycle.sql` - **Phase 6 (Task Lifecycle Enhancement)**: Extended tasks table with notes, deleted_at, archived_at
+9. `20260125021436_009_tasks_table.sql` - **Phase 5 (Planner MVP)**: Tasks table with RLS policies
+10. `20260126000000_010_task_lifecycle.sql` - **Phase 6 (Task Lifecycle Enhancement)**: Extended tasks table with notes, deleted_at, archived_at
+11. `20260205184002_enforce_admin_task_delete.sql` - **Phase 6 (Task Lifecycle Enhancement)**: Admin-only permanent delete for tasks deleted > 30 days
 ## Phase 1 Migrations (Roles & Invites)
 
 ### 005_admin_role_and_helpers.sql
@@ -490,13 +492,13 @@ WHERE user_id = '<last-admin-user>' AND household_id = '<household-id>';
 | `tasks_select_members` | SELECT | `is_household_member(household_id)` | Migration 009 |
 | `tasks_insert_members` | INSERT | `is_household_member(household_id)` | Migration 009 |
 | `tasks_update_members` | UPDATE | `is_household_member(household_id)` | Migration 009 |
-| `tasks_delete_members` | DELETE | `is_household_member(household_id)` | Migration 009 |
+| `tasks_delete_admins_30_days` | DELETE | `is_household_admin(household_id)` AND `deleted_at <= now() - interval '30 days'` | Migration 011 |
 
 **Security Guarantees**:
-- Users can only access tasks from their own household
-- Users CANNOT see or modify tasks from other households
-- All members have equal access (no admin restrictions on tasks)
-- Household isolation enforced via `EXISTS` clause on `household_members`
+-- Users can only access tasks from their own household
+-- Users CANNOT see or modify tasks from other households
+-- Permanent deletes restricted to admins and only for tasks deleted > 30 days
+-- Household isolation enforced via `EXISTS` clause on `household_members`
 
 **Performance**: Uses `tasks_household_id_idx` index for efficient household filtering
 
